@@ -480,9 +480,7 @@
             #manualTicketResultModal {
                 position: absolute; left: 0; top: 0; width: 100%; height: 100%; background: white; box-shadow: none; display: flex; align-items: center; justify-content: center;
             }
-            .drawer-close, .btn-primary, #headerActionGroup, .bottom-nav, .drawer-header, .drawer-handle {
-                display: none !important;
-            }
+            .drawer-close, .btn-primary, #headerActionGroup, .bottom-nav, .drawer-header, .drawer-handle { display: none !important; }
             .drawer-content { transform: none !important; max-height: none !important; box-shadow: none !important; padding: 0 !important; width: 100% !important; background: transparent !important; }
             
             /* Ubah layout tiket menjadi Landscape untuk Print PDF */
@@ -544,6 +542,11 @@
             <div style="margin-bottom: 15px;">
                 <label style="font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 5px; display: block;">Nama Penumpang</label>
                 <input type="text" id="manualInputNamaPenumpang" placeholder="Masukkan Nama Penumpang..." style="width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #e2e8f0; font-family: 'Inter', sans-serif; font-size: 14px; outline: none;">
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label style="font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 5px; display: block;">No. HP Penumpang</label>
+                <input type="tel" id="manualInputNoHp" placeholder="Masukkan No. HP..." style="width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #e2e8f0; font-family: 'Inter', sans-serif; font-size: 14px; outline: none;">
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
@@ -1007,9 +1010,9 @@
     </div>
 
     <div id="scannedTicketDrawer" class="drawer-modal">
-        <div class="drawer-content" style="background:#f8fafc;">
-            <div class="drawer-handle"></div>
-            <div class="drawer-header" style="margin-bottom: 10px;">
+        <div class="drawer-content" style="background:#f8fafc; padding:0;">
+            <div class="drawer-handle" style="margin-top: 15px;"></div>
+            <div class="drawer-header" style="margin-bottom: 10px; padding: 0 20px;">
                 <h3 style="font-weight: 800; font-size:16px;"><i class="fa-solid fa-ticket" style="color:var(--primary);"></i> Detail Pesanan</h3>
                 <button class="drawer-close" onclick="closeScannedTicketDrawer()"><i class="fa-solid fa-xmark"></i></button>
             </div>
@@ -1141,7 +1144,8 @@
 
     // ================= INIT & ROUTING =================
     window.onload = () => {
-        initCityData(); fetchFacilitiesData(); initTimePickerOptions();
+        initCityData();
+        fetchFacilitiesData(); initTimePickerOptions();
         let savedSession = localStorage.getItem('goBorneo_partner_session');
         if(savedSession) {
             let parsed = JSON.parse(savedSession);
@@ -1170,29 +1174,34 @@
     }
 
     function switchSubView(tab) {
-        document.getElementById('subLayanan').style.display = 'none'; document.getElementById('subPesanan').style.display = 'none';
+        document.getElementById('subLayanan').style.display = 'none';
+        document.getElementById('subPesanan').style.display = 'none';
         document.getElementById('subProfil').style.display = 'none';
         
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         let mainHeader = document.getElementById('mainAppHeader');
         
         document.getElementById('headerBrandGroup').style.display = 'flex';
-        document.getElementById('headerActionGroup').style.display = 'flex'; document.getElementById('headerProfileTitle').style.display = 'none';
+        document.getElementById('headerActionGroup').style.display = 'flex';
+        document.getElementById('headerProfileTitle').style.display = 'none';
 
         if(tab === 'layanan') {
-            mainHeader.style.display = 'flex'; document.getElementById('subLayanan').style.display = 'block';
+            mainHeader.style.display = 'flex';
+            document.getElementById('subLayanan').style.display = 'block';
             if(document.querySelectorAll('.nav-item')[0]) document.querySelectorAll('.nav-item')[0].classList.add('active');
             loadLayananData();
             if(pesananPollingInterval) { clearInterval(pesananPollingInterval); pesananPollingInterval = null; }
 
         } else if(tab === 'pesanan') {
-            mainHeader.style.display = 'none'; document.getElementById('subPesanan').style.display = 'block';
+            mainHeader.style.display = 'none';
+            document.getElementById('subPesanan').style.display = 'block';
             if(document.querySelectorAll('.nav-item')[1]) document.querySelectorAll('.nav-item')[1].classList.add('active');
             loadPesananData();
             if(!pesananPollingInterval) { pesananPollingInterval = setInterval(fetchPesananDataSilently, 5000); }
 
         } else if(tab === 'profil') {
-            mainHeader.style.display = 'flex'; document.getElementById('headerBrandGroup').style.display = 'none';
+            mainHeader.style.display = 'flex';
+            document.getElementById('headerBrandGroup').style.display = 'none';
             document.getElementById('headerActionGroup').style.display = 'none'; document.getElementById('headerProfileTitle').style.display = 'block';
 
             let profSec = document.getElementById('subProfil');
@@ -1219,12 +1228,14 @@
         // Memunculkan loading terlebih dahulu
         document.getElementById('seatGridContainer').style.display = 'none';
         document.getElementById('seatLoading').style.display = 'block';
+        
         fetchPesananDataSilently().then(() => {
             // Sembunyikan loading dan munculkan grid
             document.getElementById('seatLoading').style.display = 'none';
             document.getElementById('seatGridContainer').style.display = 'grid';
             renderSeatLayout();
         });
+        
         if(!seatPollingInterval) {
             seatPollingInterval = setInterval(() => {
                 fetchPesananDataSilently();
@@ -1247,9 +1258,10 @@
         
         let bookedApp = [];
         let bookedManual = [];
+        
         globalPesananList.forEach(order => {
             if(order.merkKendaraan === item.merk && isSameDate(order.tanggalBooking, currentSeatDate)) {
-                let isManual = (order.userId === "MANUAL") || order.isManualLocal;
+                let isManual = (order.role === "Mitra") || order.isManualLocal;
                 let seatsArray = order.nomorKursi.toString().split(',').map(s => s.trim());
                 if(isManual) {
                     bookedManual.push(...seatsArray);
@@ -1264,6 +1276,7 @@
         const numCols = cols.length;
         const numRows = Math.ceil(kapasitas / numCols); 
         let totalRendered = 0;
+        
         for(let row = 1; row <= numRows; row++) {
             for(let c = 0; c < numCols; c++) {
                 if (totalRendered >= kapasitas) break;
@@ -1280,6 +1293,7 @@
                 
                 let onclickFn = (isAppBooked || isManualBooked) ? '' : `onclick="toggleSeatSelection('${seatNo}')"`;
                 let iconColorStyle = isSelected ? 'style="color: #fff"' : '';
+                
                 gridHtml += `
                     <div class="seat-item ${seatClass}" ${onclickFn}>
                         <i class="fa-solid fa-chair" ${iconColorStyle}></i>
@@ -1326,8 +1340,10 @@
         
         let firstDay = new Date(currentSeatCalYear, currentSeatCalMonth, 1).getDay(); 
         let daysInMonth = new Date(currentSeatCalYear, currentSeatCalMonth + 1, 0).getDate();
+        
         let gridHtml = `<div style="font-size:11px; font-weight:700; color:#94a3b8;">Min</div><div style="font-size:11px; font-weight:700; color:#94a3b8;">Sen</div><div style="font-size:11px; font-weight:700; color:#94a3b8;">Sel</div><div style="font-size:11px; font-weight:700; color:#94a3b8;">Rab</div><div style="font-size:11px; font-weight:700; color:#94a3b8;">Kam</div><div style="font-size:11px; font-weight:700; color:#94a3b8;">Jum</div><div style="font-size:11px; font-weight:700; color:#94a3b8;">Sab</div>`;
         for (let i = 0; i < firstDay; i++) gridHtml += `<div></div>`;
+        
         for (let day = 1; day <= daysInMonth; day++) { 
             let mStr = (currentSeatCalMonth + 1).toString().padStart(2, '0');
             let dStr = day.toString().padStart(2, '0'); 
@@ -1337,6 +1353,7 @@
             let style = isSelected 
                 ? "background: var(--primary); color: #fff; box-shadow: 0 4px 10px rgba(2,132,199,0.3);" 
                 : "background: #f1f5f9; color: var(--text-main);";
+                
             gridHtml += `<div onclick="selectSeatDate('${fullDateStr}')" style="width:38px; height:38px; border-radius:12px; display:flex; align-items:center; justify-content:center; margin:auto; cursor:pointer; font-size:13px; font-weight:700; transition:0.2s; ${style}">${day}</div>`;
         } 
         document.getElementById('seatCalendarGrid').innerHTML = gridHtml;
@@ -1362,7 +1379,8 @@
         if(selectedManualSeats.length === 0) {
             return showAlert("Perhatian", "Pilih minimal 1 kursi untuk dipesan secara manual.", "fa-triangle-exclamation", true);
         }
-        document.getElementById('manualInputNamaPenumpang').value = ""; // Clear input from previous use
+        document.getElementById('manualInputNamaPenumpang').value = "";
+        document.getElementById('manualInputNoHp').value = ""; // Clear input from previous use
         document.getElementById('manualBookingPaymentModal').classList.add('show');
         pushBackButtonHandler('manualBookingPaymentModal');
     }
@@ -1380,13 +1398,17 @@
         let paymentStatus = document.querySelector('input[name="manualPaymentStatus"]:checked').value;
         
         let inputNama = document.getElementById('manualInputNamaPenumpang').value.trim();
+        let inputHp = document.getElementById('manualInputNoHp').value.trim();
+        
         let finalNamaPenumpang = inputNama ? inputNama : SESSION_COMPANY.namaPerusahaan;
+        let finalNoHp = inputHp ? inputHp : SESSION_COMPANY.noHpPerusahaan;
 
         showLoading(true);
         try {
             let payload = {
                 action: "manualBooking", 
-                userId: "MANUAL", // Force userId as MANUAL untuk penanda kursi manual (Column B)
+                userId: "MANUAL", 
+                role: "Mitra", // Penanda kursi manual dipesan oleh Mitra (Kolom P)
                 username: SESSION_USER.username,
                 namaPerusahaan: SESSION_COMPANY.namaPerusahaan,
                 emailPenumpang: SESSION_USER.email, 
@@ -1395,7 +1417,7 @@
                 tanggalBooking: fullDateTimeBooking, 
                 nomorKursi: selectedManualSeats.join(", "),
                 namaPenumpang: finalNamaPenumpang, 
-                noHp: SESSION_COMPANY.noHpPerusahaan,
+                noHp: finalNoHp, // Menggunakan finalNoHp dari input (Kolom E)
                 harga: activeBus.harga * selectedManualSeats.length,
                 asal: activeBus.asal,
                 tujuan: activeBus.tujuan,
@@ -1422,9 +1444,8 @@
                 }
 
                 showLoading(false);
-                
                 if(newOrder) {
-                    selectedManualSeats = []; 
+                    selectedManualSeats = [];
                     renderSeatLayout();
                     closeManualPaymentModal();
                     
@@ -1437,6 +1458,7 @@
                     newOrder = {
                         idBooking: generatedId || "MENUNGGU_SINKRONISASI",
                         userId: "MANUAL",
+                        role: "Mitra",
                         merkKendaraan: payload.merkKendaraan,
                         tanggalBooking: payload.tanggalBooking,
                         nomorKursi: payload.nomorKursi,
@@ -1449,6 +1471,7 @@
                         statusBooking: payload.statusBooking,
                         isManualLocal: true 
                     };
+                    
                     globalPesananList.push(newOrder);
                     selectedManualSeats = []; 
                     renderSeatLayout();
@@ -1565,37 +1588,41 @@
         const originalText = btn.innerHTML;
         btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memproses...';
         btn.disabled = true;
+        
         const ticketElement = document.getElementById('printableTicketCard');
         
-        try {
-            const canvas = await html2canvas(ticketElement, { scale: 2, useCORS: true });
-            canvas.toBlob(async (blob) => {
-                const file = new File([blob], `Ticket_${lastGeneratedTicket.idBooking}.jpg`, { type: 'image/jpeg' });
-                
-                // Cek ketersediaan navigator.share (Mobile)
-                if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                    try {
-                        await navigator.share({
-                            files: [file],
-                            title: 'E-Ticket Go Borneo',
-                            text: `Berikut adalah e-ticket untuk pesanan ${lastGeneratedTicket.idBooking}.`
-                        });
-                        btn.innerHTML = originalText;
-                        btn.disabled = false;
-                    } catch (err) {
-                        console.error("Share failed:", err);
+        // Timeout agar browser sempat merender loading sebelum thread diblokir canvas
+        setTimeout(async () => {
+            try {
+                const canvas = await html2canvas(ticketElement, { scale: 2, useCORS: true });
+                canvas.toBlob(async (blob) => {
+                    const file = new File([blob], `Ticket_${lastGeneratedTicket.idBooking}.jpg`, { type: 'image/jpeg' });
+                    
+                    // Cek ketersediaan navigator.share (Mobile)
+                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                        try {
+                            await navigator.share({
+                                files: [file],
+                                title: 'E-Ticket Go Borneo',
+                                text: `Berikut adalah e-ticket untuk pesanan ${lastGeneratedTicket.idBooking}.`
+                            });
+                            btn.innerHTML = originalText;
+                            btn.disabled = false;
+                        } catch (err) {
+                            console.error("Share failed:", err);
+                            fallbackDownloadAndShare(canvas.toDataURL("image/jpeg"));
+                        }
+                    } else {
+                        // Fallback Desktop PC/Laptop (Otomatis Download + Buka WA Web)
                         fallbackDownloadAndShare(canvas.toDataURL("image/jpeg"));
                     }
-                } else {
-                    // Fallback Desktop PC/Laptop (Otomatis Download + Buka WA Web)
-                    fallbackDownloadAndShare(canvas.toDataURL("image/jpeg"));
-                }
-            }, 'image/jpeg', 0.9);
-        } catch (e) {
-            showAlert('Error', 'Gagal memproses gambar tiket', 'fa-xmark', true);
-            btn.innerHTML = originalText;
-            btn.disabled = false;
-        }
+                }, 'image/jpeg', 0.9);
+            } catch (e) {
+                showAlert('Error', 'Gagal memproses gambar tiket', 'fa-xmark', true);
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }, 100);
     }
 
     function fallbackDownloadAndShare(dataUrl) {
@@ -1612,6 +1639,7 @@
         let text = `*E-TICKET GO BORNEO*\n\nID Booking: ${o.idBooking}\nNama: ${o.namaPenumpang}\nArmada: ${o.merkKendaraan}\nRute: ${o.asal} - ${o.tujuan}\nKursi: ${o.nomorKursi}\nTgl Berangkat: ${formatTglIndo(o.tanggalBooking)}\nTotal: Rp ${formatNumber(o.harga)}\nStatus: ${o.statusBooking.toUpperCase()}\n\n_Catatan: File tiket (JPG) telah terunduh ke perangkat Anda. Silakan lampirkan gambar tiket tersebut saat mengirim pesan ini._`;
         let waUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
         setTimeout(() => { window.open(waUrl, '_blank'); }, 500);
+        
         const btn = document.getElementById('btnShareWa');
         btn.innerHTML = '<i class="fa-brands fa-whatsapp"></i> Bagikan (WA)';
         btn.disabled = false;
@@ -1619,7 +1647,8 @@
 
     // ================= CONFIRM MODAL LOGIC =================
     function showConfirmModal(title, msg, iconClass, isDanger, callback) {
-        document.getElementById('confirmTitle').innerText = title; document.getElementById('confirmMessage').innerText = msg;
+        document.getElementById('confirmTitle').innerText = title;
+        document.getElementById('confirmMessage').innerText = msg;
         let iconEl = document.getElementById('confirmIcon'); iconEl.className = `confirm-icon fa-solid ${iconClass}`; iconEl.style.color = isDanger ? "#ef4444" : "#f59e0b";
         let btnYes = document.getElementById('confirmYesBtn'); btnYes.innerText = isDanger ? "Hapus" : "Keluar Akun"; btnYes.className = isDanger ? "confirm-btn btn-danger-confirm" : "confirm-btn btn-logout-confirm";
         customConfirmCallback = callback; document.getElementById('customConfirmModal').classList.add('show');
@@ -1672,14 +1701,16 @@
         let suffixes = ["", "-popup"];
         suffixes.forEach(suffix => { let btnConfirm = document.getElementById(`btn-confirm-${idToConfirm}${suffix}`); let badgeEl = document.getElementById(`badge-${idToConfirm}${suffix}`); if(btnConfirm) btnConfirm.style.display = 'none'; if(badgeEl) { badgeEl.className = 'status-ribbon-bottom-left aktif'; badgeEl.innerText = 'LUNAS'; } });
         let orderIdx = globalPesananList.findIndex(o => o.idBooking === idToConfirm);
-        if(orderIdx > -1) { globalPesananList[orderIdx].statusBooking = 'Lunas'; updateDashboardPesananStats(); if(orderChartInstance) { let activeType = document.querySelector('.chart-filter-btn.active').id.replace('btn-chart-',''); updateChartFilter(activeType); } }
+        if(orderIdx > -1) { globalPesananList[orderIdx].statusBooking = 'Lunas'; updateDashboardPesananStats();
+        if(orderChartInstance) { let activeType = document.querySelector('.chart-filter-btn.active').id.replace('btn-chart-',''); updateChartFilter(activeType); } }
         showAlert("Berhasil", "Pesanan tiket sudah dibayarkan.", "fa-check");
         try {
             let res = await fetchGAS({ action: "confirmPayment", idBooking: idToConfirm, namaPerusahaan: SESSION_COMPANY.namaPerusahaan, statusBooking: "Lunas" });
             if(res.status !== "success") { throw new Error(res.message); }
         } catch(e) {
             suffixes.forEach(suffix => { let btnConfirm = document.getElementById(`btn-confirm-${idToConfirm}${suffix}`); let badgeEl = document.getElementById(`badge-${idToConfirm}${suffix}`); if(btnConfirm) btnConfirm.style.display = 'inline-block'; if(badgeEl) { badgeEl.className = 'status-ribbon-bottom-left non-aktif'; badgeEl.innerText = 'BELUM BAYAR'; } });
-            if(orderIdx > -1) { globalPesananList[orderIdx].statusBooking = 'Belum Bayar'; updateDashboardPesananStats(); if(orderChartInstance) { let activeType = document.querySelector('.chart-filter-btn.active').id.replace('btn-chart-',''); updateChartFilter(activeType); } }
+            if(orderIdx > -1) { globalPesananList[orderIdx].statusBooking = 'Belum Bayar'; updateDashboardPesananStats(); if(orderChartInstance) { let activeType = document.querySelector('.chart-filter-btn.active').id.replace('btn-chart-',''); updateChartFilter(activeType);
+            } }
             showAlert("Koneksi Error", "Gagal sinkronisasi data.", "fa-wifi", true);
         }
     }
@@ -1688,20 +1719,23 @@
     function formatTglIndo(tglStr) {
         if (!tglStr) return "-";
         try { const date = new Date(tglStr); if (isNaN(date.getTime())) return tglStr;
-        const options = { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' }; return date.toLocaleDateString('id-ID', options); } catch(e) { return tglStr; }
+        const options = { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' }; return date.toLocaleDateString('id-ID', options);
+        } catch(e) { return tglStr; }
     }
     function formatNumber(angka) { if(!angka) return "0";
         return new Intl.NumberFormat('id-ID').format(angka); }
     function formatRupiah(angka) { return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka).replace("Rp", "Rp.");
     }
     function hitungDurasi(jB, jS) { let [h1, m1] = jB.split(':').map(Number); let [h2, m2] = jS.split(':').map(Number);
-        let dH = h2 - h1; let dM = m2 - m1; if (dM < 0) { dM += 60; dH -= 1; } if (dH < 0) dH += 24; let res = []; if (dH > 0) res.push(`${dH}j`);
+        let dH = h2 - h1; let dM = m2 - m1; if (dM < 0) { dM += 60;
+        dH -= 1; } if (dH < 0) dH += 24; let res = []; if (dH > 0) res.push(`${dH}j`);
         if (dM > 0) res.push(`${dM}m`); return res.join(' ') || "0m";
     }
 
     // ================= GRAFIK STATISTIK CHART JS =================
     function calculateRealChartData(type) {
-        let labels = []; let data = []; let lunasOrders = globalPesananList.filter(o => o.statusBooking.toLowerCase() === 'lunas');
+        let labels = [];
+        let data = []; let lunasOrders = globalPesananList.filter(o => o.statusBooking.toLowerCase() === 'lunas');
         if (type === 'hari') {
             labels = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
             data = [0, 0, 0, 0, 0, 0, 0];
@@ -1714,7 +1748,8 @@
         } else if (type === 'tahun') {
             let yearCounts = {};
             lunasOrders.forEach(o => { let d = new Date(o.tanggalBooking); if(!isNaN(d.getTime())) { let y = d.getFullYear(); yearCounts[y] = (yearCounts[y] || 0) + 1; } });
-            labels = Object.keys(yearCounts).sort(); if(labels.length === 0) { labels = [new Date().getFullYear().toString()]; yearCounts[labels[0]] = 0; }
+            labels = Object.keys(yearCounts).sort(); if(labels.length === 0) { labels = [new Date().getFullYear().toString()]; yearCounts[labels[0]] = 0;
+            }
             data = labels.map(y => yearCounts[y]);
         }
         return { labels, data };
@@ -1731,7 +1766,8 @@
     }
     
     function updateChartFilter(type) {
-        document.querySelectorAll('.chart-filter-btn').forEach(btn => btn.classList.remove('active')); document.getElementById(`btn-chart-${type}`).classList.add('active');
+        document.querySelectorAll('.chart-filter-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById(`btn-chart-${type}`).classList.add('active');
         if(!orderChartInstance) return; let chartData = calculateRealChartData(type); orderChartInstance.data.labels = chartData.labels; orderChartInstance.data.datasets[0].data = chartData.data; orderChartInstance.update();
     }
 
@@ -1745,7 +1781,8 @@
     }
 
     function updateDashboardPesananStats() {
-        let belumBayar = 0; let lunas = 0; globalPesananList.forEach(o => { if (o.statusBooking.toLowerCase() === 'lunas') lunas++; else belumBayar++; });
+        let belumBayar = 0;
+        let lunas = 0; globalPesananList.forEach(o => { if (o.statusBooking.toLowerCase() === 'lunas') lunas++; else belumBayar++; });
         if(document.getElementById('stat-pesanan-aktif')) document.getElementById('stat-pesanan-aktif').innerText = belumBayar;
         if(document.getElementById('stat-pesanan-selesai')) document.getElementById('stat-pesanan-selesai').innerText = lunas;
     }
@@ -1767,25 +1804,39 @@
         }
     }
     
-    function toggleClearBtn(input) { let btn = input.nextElementSibling; if(btn && btn.classList.contains('clear-btn')) { btn.style.display = input.value.length > 0 ? 'block' : 'none'; } }
-    function clearSearch(inputId) { let input = document.getElementById(inputId); if(input) { input.value = ''; toggleClearBtn(input); if(inputId === 'regionSearchInput') filterRegions(); if(inputId === 'layananSearchInputWeb') filterLayananWeb(); if(inputId === 'pesananSearchInput') filterPesananMobile(); if(inputId === 'layananSearchInput') filterLayananMobile(); } }
+    function toggleClearBtn(input) { let btn = input.nextElementSibling;
+        if(btn && btn.classList.contains('clear-btn')) { btn.style.display = input.value.length > 0 ? 'block' : 'none';
+        } }
+    function clearSearch(inputId) { let input = document.getElementById(inputId); if(input) { input.value = ''; toggleClearBtn(input);
+        if(inputId === 'regionSearchInput') filterRegions(); if(inputId === 'layananSearchInputWeb') filterLayananWeb(); if(inputId === 'pesananSearchInput') filterPesananMobile(); if(inputId === 'layananSearchInput') filterLayananMobile();
+        } }
     
     function openLayananSearch() { 
-        document.getElementById('layananSearchOverlay').classList.add('show'); document.getElementById('layananSearchInput').focus();
+        document.getElementById('layananSearchOverlay').classList.add('show');
+        document.getElementById('layananSearchInput').focus();
         pushBackButtonHandler('layananSearch');
     }
     function closeLayananSearch(fromPopState = false) { 
-        document.getElementById('layananSearchOverlay').classList.remove('show'); clearSearch('layananSearchInput'); 
+        document.getElementById('layananSearchOverlay').classList.remove('show');
+        clearSearch('layananSearchInput'); 
         if (!fromPopState) popBackButtonHandler();
     }
     function filterLayananMobile() { let val = document.getElementById('layananSearchInput').value.toLowerCase();
-        doSearchLayananDOM(val); }
+        doSearchLayananDOM(val);
+    }
     
     function toggleWebSearch(forceClose = false) { let box = document.getElementById('webSearchExpand');
-        if(forceClose) { box.classList.remove('expanded'); clearSearch('layananSearchInputWeb'); return; } box.classList.toggle('expanded'); if(box.classList.contains('expanded')) { document.getElementById('layananSearchInputWeb').focus(); } else { clearSearch('layananSearchInputWeb'); } }
-    function filterLayananWeb() { let val = document.getElementById('layananSearchInputWeb').value.toLowerCase(); doSearchLayananDOM(val); }
-    function doSearchLayananDOM(val) { let cards = document.getElementById('layananCardContainer').querySelectorAll('.ticket-card'); cards.forEach(card => { let text = card.innerText.toLowerCase(); card.style.display = text.includes(val) ? '' : 'none'; }); }
-    function filterPesananMobile() { let val = document.getElementById('pesananSearchInput').value.toLowerCase(); let cards = document.querySelectorAll('.pesanan-card-item'); cards.forEach(card => { let text = card.innerText.toLowerCase(); card.style.display = text.includes(val) ? '' : 'none'; }); }
+        if(forceClose) { box.classList.remove('expanded');
+        clearSearch('layananSearchInputWeb'); return; } box.classList.toggle('expanded'); if(box.classList.contains('expanded')) { document.getElementById('layananSearchInputWeb').focus(); } else { clearSearch('layananSearchInputWeb');
+        } }
+    function filterLayananWeb() { let val = document.getElementById('layananSearchInputWeb').value.toLowerCase(); doSearchLayananDOM(val);
+    }
+    function doSearchLayananDOM(val) { let cards = document.getElementById('layananCardContainer').querySelectorAll('.ticket-card');
+        cards.forEach(card => { let text = card.innerText.toLowerCase(); card.style.display = text.includes(val) ? '' : 'none'; });
+    }
+    function filterPesananMobile() { let val = document.getElementById('pesananSearchInput').value.toLowerCase(); let cards = document.querySelectorAll('.pesanan-card-item');
+        cards.forEach(card => { let text = card.innerText.toLowerCase(); card.style.display = text.includes(val) ? '' : 'none'; });
+    }
 
     // ================= FILTER ORDER =================
     function toggleOrderFilter() {
@@ -1810,12 +1861,15 @@
 
     // ================= SCANNER =================
     function openScanner() { 
-        document.getElementById('scannerModal').classList.add('open'); html5QrCode = new Html5Qrcode("reader");
+        document.getElementById('scannerModal').classList.add('open');
+        html5QrCode = new Html5Qrcode("reader");
         html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 220, height: 220 } }, onScanSuccess, onScanFailure).catch(err => { console.error(err); showAlert("Akses Kamera", "Gagal membuka kamera perangkat.", "fa-camera", true); });
         pushBackButtonHandler('scanner');
     }
     function closeScanner(fromPopState = false) { 
-        document.getElementById('scannerModal').classList.remove('open'); if(html5QrCode) { html5QrCode.stop().then(() => { html5QrCode.clear(); html5QrCode = null; }).catch(err => console.log(err)); } 
+        document.getElementById('scannerModal').classList.remove('open');
+        if(html5QrCode) { html5QrCode.stop().then(() => { html5QrCode.clear(); html5QrCode = null; }).catch(err => console.log(err));
+        } 
         if (!fromPopState) popBackButtonHandler();
     }
 
@@ -1829,105 +1883,165 @@
     }
 
     function onScanSuccess(decodedText, decodedResult) { 
-        closeScanner(); let targetedOrder = globalPesananList.find(o => o.idBooking === decodedText || o.idBooking.includes(decodedText));
+        closeScanner();
+        let targetedOrder = globalPesananList.find(o => o.idBooking === decodedText || o.idBooking.includes(decodedText));
         if (targetedOrder) { 
-            document.getElementById('scannedTicketContent').innerHTML = generateBoardingPassHTML(targetedOrder);
-            openScannedTicketDrawer(); setTimeout(() => {
-                document.getElementById('ticketQrCode').innerHTML = "";
-                new QRCode(document.getElementById("ticketQrCode"), {
-                    text: targetedOrder.idBooking,
-                    width: 80, height: 80,
-                    colorDark : "#000000", colorLight : "#ffffff",
-                    correctLevel : QRCode.CorrectLevel.M
-                });
-            }, 100); showAlert('Berhasil', 'Scan Tiket / Resi berhasil ditemukan.', 'fa-qrcode');
+            // Ubah tampilan result sesuai tampilan di Card List (Manajemen Tiket Masuk)
+            document.getElementById('scannedTicketContent').innerHTML = `<div style="padding: 10px 20px 20px 20px;">${generateTicketCardHTML(targetedOrder, true, 0)}</div>`;
+            openScannedTicketDrawer();
+            showAlert('Berhasil', 'Scan Tiket / Resi berhasil ditemukan.', 'fa-qrcode');
         } else { 
-            showAlert('Tidak Ditemukan', 'Tiket tidak ada di sistem/belum di-load.', 'fa-circle-xmark', true); } 
+            showAlert('Tidak Ditemukan', 'Tiket tidak ada di sistem/belum di-load.', 'fa-circle-xmark', true);
+        } 
     }
     function onScanFailure(error) { }
 
-    function togglePassword(icon, inputId) { let input = document.getElementById(inputId); if (input.type === "password") { input.type = "text"; icon.classList.remove("fa-eye-slash"); icon.classList.add("fa-eye"); } else { input.type = "password"; icon.classList.remove("fa-eye"); icon.classList.add("fa-eye-slash"); } }
-    function showLoading(show) { document.getElementById('globalLoader').style.display = show ? "flex" : "none"; }
-    function showAlert(title, message, iconClass = "fa-check", isError = false) { let toast = document.getElementById('alertToast'); let iconDiv = document.getElementById('alertIcon'); document.getElementById('alertTitle').innerText = title; document.getElementById('alertMessage').innerText = message; iconDiv.className = isError ? "alert-icon error" : "alert-icon success"; iconDiv.innerHTML = `<i class="fa-solid ${iconClass}"></i>`; toast.classList.add('show'); setTimeout(closeAlert, 4000); }
-    function closeAlert() { document.getElementById('alertToast').classList.remove('show'); }
+    function togglePassword(icon, inputId) { let input = document.getElementById(inputId);
+        if (input.type === "password") { input.type = "text"; icon.classList.remove("fa-eye-slash"); icon.classList.add("fa-eye"); } else { input.type = "password"; icon.classList.remove("fa-eye"); icon.classList.add("fa-eye-slash");
+        } }
+    function showLoading(show) { document.getElementById('globalLoader').style.display = show ? "flex" : "none";
+    }
+    function showAlert(title, message, iconClass = "fa-check", isError = false) { let toast = document.getElementById('alertToast');
+        let iconDiv = document.getElementById('alertIcon'); document.getElementById('alertTitle').innerText = title; document.getElementById('alertMessage').innerText = message; iconDiv.className = isError ? "alert-icon error" : "alert-icon success";
+        iconDiv.innerHTML = `<i class="fa-solid ${iconClass}"></i>`; toast.classList.add('show'); setTimeout(closeAlert, 4000); }
+    function closeAlert() { document.getElementById('alertToast').classList.remove('show');
+    }
 
     // ================= IMAGE CROPPER =================
-    function handleImageSelection(event, targetPreviewId, aspectRatio) { const file = event.target.files[0]; if(!file) return; currentTargetImageId = targetPreviewId; const reader = new FileReader(); reader.onload = (e) => { document.getElementById('cropperImage').src = e.target.result; document.getElementById('cropperModal').classList.add('open'); if(cropperInstance) cropperInstance.destroy(); cropperInstance = new Cropper(document.getElementById('cropperImage'), { aspectRatio: aspectRatio, viewMode: 2, autoCropArea: 1, responsive: true }); 
+    function handleImageSelection(event, targetPreviewId, aspectRatio) { const file = event.target.files[0];
+        if(!file) return; currentTargetImageId = targetPreviewId; const reader = new FileReader(); reader.onload = (e) => { document.getElementById('cropperImage').src = e.target.result; document.getElementById('cropperModal').classList.add('open');
+        if(cropperInstance) cropperInstance.destroy(); cropperInstance = new Cropper(document.getElementById('cropperImage'), { aspectRatio: aspectRatio, viewMode: 2, autoCropArea: 1, responsive: true }); 
         pushBackButtonHandler('cropperModal');
-        }; reader.readAsDataURL(file); }
+        }; reader.readAsDataURL(file);
+    }
     function cancelCrop(fromPopState = false) { 
-        document.getElementById('cropperModal').classList.remove('open'); if(cropperInstance) cropperInstance.destroy(); document.getElementById('compLogoFile').value = ""; document.getElementById('addFotoFile').value = ""; document.getElementById('editFotoFile').value = "";
+        document.getElementById('cropperModal').classList.remove('open'); if(cropperInstance) cropperInstance.destroy();
+        document.getElementById('compLogoFile').value = ""; document.getElementById('addFotoFile').value = ""; document.getElementById('editFotoFile').value = "";
         document.getElementById('editCompLogoInput').value = ""; 
-        if (!fromPopState) popBackButtonHandler(); }
+        if (!fromPopState) popBackButtonHandler();
+    }
     function applyCrop() { if(!cropperInstance) return;
-        const canvas = cropperInstance.getCroppedCanvas({ width: 400, fillColor: '#fff' }); const base64Image = canvas.toDataURL('image/jpeg', 0.6); document.getElementById(currentTargetImageId).src = base64Image; document.getElementById(currentTargetImageId).style.display = 'block';
-        if(currentTargetImageId === 'previewCompLogo') base64CompLogo = base64Image; else if (currentTargetImageId === 'previewEditCompLogo') base64EditCompLogo = base64Image;
-        else if(currentTargetImageId === 'previewAddFoto' || currentTargetImageId === 'previewEditFoto') base64ArmadaFoto = base64Image; cancelCrop(); }
+        const canvas = cropperInstance.getCroppedCanvas({ width: 400, fillColor: '#fff' });
+        const base64Image = canvas.toDataURL('image/jpeg', 0.6); document.getElementById(currentTargetImageId).src = base64Image; document.getElementById(currentTargetImageId).style.display = 'block';
+        if(currentTargetImageId === 'previewCompLogo') base64CompLogo = base64Image;
+        else if (currentTargetImageId === 'previewEditCompLogo') base64EditCompLogo = base64Image;
+        else if(currentTargetImageId === 'previewAddFoto' || currentTargetImageId === 'previewEditFoto') base64ArmadaFoto = base64Image; cancelCrop();
+    }
 
     // ================= DATA KOTA, WAKTU & FASILITAS =================
-    async function initCityData() { try { const response = await fetch('https://raw.githubusercontent.com/yusufsyaifudin/wilayah-indonesia/master/data/list_of_area/regencies.json'); if (response.ok) { const rawData = await response.json(); indonesianRegionsDatabase = rawData.map(item => { let name = item.name.toLowerCase().replace('kabupaten ', 'Kab. ').replace('kota ', ''); return name.replace(/\b\w/g, c => c.toUpperCase()); }); } } catch (e) { } }
-    function openRegionSelection(targetInputId) { activeRegionInputTargetId = targetInputId; document.getElementById('regionModalTitle').innerText = targetInputId === "addAsal" || targetInputId === "editAsal" ? "Pilih Kota Asal" : "Pilih Kota Tujuan"; clearSearch('regionSearchInput'); renderRegionList(indonesianRegionsDatabase); document.getElementById('regionModal').classList.add('open'); pushBackButtonHandler('regionModal');
+    async function initCityData() { try { const response = await fetch('https://raw.githubusercontent.com/yusufsyaifudin/wilayah-indonesia/master/data/list_of_area/regencies.json');
+        if (response.ok) { const rawData = await response.json(); indonesianRegionsDatabase = rawData.map(item => { let name = item.name.toLowerCase().replace('kabupaten ', 'Kab. ').replace('kota ', ''); return name.replace(/\b\w/g, c => c.toUpperCase()); });
+        } } catch (e) { } }
+    function openRegionSelection(targetInputId) { activeRegionInputTargetId = targetInputId;
+        document.getElementById('regionModalTitle').innerText = targetInputId === "addAsal" || targetInputId === "editAsal" ? "Pilih Kota Asal" : "Pilih Kota Tujuan"; clearSearch('regionSearchInput'); renderRegionList(indonesianRegionsDatabase); document.getElementById('regionModal').classList.add('open');
+        pushBackButtonHandler('regionModal');
     }
     function closeRegionModal(fromPopState = false) { 
         document.getElementById('regionModal').classList.remove('open');
         if (!fromPopState) popBackButtonHandler();
     }
-    function renderRegionList(items) { let listHtml = items.length === 0 ? `<li style="text-align:center; padding:20px; color:var(--text-muted);">Wilayah tidak ditemukan</li>` : ""; items.slice(0, 150).forEach(cityName => { listHtml += `<li class="modal-list-item" onclick="selectRegionValue('${cityName}')"><i class="fa-solid fa-location-dot"></i> <span>${cityName}</span></li>`; }); document.getElementById('regionListContainer').innerHTML = listHtml; }
-    function filterRegions() { renderRegionList(indonesianRegionsDatabase.filter(name => name.toLowerCase().includes(document.getElementById('regionSearchInput').value.toLowerCase().trim()))); }
-    function selectRegionValue(val) { document.getElementById(activeRegionInputTargetId).value = val; closeRegionModal(); }
+    function renderRegionList(items) { let listHtml = items.length === 0 ?
+        `<li style="text-align:center; padding:20px; color:var(--text-muted);">Wilayah tidak ditemukan</li>` : ""; items.slice(0, 150).forEach(cityName => { listHtml += `<li class="modal-list-item" onclick="selectRegionValue('${cityName}')"><i class="fa-solid fa-location-dot"></i> <span>${cityName}</span></li>`; });
+        document.getElementById('regionListContainer').innerHTML = listHtml; }
+    function filterRegions() { renderRegionList(indonesianRegionsDatabase.filter(name => name.toLowerCase().includes(document.getElementById('regionSearchInput').value.toLowerCase().trim())));
+    }
+    function selectRegionValue(val) { document.getElementById(activeRegionInputTargetId).value = val; closeRegionModal();
+    }
     
-    function initTimePickerOptions() { let hourHtml = "", minHtml = ""; for(let i=0; i<24; i++) { let pad = i.toString().padStart(2, '0'); hourHtml += `<div class="time-opt-item" data-val="${pad}" onclick="selectTimeItem('hour', this)">${pad}</div>`; } 
-        for(let i=0; i<60; i+=5) { let pad = i.toString().padStart(2, '0'); minHtml += `<div class="time-opt-item" data-val="${pad}" onclick="selectTimeItem('minute', this)">${pad}</div>`; } 
-        document.getElementById('hourScrollBox').innerHTML = hourHtml; document.getElementById('minuteScrollBox').innerHTML = minHtml; }
+    function initTimePickerOptions() { let hourHtml = "", minHtml = "";
+        for(let i=0; i<24; i++) { let pad = i.toString().padStart(2, '0'); hourHtml += `<div class="time-opt-item" data-val="${pad}" onclick="selectTimeItem('hour', this)">${pad}</div>`;
+        } 
+        for(let i=0; i<60; i+=5) { let pad = i.toString().padStart(2, '0');
+        minHtml += `<div class="time-opt-item" data-val="${pad}" onclick="selectTimeItem('minute', this)">${pad}</div>`; } 
+        document.getElementById('hourScrollBox').innerHTML = hourHtml;
+        document.getElementById('minuteScrollBox').innerHTML = minHtml; }
     
-    function openTimeSelection(targetInputId) { activeTimeInputTargetId = targetInputId; document.getElementById('timeModalTitle').innerText = targetInputId === "addJamB" || targetInputId === "editJamB" ? "Jam Keberangkatan" : "Estimasi Jam Tiba"; let hBox = document.getElementById('hourScrollBox'); let mBox = document.getElementById('minuteScrollBox'); if(!hBox.querySelector('.selected')) hBox.children[0].classList.add('selected');
+    function openTimeSelection(targetInputId) { activeTimeInputTargetId = targetInputId;
+        document.getElementById('timeModalTitle').innerText = targetInputId === "addJamB" || targetInputId === "editJamB" ? "Jam Keberangkatan" : "Estimasi Jam Tiba"; let hBox = document.getElementById('hourScrollBox');
+        let mBox = document.getElementById('minuteScrollBox'); if(!hBox.querySelector('.selected')) hBox.children[0].classList.add('selected');
         if(!mBox.querySelector('.selected')) mBox.children[0].classList.add('selected'); document.getElementById('timePickerModal').classList.add('open'); 
-        pushBackButtonHandler('timePicker'); }
+        pushBackButtonHandler('timePicker');
+    }
     function closeTimeModal(fromPopState = false) { 
         document.getElementById('timePickerModal').classList.remove('open');
         if (!fromPopState) popBackButtonHandler();
     }
     
-    function selectTimeItem(type, element) { let parent = type === 'hour' ? document.getElementById('hourScrollBox') : document.getElementById('minuteScrollBox'); parent.querySelectorAll('.time-opt-item').forEach(item => item.classList.remove('selected')); element.classList.add('selected'); element.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
-    function handleTimeScroll(type) { clearTimeout(window[`scrollTimeTimeout_${type}`]); window[`scrollTimeTimeout_${type}`] = setTimeout(() => { let parent = type === 'hour' ? document.getElementById('hourScrollBox') : document.getElementById('minuteScrollBox'); let parentCenter = parent.getBoundingClientRect().top + (parent.clientHeight / 2); let closestElem = null; let closestDist = Infinity; parent.querySelectorAll('.time-opt-item').forEach(item => { let box = item.getBoundingClientRect(); let itemCenter = box.top + (box.height / 2); let dist = Math.abs(parentCenter - itemCenter); if(dist < closestDist) { closestDist = dist; closestElem = item; } }); if(closestElem && !closestElem.classList.contains('selected')) { parent.querySelectorAll('.time-opt-item').forEach(i => i.classList.remove('selected')); closestElem.classList.add('selected'); } }, 150); }
-    function saveSelectedTime() { let h = document.getElementById('hourScrollBox').querySelector('.selected').getAttribute('data-val'); let m = document.getElementById('minuteScrollBox').querySelector('.selected').getAttribute('data-val'); document.getElementById(activeTimeInputTargetId).value = `${h}:${m}`; closeTimeModal(); }
+    function selectTimeItem(type, element) { let parent = type === 'hour' ?
+        document.getElementById('hourScrollBox') : document.getElementById('minuteScrollBox'); parent.querySelectorAll('.time-opt-item').forEach(item => item.classList.remove('selected')); element.classList.add('selected'); element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    function handleTimeScroll(type) { clearTimeout(window[`scrollTimeTimeout_${type}`]); window[`scrollTimeTimeout_${type}`] = setTimeout(() => { let parent = type === 'hour' ? document.getElementById('hourScrollBox') : document.getElementById('minuteScrollBox'); let parentCenter = parent.getBoundingClientRect().top + (parent.clientHeight / 2); let closestElem = null; let closestDist = Infinity; parent.querySelectorAll('.time-opt-item').forEach(item => { let box = item.getBoundingClientRect(); let itemCenter = box.top + (box.height / 2); let dist = Math.abs(parentCenter - itemCenter); if(dist < closestDist) { closestDist = dist; closestElem = item; } }); if(closestElem && !closestElem.classList.contains('selected')) { parent.querySelectorAll('.time-opt-item').forEach(i => i.classList.remove('selected')); closestElem.classList.add('selected'); } }, 150);
+    }
+    function saveSelectedTime() { let h = document.getElementById('hourScrollBox').querySelector('.selected').getAttribute('data-val'); let m = document.getElementById('minuteScrollBox').querySelector('.selected').getAttribute('data-val'); document.getElementById(activeTimeInputTargetId).value = `${h}:${m}`; closeTimeModal();
+    }
 
-    async function fetchFacilitiesData() { try { let r = await fetch(GAS_API_URL + "?action=getFacilities"); globalFacilitiesDatabase = await r.json(); } catch (e) { } }
-    function openFacilitySelection(targetInputId) { activeFacilityTargetInput = targetInputId; renderFacilitiesCapsules(); document.getElementById('facilityModal').classList.add('open'); 
+    async function fetchFacilitiesData() { try { let r = await fetch(GAS_API_URL + "?action=getFacilities");
+        globalFacilitiesDatabase = await r.json(); } catch (e) { } }
+    function openFacilitySelection(targetInputId) { activeFacilityTargetInput = targetInputId; renderFacilitiesCapsules();
+        document.getElementById('facilityModal').classList.add('open'); 
         pushBackButtonHandler('facilityModal');
     }
     function closeFacilityModal(fromPopState = false) { 
         document.getElementById('facilityModal').classList.remove('open');
         if (!fromPopState) popBackButtonHandler();
     }
-    function renderFacilitiesCapsules() { let html = ""; if (globalFacilitiesDatabase.length === 0) html = `<div style="width:100%; text-align:center;">Data tidak ditemukan.</div>`; else { globalFacilitiesDatabase.forEach(item => { let isActiveClass = selectedFasilitasArray.includes(item.nama) ? 'active' : ''; let iconImg = item.icon ? item.icon : "https://cdn-icons-png.flaticon.com/512/744/744465.png"; html += `<div class="capsule-btn ${isActiveClass}" onclick="toggleFacilityItem('${item.nama}')"><img src="${iconImg}"><span>${item.nama}</span></div>`; }); } document.getElementById('facilityCapsuleContainer').innerHTML = html; }
-    function toggleFacilityItem(nama) { let index = selectedFasilitasArray.indexOf(nama); if (index > -1) selectedFasilitasArray.splice(index, 1); else selectedFasilitasArray.push(nama); renderFacilitiesCapsules(); }
-    function saveSelectedFacilities() { if(activeFacilityTargetInput) { document.getElementById(activeFacilityTargetInput).value = selectedFasilitasArray.join(", "); } closeFacilityModal(); renderFormFacilitiesPreview(); }
-    function renderFormFacilitiesPreview() { let previewHtml = ""; let targetContainer = activeFacilityTargetInput === 'addFasilitas' ? 'addFasilitasPreviewContainer' : 'editFasilitasPreviewContainer'; selectedFasilitasArray.forEach(nama => { let found = globalFacilitiesDatabase.find(f => f.nama === nama); let iconUrl = found && found.icon ? found.icon : "https://cdn-icons-png.flaticon.com/512/744/744465.png"; previewHtml += `<div class="facility-preview-chip"><img src="${iconUrl}" style="width:14px; height:14px; object-fit:contain;"><span>${nama}</span></div>`; }); if(document.getElementById(targetContainer)) { document.getElementById(targetContainer).innerHTML = previewHtml; } }
-    function buildCardFacilityImages(fasilitasString) { if(!fasilitasString) return '<span style="color:#94a3b8; font-size:12px;">Standard</span>'; let list = fasilitasString.split(",").map(f => f.trim()); let imagesHtml = ""; list.forEach(namaFasilitas => { let match = globalFacilitiesDatabase.find(g => g.nama.toLowerCase() === namaFasilitas.toLowerCase()); let src = match && match.icon ? match.icon : "https://cdn-icons-png.flaticon.com/512/744/744465.png"; imagesHtml += `<img class="ticket-facility-img" src="${src}" title="${namaFasilitas}">`; }); return imagesHtml; }
+    function renderFacilitiesCapsules() { let html = "";
+        if (globalFacilitiesDatabase.length === 0) html = `<div style="width:100%; text-align:center;">Data tidak ditemukan.</div>`;
+        else { globalFacilitiesDatabase.forEach(item => { let isActiveClass = selectedFasilitasArray.includes(item.nama) ? 'active' : ''; let iconImg = item.icon ? item.icon : "https://cdn-icons-png.flaticon.com/512/744/744465.png"; html += `<div class="capsule-btn ${isActiveClass}" onclick="toggleFacilityItem('${item.nama}')"><img src="${iconImg}"><span>${item.nama}</span></div>`; });
+        } document.getElementById('facilityCapsuleContainer').innerHTML = html; }
+    function toggleFacilityItem(nama) { let index = selectedFasilitasArray.indexOf(nama);
+        if (index > -1) selectedFasilitasArray.splice(index, 1); else selectedFasilitasArray.push(nama); renderFacilitiesCapsules(); }
+    function saveSelectedFacilities() { if(activeFacilityTargetInput) { document.getElementById(activeFacilityTargetInput).value = selectedFasilitasArray.join(", ");
+        } closeFacilityModal(); renderFormFacilitiesPreview(); }
+    function renderFormFacilitiesPreview() { let previewHtml = "";
+        let targetContainer = activeFacilityTargetInput === 'addFasilitas' ? 'addFasilitasPreviewContainer' : 'editFasilitasPreviewContainer';
+        selectedFasilitasArray.forEach(nama => { let found = globalFacilitiesDatabase.find(f => f.nama === nama); let iconUrl = found && found.icon ? found.icon : "https://cdn-icons-png.flaticon.com/512/744/744465.png"; previewHtml += `<div class="facility-preview-chip"><img src="${iconUrl}" style="width:14px; height:14px; object-fit:contain;"><span>${nama}</span></div>`; });
+        if(document.getElementById(targetContainer)) { document.getElementById(targetContainer).innerHTML = previewHtml; } }
+    function buildCardFacilityImages(fasilitasString) { if(!fasilitasString) return '<span style="color:#94a3b8; font-size:12px;">Standard</span>';
+        let list = fasilitasString.split(",").map(f => f.trim()); let imagesHtml = "";
+        list.forEach(namaFasilitas => { let match = globalFacilitiesDatabase.find(g => g.nama.toLowerCase() === namaFasilitas.toLowerCase()); let src = match && match.icon ? match.icon : "https://cdn-icons-png.flaticon.com/512/744/744465.png"; imagesHtml += `<img class="ticket-facility-img" src="${src}" title="${namaFasilitas}">`; });
+        return imagesHtml; }
 
     // ================= REGISTRASI & LOGIN =================
     async function handleRegister() { 
-        const namaLengkap = document.getElementById('regNama').value.trim(); const username = document.getElementById('regUser').value.trim(); const email = document.getElementById('regEmail').value.trim(); const noHp = document.getElementById('regHp').value.trim(); const alamatLengkap = document.getElementById('regAlamat').value.trim(); const password = document.getElementById('regPass').value.trim();
-        if(!namaLengkap || !username || !email || !noHp || !alamatLengkap || !password) { showAlert("Gagal", "Semua kolom wajib diisi!", "fa-circle-exclamation", true); return; } 
-        if(!/^[A-Z](?=.*[a-zA-Z])(?=.*\d).{7,}$/.test(password)) { showAlert("Kata Sandi Lemah", "Minimal 8 karakter, diawali huruf besar, kombinasi huruf & angka.", "fa-shield-halved", true); return; } 
+        const namaLengkap = document.getElementById('regNama').value.trim();
+        const username = document.getElementById('regUser').value.trim(); const email = document.getElementById('regEmail').value.trim(); const noHp = document.getElementById('regHp').value.trim(); const alamatLengkap = document.getElementById('regAlamat').value.trim(); const password = document.getElementById('regPass').value.trim();
+        if(!namaLengkap || !username || !email || !noHp || !alamatLengkap || !password) { showAlert("Gagal", "Semua kolom wajib diisi!", "fa-circle-exclamation", true); return;
+        } 
+        if(!/^[A-Z](?=.*[a-zA-Z])(?=.*\d).{7,}$/.test(password)) { showAlert("Kata Sandi Lemah", "Minimal 8 karakter, diawali huruf besar, kombinasi huruf & angka.", "fa-shield-halved", true);
+        return; } 
         showLoading(true);
-        try { let res = await fetchGAS({ action: "register", namaLengkap, username, email, noHp, alamatLengkap, password }); showLoading(false); if(res.status === "success") { showAlert("Sukses!", res.message, "fa-circle-check"); setTimeout(() => switchPage('pageLogin'), 1500); } else { showAlert("Gagal", res.message, "fa-circle-xmark", true); } } catch(e) { showLoading(false); showAlert("Koneksi Error", e.message, "fa-wifi", true); } 
+        try { let res = await fetchGAS({ action: "register", namaLengkap, username, email, noHp, alamatLengkap, password }); showLoading(false);
+        if(res.status === "success") { showAlert("Sukses!", res.message, "fa-circle-check"); setTimeout(() => switchPage('pageLogin'), 1500); } else { showAlert("Gagal", res.message, "fa-circle-xmark", true);
+        } } catch(e) { showLoading(false); showAlert("Koneksi Error", e.message, "fa-wifi", true);
+        } 
     }
     
     async function handleLogin() { 
-        const username = document.getElementById('loginUser').value.trim(); const password = document.getElementById('loginPass').value.trim(); 
-        if(!username || !password) { showAlert("Akses Ditolak", "Isi username dan password.", "fa-lock", true); return; } 
+        const username = document.getElementById('loginUser').value.trim();
+        const password = document.getElementById('loginPass').value.trim(); 
+        if(!username || !password) { showAlert("Akses Ditolak", "Isi username dan password.", "fa-lock", true); return;
+        } 
         showLoading(true);
-        try { let res = await fetchGAS({ action: "login", username, password }); showLoading(false); if(res.status === "success") { SESSION_USER = res.user; if(res.hasCompany) { SESSION_COMPANY = res.company; localStorage.setItem('goBorneo_partner_session', JSON.stringify({ user: SESSION_USER, company: SESSION_COMPANY })); populateDashboardData(); switchPage('pageMainApp'); loadLayananData(); } else { switchPage('pageOnboarding'); } } else { showAlert("Login Gagal", res.message, "fa-triangle-exclamation", true); } } catch(e) { showLoading(false); showAlert("Error Script", e.message, "fa-server", true); } 
+        try { let res = await fetchGAS({ action: "login", username, password }); showLoading(false); if(res.status === "success") { SESSION_USER = res.user;
+        if(res.hasCompany) { SESSION_COMPANY = res.company; localStorage.setItem('goBorneo_partner_session', JSON.stringify({ user: SESSION_USER, company: SESSION_COMPANY })); populateDashboardData(); switchPage('pageMainApp'); loadLayananData(); } else { switchPage('pageOnboarding');
+        } } else { showAlert("Login Gagal", res.message, "fa-triangle-exclamation", true); } } catch(e) { showLoading(false); showAlert("Error Script", e.message, "fa-server", true);
+        } 
     }
     
     async function handleCompanyRegister() { 
-        const n = document.getElementById('compNama').value.trim(); const d = document.getElementById('compDesc').value.trim(); const h = document.getElementById('compHp').value.trim(); const a = document.getElementById('compAlamat').value.trim();
-        if(!n || !d || !h || !a) { showAlert("Belum Lengkap", "Isi seluruh profil perusahaan.", "fa-building", true); return; } 
-        if(!base64CompLogo) { showAlert("Logo Wajib", "Upload logo perusahaan.", "fa-image", true); return; } 
+        const n = document.getElementById('compNama').value.trim();
+        const d = document.getElementById('compDesc').value.trim(); const h = document.getElementById('compHp').value.trim(); const a = document.getElementById('compAlamat').value.trim();
+        if(!n || !d || !h || !a) { showAlert("Belum Lengkap", "Isi seluruh profil perusahaan.", "fa-building", true); return;
+        } 
+        if(!base64CompLogo) { showAlert("Logo Wajib", "Upload logo perusahaan.", "fa-image", true); return;
+        } 
         showLoading(true);
-        try { let res = await fetchGAS({ action: "registerCompany", username: SESSION_USER.username, namaPerusahaan: n, deskripsiPerusahaan: d, noHpPerusahaan: h, alamatPerusahaan: a, logo: base64CompLogo }); showLoading(false); if(res.status === "success") { SESSION_COMPANY = { namaPerusahaan: n, deskripsiPerusahaan: d, logo: base64CompLogo, noHpPerusahaan: h, alamatPerusahaan: a }; localStorage.setItem('goBorneo_partner_session', JSON.stringify({ user: SESSION_USER, company: SESSION_COMPANY })); populateDashboardData(); switchPage('pageMainApp'); loadLayananData(); } else { showAlert("Gagal", res.message, "fa-circle-xmark", true); } } catch(e) { showLoading(false); showAlert("Koneksi Error", e.message, "fa-wifi", true); } 
+        try { let res = await fetchGAS({ action: "registerCompany", username: SESSION_USER.username, namaPerusahaan: n, deskripsiPerusahaan: d, noHpPerusahaan: h, alamatPerusahaan: a, logo: base64CompLogo });
+        showLoading(false); if(res.status === "success") { SESSION_COMPANY = { namaPerusahaan: n, deskripsiPerusahaan: d, logo: base64CompLogo, noHpPerusahaan: h, alamatPerusahaan: a };
+        localStorage.setItem('goBorneo_partner_session', JSON.stringify({ user: SESSION_USER, company: SESSION_COMPANY })); populateDashboardData(); switchPage('pageMainApp'); loadLayananData(); } else { showAlert("Gagal", res.message, "fa-circle-xmark", true);
+        } } catch(e) { showLoading(false); showAlert("Koneksi Error", e.message, "fa-wifi", true);
+        } 
     }
 
     // ================= DATA LAYANAN =================
@@ -2012,9 +2126,9 @@
         // Terapkan filter berdasarkan status currentPesananFilter
         let filteredList = dataList;
         if(currentPesananFilter === 'mitra') {
-            filteredList = dataList.filter(o => o.userId === "MANUAL" || o.isManualLocal);
+            filteredList = dataList.filter(o => o.role === "Mitra" || o.isManualLocal);
         } else if (currentPesananFilter === 'user') {
-            filteredList = dataList.filter(o => o.userId !== "MANUAL" && !o.isManualLocal);
+            filteredList = dataList.filter(o => o.role !== "Mitra" && !o.isManualLocal);
         }
 
         let filterText = "Semua Pesanan";
@@ -2056,7 +2170,7 @@
         let statusClass = isPaid ? "aktif" : "non-aktif"; let statusText = isPaid ? "LUNAS" : "BELUM BAYAR";
         let tglBooking = formatTglIndo(order.tanggalBooking);
         
-        let isManual = (order.userId === "MANUAL") || order.isManualLocal;
+        let isManual = (order.role === "Mitra") || order.isManualLocal;
         let manualBadge = isManual ? `<div class="badge-manual"><i class="fa-solid fa-bolt"></i> Manual</div>` : '';
 
         let suffix = isPopupDrawer ? "-popup" : "";
@@ -2103,31 +2217,40 @@
     async function openAddService() { 
         document.getElementById('pageAddService').classList.add('open'); 
         pushBackButtonHandler('addService');
-        try { let response = await fetch(GAS_API_URL + "?action=getVehicleTypes"); let listJenis = await response.json(); let optionsHtml = listJenis.length > 0 ? listJenis.map(i => `<div class="custom-option" onclick="selectServiceType('${i.nama}', '${i.icon || "https://cdn-icons-png.flaticon.com/512/744/744465.png"}')"><img src="${i.icon || ""}"><span style="color:var(--text-main); font-weight:500;">${i.nama}</span></div>`).join("") : `<div class="custom-option">Tidak ada data.</div>`; document.getElementById('serviceTypeOptions').innerHTML = optionsHtml; } catch (e) { document.getElementById('serviceTypeOptions').innerHTML = `<div class="custom-option" style="color:#EF4444">Gagal memuat jenis.</div>`; } 
+        try { let response = await fetch(GAS_API_URL + "?action=getVehicleTypes"); let listJenis = await response.json(); let optionsHtml = listJenis.length > 0 ? listJenis.map(i => `<div class="custom-option" onclick="selectServiceType('${i.nama}', '${i.icon || "https://cdn-icons-png.flaticon.com/512/744/744465.png"}')"><img src="${i.icon || ""}"><span style="color:var(--text-main); font-weight:500;">${i.nama}</span></div>`).join("") : `<div class="custom-option">Tidak ada data.</div>`; document.getElementById('serviceTypeOptions').innerHTML = optionsHtml;
+        } catch (e) { document.getElementById('serviceTypeOptions').innerHTML = `<div class="custom-option" style="color:#EF4444">Gagal memuat jenis.</div>`;
+        } 
     }
     function selectServiceType(namaJenis, iconUrl) { 
-        selectedVehicleTypeName = namaJenis; let isEdit = document.getElementById('pageEditService').classList.contains('open'); let targetSpan = isEdit ? 'selectedEditServiceType' : 'selectedServiceType';
+        selectedVehicleTypeName = namaJenis;
+        let isEdit = document.getElementById('pageEditService').classList.contains('open'); let targetSpan = isEdit ? 'selectedEditServiceType' : 'selectedServiceType';
         if(document.getElementById(targetSpan)){ document.getElementById(targetSpan).innerHTML = `<div style="display: flex; align-items: center; gap: 10px;"><img src="${iconUrl}" style="width:24px; height:24px; object-fit:contain; border-radius:4px;"><span style="font-weight:700; color:var(--text-main);">${namaJenis}</span></div>`; } if(document.getElementById('serviceTypeOptions')) document.getElementById('serviceTypeOptions').classList.remove('open');
         if(document.getElementById('serviceEditTypeOptions')) document.getElementById('serviceEditTypeOptions').classList.remove('open'); if(document.getElementById('serviceTypeSelect')) document.getElementById('serviceTypeSelect').style.borderColor = "var(--primary)"; if(document.getElementById('serviceEditTypeSelect')) document.getElementById('serviceEditTypeSelect').style.borderColor = "var(--primary)";
     }
     function closeAddServiceAndReset(fromPopState = false) { 
-        document.getElementById('selectedServiceType').innerHTML = "<span>Pilih Tipe Kendaraan...</span>"; selectedVehicleTypeName = ""; selectedFasilitasArray = [];
+        document.getElementById('selectedServiceType').innerHTML = "<span>Pilih Tipe Kendaraan...</span>";
+        selectedVehicleTypeName = ""; selectedFasilitasArray = [];
         document.getElementById('addFasilitas').value = ""; document.getElementById('addFasilitasPreviewContainer').innerHTML = ""; ['addMerk','addKapasitas','addHarga','addAsal','addTujuan','addJamB','addJamS','addFotoFile'].forEach(id => document.getElementById(id).value = ""); document.getElementById('previewAddFoto').src = "";
         document.getElementById('previewAddFoto').style.display = 'none'; base64ArmadaFoto = ""; document.getElementById('pageAddService').classList.remove('open'); 
         if (!fromPopState) popBackButtonHandler();
     }
     async function submitNewService() { 
         const d = { jenis: selectedVehicleTypeName, merk: document.getElementById('addMerk').value.trim(), fasilitas: document.getElementById('addFasilitas').value.trim(), kapasitas: document.getElementById('addKapasitas').value.trim(), harga: document.getElementById('addHarga').value.trim(), asal: document.getElementById('addAsal').value.trim(), tujuan: document.getElementById('addTujuan').value.trim(), jamBerangkat: document.getElementById('addJamB').value, jamSampai: document.getElementById('addJamS').value };
-        if(!d.jenis || !d.merk || !d.fasilitas || !d.kapasitas || !d.harga || !d.asal || !d.tujuan || !d.jamBerangkat || !d.jamSampai) { showAlert("Belum Lengkap", "Isi seluruh spesifikasi jadwal.", "fa-triangle-exclamation", true); return; } 
-        if(!base64ArmadaFoto) { showAlert("Foto Wajib", "Upload foto armada.", "fa-camera", true); return; } 
+        if(!d.jenis || !d.merk || !d.fasilitas || !d.kapasitas || !d.harga || !d.asal || !d.tujuan || !d.jamBerangkat || !d.jamSampai) { showAlert("Belum Lengkap", "Isi seluruh spesifikasi jadwal.", "fa-triangle-exclamation", true);
+        return; } 
+        if(!base64ArmadaFoto) { showAlert("Foto Wajib", "Upload foto armada.", "fa-camera", true); return;
+        } 
         showLoading(true);
         const payload = { action: "addService", username: SESSION_USER.username, email: SESSION_USER.email, namaPerusahaan: SESSION_COMPANY.namaPerusahaan, foto: base64ArmadaFoto, ...d };
-        try { let result = await fetchGAS(payload); showLoading(false); if(result.status === "success") { showAlert("Berhasil", "Armada ditambahkan.", "fa-circle-check"); closeAddServiceAndReset(); loadLayananData(); } else { showAlert("Gagal", result.message, "fa-circle-xmark", true); } } catch(e) { showLoading(false); showAlert("Koneksi Error", e.message, "fa-wifi", true); } 
+        try { let result = await fetchGAS(payload); showLoading(false); if(result.status === "success") { showAlert("Berhasil", "Armada ditambahkan.", "fa-circle-check"); closeAddServiceAndReset(); loadLayananData();
+        } else { showAlert("Gagal", result.message, "fa-circle-xmark", true); } } catch(e) { showLoading(false); showAlert("Koneksi Error", e.message, "fa-wifi", true);
+        } 
     }
 
     // ================= KALENDER & SETTINGS =================
     function openPengaturanDrawer(idx) { 
-        activeLayananIndex = idx; const item = globalLayananList[idx]; document.getElementById('pengaturanModalTitle').innerText = "Pengaturan " + item.merk; currentCalYear = new Date().getFullYear(); currentCalMonth = new Date().getMonth(); document.getElementById('pengaturanModal').classList.add('open'); renderCalendarWidget();
+        activeLayananIndex = idx;
+        const item = globalLayananList[idx]; document.getElementById('pengaturanModalTitle').innerText = "Pengaturan " + item.merk; currentCalYear = new Date().getFullYear(); currentCalMonth = new Date().getMonth(); document.getElementById('pengaturanModal').classList.add('open'); renderCalendarWidget();
         pushBackButtonHandler('pengaturanModal');
     }
     function closePengaturanModal(fromPopState = false) { 
@@ -2135,19 +2258,23 @@
         if (!fromPopState) popBackButtonHandler();
     }
     function renderCalendarWidget() { 
-        const item = globalLayananList[activeLayananIndex]; let offDatesArray = item.tanggalLibur ? item.tanggalLibur.split(',').map(d => d.trim()).filter(Boolean) : [];
+        const item = globalLayananList[activeLayananIndex];
+        let offDatesArray = item.tanggalLibur ? item.tanggalLibur.split(',').map(d => d.trim()).filter(Boolean) : [];
         const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"]; if(document.getElementById('calMonthYearTitle')) document.getElementById('calMonthYearTitle').innerText = `${monthNames[currentCalMonth]} ${currentCalYear}`;
         let firstDay = new Date(currentCalYear, currentCalMonth, 1).getDay(); let daysInMonth = new Date(currentCalYear, currentCalMonth + 1, 0).getDate();
         let gridHtml = `<div style="font-size:10px; font-weight:700; color:#94a3b8;">Min</div><div style="font-size:10px; font-weight:700; color:#94a3b8;">Sen</div><div style="font-size:10px; font-weight:700; color:#94a3b8;">Sel</div><div style="font-size:10px; font-weight:700; color:#94a3b8;">Rab</div><div style="font-size:10px; font-weight:700; color:#94a3b8;">Kam</div><div style="font-size:10px; font-weight:700; color:#94a3b8;">Jum</div><div style="font-size:10px; font-weight:700; color:#94a3b8;">Sab</div>`;
         for (let i = 0; i < firstDay; i++) gridHtml += `<div></div>`;
         for (let day = 1; day <= daysInMonth; day++) { 
-            let mStr = (currentCalMonth + 1).toString().padStart(2, '0'); let dStr = day.toString().padStart(2, '0'); let fullDateStr = `${currentCalYear}-${mStr}-${dStr}`; let isOff = offDatesArray.includes(fullDateStr); let bgStyle = isOff ? "background:#fef2f2; color:#ef4444; border:1px solid #fca5a5;" : "background:#f0fdf4; color:#22c55e; border:1px solid #86efac;"; let statusText = isOff ? "off" : "on";
+            let mStr = (currentCalMonth + 1).toString().padStart(2, '0');
+            let dStr = day.toString().padStart(2, '0'); let fullDateStr = `${currentCalYear}-${mStr}-${dStr}`; let isOff = offDatesArray.includes(fullDateStr); let bgStyle = isOff ?
+            "background:#fef2f2; color:#ef4444; border:1px solid #fca5a5;" : "background:#f0fdf4; color:#22c55e; border:1px solid #86efac;"; let statusText = isOff ? "off" : "on";
             let statusColor = isOff ? "#ef4444" : "#22c55e"; gridHtml += `<div onclick="toggleMultipleChoiceDate('${fullDateStr}')" style="width:40px; height:46px; ${bgStyle} border-radius:10px; display:flex; flex-direction:column; align-items:center; justify-content:center; margin:auto; cursor:pointer; font-size:12px; font-weight:700; transition:all 0.1s ease;">${day}<div style="font-size:9px; font-weight:800; text-transform:uppercase; color:${statusColor}; margin-top:2px;">${statusText}</div></div>`;
         } 
         if(document.getElementById('calendarGridWidget')) document.getElementById('calendarGridWidget').innerHTML = gridHtml;
     }
     function toggleMultipleChoiceDate(dateStr) { 
-        const item = globalLayananList[activeLayananIndex]; let offDatesArray = item.tanggalLibur ? item.tanggalLibur.split(',').map(d => d.trim()).filter(Boolean) : []; let dateIdx = offDatesArray.indexOf(dateStr); if(dateIdx > -1) offDatesArray.splice(dateIdx, 1);
+        const item = globalLayananList[activeLayananIndex];
+        let offDatesArray = item.tanggalLibur ? item.tanggalLibur.split(',').map(d => d.trim()).filter(Boolean) : []; let dateIdx = offDatesArray.indexOf(dateStr); if(dateIdx > -1) offDatesArray.splice(dateIdx, 1);
         else offDatesArray.push(dateStr); item.tanggalLibur = offDatesArray.join(','); renderCalendarWidget(); 
     }
     function changeCalendarMonth(dir) { 
@@ -2156,27 +2283,41 @@
         } renderCalendarWidget(); 
     }
     async function saveCalendarSettings() { 
-        if(activeLayananIndex === -1) return; const item = globalLayananList[activeLayananIndex]; showLoading(true); 
-        try { let res = await fetchGAS({ action: "updateCalendar", username: SESSION_USER.username, email: SESSION_USER.email, merk: item.merk, jamBerangkat: item.jamBerangkat, tanggalLibur: item.tanggalLibur }); showLoading(false); if(res.status === "success") { showAlert("Sukses", "Kalender operasional diperbarui!", "fa-circle-check"); closePengaturanModal(); loadLayananData(); } else { showAlert("Gagal", res.message, "fa-circle-xmark", true); } } catch(e) { showLoading(false); showAlert("Koneksi Error", e.message, "fa-wifi", true); } 
+        if(activeLayananIndex === -1) return;
+        const item = globalLayananList[activeLayananIndex]; showLoading(true); 
+        try { let res = await fetchGAS({ action: "updateCalendar", username: SESSION_USER.username, email: SESSION_USER.email, merk: item.merk, jamBerangkat: item.jamBerangkat, tanggalLibur: item.tanggalLibur });
+        showLoading(false); if(res.status === "success") { showAlert("Sukses", "Kalender operasional diperbarui!", "fa-circle-check"); closePengaturanModal(); loadLayananData(); } else { showAlert("Gagal", res.message, "fa-circle-xmark", true);
+        } } catch(e) { showLoading(false); showAlert("Koneksi Error", e.message, "fa-wifi", true);
+        } 
     }
 
     async function executeDeleteService() {
-        if(activeLayananIndex === -1) return; const item = globalLayananList[activeLayananIndex]; showLoading(true);
-        try { let res = await fetchGAS({ action: "deleteService", username: SESSION_USER.username, email: SESSION_USER.email, merk: item.merk, jamBerangkat: item.jamBerangkat }); showLoading(false); if(res.status === "success") { showAlert("Terhapus", "Data armada berhasil dihapus.", "fa-trash"); closePengaturanModal(); loadLayananData(); } else { showAlert("Gagal", res.message, "fa-circle-xmark", true); } } catch(e) { showLoading(false); showAlert("Koneksi Error", e.message, "fa-wifi", true); }
+        if(activeLayananIndex === -1) return;
+        const item = globalLayananList[activeLayananIndex]; showLoading(true);
+        try { let res = await fetchGAS({ action: "deleteService", username: SESSION_USER.username, email: SESSION_USER.email, merk: item.merk, jamBerangkat: item.jamBerangkat });
+        showLoading(false); if(res.status === "success") { showAlert("Terhapus", "Data armada berhasil dihapus.", "fa-trash"); closePengaturanModal(); loadLayananData(); } else { showAlert("Gagal", res.message, "fa-circle-xmark", true);
+        } } catch(e) { showLoading(false); showAlert("Koneksi Error", e.message, "fa-wifi", true);
+        }
     }
 
     async function openEditLayananForm() { 
         closePengaturanModal();
         try { 
-            const item = globalLayananList[activeLayananIndex]; oldMerkForEdit = item.merk; oldJamBForEdit = item.jamBerangkat; selectedVehicleTypeName = item.jenis; document.getElementById('editMerk').value = item.merk || ''; document.getElementById('editKapasitas').value = item.kapasitas || '';
+            const item = globalLayananList[activeLayananIndex];
+            oldMerkForEdit = item.merk; oldJamBForEdit = item.jamBerangkat; selectedVehicleTypeName = item.jenis; document.getElementById('editMerk').value = item.merk || ''; document.getElementById('editKapasitas').value = item.kapasitas || '';
             document.getElementById('editHarga').value = item.harga || ''; document.getElementById('editAsal').value = item.asal || ''; document.getElementById('editTujuan').value = item.tujuan || ''; document.getElementById('editJamB').value = item.jamBerangkat || '';
             document.getElementById('editJamS').value = item.jamSampai || ''; document.getElementById('editFasilitas').value = item.fasilitas || ''; selectedFasilitasArray = item.fasilitas ? item.fasilitas.split(',').map(f => f.trim()) : [];
             activeFacilityTargetInput = 'editFasilitas'; renderFormFacilitiesPreview(); 
-            let response = await fetch(GAS_API_URL + "?action=getVehicleTypes"); let listJenis = await response.json(); let optionsHtml = listJenis.length > 0 ? listJenis.map(i => `<div class="custom-option" onclick="selectServiceType('${i.nama}', '${i.icon || "https://cdn-icons-png.flaticon.com/512/744/744465.png"}')"><img src="${i.icon || ""}"><span style="color:var(--text-main); font-weight:500;">${i.nama}</span></div>`).join("") : `<div class="custom-option">Tidak ada data.</div>`;
-            document.getElementById('serviceEditTypeOptions').innerHTML = optionsHtml; let matchJenis = listJenis.find(j => j.nama === item.jenis); let defIconUrl = matchJenis && matchJenis.icon ? matchJenis.icon : "https://cdn-icons-png.flaticon.com/512/744/744465.png"; if (document.getElementById('selectedEditServiceType')) { document.getElementById('selectedEditServiceType').innerHTML = `<div style="display: flex; align-items: center; gap: 10px;"><img src="${defIconUrl}" style="width:24px; height:24px; object-fit:contain; border-radius:4px;"><span style="font-weight:700; color:var(--text-main);">${item.jenis}</span></div>`; } 
-            if(item.foto) { document.getElementById('previewEditFoto').src = item.foto; document.getElementById('previewEditFoto').style.display = 'block'; } else { document.getElementById('previewEditFoto').src = ""; document.getElementById('previewEditFoto').style.display = 'none'; } base64ArmadaFoto = ""; document.getElementById('pageEditService').classList.add('open');
+            let response = await fetch(GAS_API_URL + "?action=getVehicleTypes"); let listJenis = await response.json();
+            let optionsHtml = listJenis.length > 0 ? listJenis.map(i => `<div class="custom-option" onclick="selectServiceType('${i.nama}', '${i.icon || "https://cdn-icons-png.flaticon.com/512/744/744465.png"}')"><img src="${i.icon || ""}"><span style="color:var(--text-main); font-weight:500;">${i.nama}</span></div>`).join("") : `<div class="custom-option">Tidak ada data.</div>`;
+            document.getElementById('serviceEditTypeOptions').innerHTML = optionsHtml; let matchJenis = listJenis.find(j => j.nama === item.jenis); let defIconUrl = matchJenis && matchJenis.icon ?
+            matchJenis.icon : "https://cdn-icons-png.flaticon.com/512/744/744465.png"; if (document.getElementById('selectedEditServiceType')) { document.getElementById('selectedEditServiceType').innerHTML = `<div style="display: flex; align-items: center; gap: 10px;"><img src="${defIconUrl}" style="width:24px; height:24px; object-fit:contain; border-radius:4px;"><span style="font-weight:700; color:var(--text-main);">${item.jenis}</span></div>`;
+            } 
+            if(item.foto) { document.getElementById('previewEditFoto').src = item.foto;
+            document.getElementById('previewEditFoto').style.display = 'block'; } else { document.getElementById('previewEditFoto').src = ""; document.getElementById('previewEditFoto').style.display = 'none'; } base64ArmadaFoto = ""; document.getElementById('pageEditService').classList.add('open');
             pushBackButtonHandler('editService');
-        } catch(e) { console.error("Gagal Render Edit Form: ", e); showAlert("Error", "Gagal memuat form edit armada.", "fa-triangle-exclamation", true); } 
+        } catch(e) { console.error("Gagal Render Edit Form: ", e); showAlert("Error", "Gagal memuat form edit armada.", "fa-triangle-exclamation", true);
+        } 
     }
     function closeEditLayananForm(fromPopState = false) { 
         document.getElementById('pageEditService').classList.remove('open');
@@ -2185,10 +2326,13 @@
     
     async function submitEditService() { 
         const d = { jenis: selectedVehicleTypeName, merk: document.getElementById('editMerk').value.trim(), fasilitas: document.getElementById('editFasilitas').value.trim(), kapasitas: document.getElementById('editKapasitas').value.trim(), harga: document.getElementById('editHarga').value.trim(), asal: document.getElementById('editAsal').value.trim(), tujuan: document.getElementById('editTujuan').value.trim(), jamBerangkat: document.getElementById('editJamB').value, jamSampai: document.getElementById('editJamS').value };
-        if(!d.jenis || !d.merk || !d.fasilitas || !d.kapasitas || !d.harga || !d.asal || !d.tujuan || !d.jamBerangkat || !d.jamSampai) { showAlert("Belum Lengkap", "Isi seluruh kolom edit.", "fa-triangle-exclamation", true); return; } 
+        if(!d.jenis || !d.merk || !d.fasilitas || !d.kapasitas || !d.harga || !d.asal || !d.tujuan || !d.jamBerangkat || !d.jamSampai) { showAlert("Belum Lengkap", "Isi seluruh kolom edit.", "fa-triangle-exclamation", true);
+        return; } 
         showLoading(true);
         const payload = { action: "editService", username: SESSION_USER.username, email: SESSION_USER.email, oldMerk: oldMerkForEdit, oldJamBerangkat: oldJamBForEdit, foto: base64ArmadaFoto || "", ...d };
-        try { let result = await fetchGAS(payload); showLoading(false); if(result.status === "success") { showAlert("Berhasil", "Spesifikasi diperbarui.", "fa-circle-check"); base64ArmadaFoto = ""; closeEditLayananForm(); loadLayananData(); } else { showAlert("Gagal Menyimpan", result.message, "fa-circle-xmark", true); } } catch(e) { showLoading(false); showAlert("Koneksi Error", e.message, "fa-wifi", true); } 
+        try { let result = await fetchGAS(payload); showLoading(false); if(result.status === "success") { showAlert("Berhasil", "Spesifikasi diperbarui.", "fa-circle-check"); base64ArmadaFoto = ""; closeEditLayananForm();
+        loadLayananData(); } else { showAlert("Gagal Menyimpan", result.message, "fa-circle-xmark", true); } } catch(e) { showLoading(false); showAlert("Koneksi Error", e.message, "fa-wifi", true);
+        } 
     }
 
     // ================= EDIT PROFIL PRIBADI & PERUSAHAAN =================
@@ -2203,19 +2347,25 @@
     }
     
     async function submitEditPribadi() {
-        const nama = document.getElementById('epNama').value.trim(); const hp = document.getElementById('epHp').value.trim(); const alamat = document.getElementById('epAlamat').value.trim();
+        const nama = document.getElementById('epNama').value.trim();
+        const hp = document.getElementById('epHp').value.trim(); const alamat = document.getElementById('epAlamat').value.trim();
         if(!nama || !hp || !alamat) return showAlert("Perhatian", "Semua kolom wajib diisi", "fa-triangle-exclamation", true);
         showLoading(true);
         try {
-            let res = await fetchGAS({ action: "editProfile", username: SESSION_USER.username, namaLengkap: nama, noHp: hp, alamatLengkap: alamat }); showLoading(false);
-            if(res.status === "success") { SESSION_USER.namaLengkap = nama; SESSION_USER.noHp = hp; SESSION_USER.alamatLengkap = alamat; localStorage.setItem('goBorneo_partner_session', JSON.stringify({ user: SESSION_USER, company: SESSION_COMPANY })); populateDashboardData(); closeEditPribadi(); showAlert("Sukses", "Profil Pribadi Diperbarui", "fa-check"); } else { showAlert("Gagal", res.message, "fa-xmark", true); }
-        } catch(e) { showLoading(false); showAlert("Error", e.message, "fa-wifi", true); }
+            let res = await fetchGAS({ action: "editProfile", username: SESSION_USER.username, namaLengkap: nama, noHp: hp, alamatLengkap: alamat });
+            showLoading(false);
+            if(res.status === "success") { SESSION_USER.namaLengkap = nama; SESSION_USER.noHp = hp; SESSION_USER.alamatLengkap = alamat;
+            localStorage.setItem('goBorneo_partner_session', JSON.stringify({ user: SESSION_USER, company: SESSION_COMPANY })); populateDashboardData(); closeEditPribadi(); showAlert("Sukses", "Profil Pribadi Diperbarui", "fa-check");
+            } else { showAlert("Gagal", res.message, "fa-xmark", true); }
+        } catch(e) { showLoading(false);
+            showAlert("Error", e.message, "fa-wifi", true); }
     }
 
     function openEditPerusahaan() { 
         if(!SESSION_COMPANY) return;
         document.getElementById('ecNama').value = SESSION_COMPANY.namaPerusahaan || ''; document.getElementById('ecHp').value = SESSION_COMPANY.noHpPerusahaan || ''; document.getElementById('ecDesc').value = SESSION_COMPANY.deskripsiPerusahaan || ''; document.getElementById('ecAlamat').value = SESSION_COMPANY.alamatPerusahaan || '';
-        let currentLogo = SESSION_COMPANY.logo || ""; if(currentLogo) { document.getElementById('previewEditCompLogo').src = currentLogo; document.getElementById('previewEditCompLogo').style.display = 'block'; } else { document.getElementById('previewEditCompLogo').style.display = 'none'; } base64EditCompLogo = ""; document.getElementById('modalEditPerusahaan').classList.add('open'); 
+        let currentLogo = SESSION_COMPANY.logo || ""; if(currentLogo) { document.getElementById('previewEditCompLogo').src = currentLogo; document.getElementById('previewEditCompLogo').style.display = 'block'; } else { document.getElementById('previewEditCompLogo').style.display = 'none';
+        } base64EditCompLogo = ""; document.getElementById('modalEditPerusahaan').classList.add('open'); 
         pushBackButtonHandler('editPerusahaan');
     }
     function closeEditPerusahaan(fromPopState = false) { 
@@ -2224,23 +2374,31 @@
     }
     
     async function submitEditPerusahaan() {
-        const nama = document.getElementById('ecNama').value.trim(); const hp = document.getElementById('ecHp').value.trim(); const desc = document.getElementById('ecDesc').value.trim(); const alamat = document.getElementById('ecAlamat').value.trim();
+        const nama = document.getElementById('ecNama').value.trim();
+        const hp = document.getElementById('ecHp').value.trim(); const desc = document.getElementById('ecDesc').value.trim(); const alamat = document.getElementById('ecAlamat').value.trim();
         if(!nama || !hp || !desc || !alamat) return showAlert("Perhatian", "Semua kolom wajib diisi", "fa-triangle-exclamation", true);
         showLoading(true);
         try {
-            let payloadData = { action: "editCompany", username: SESSION_USER.username, namaPerusahaan: nama, noHpPerusahaan: hp, deskripsiPerusahaan: desc, alamatPerusahaan: alamat, logo: base64EditCompLogo || "" };
+            let payloadData = { action: "editCompany", username: SESSION_USER.username, namaPerusahaan: nama, noHpPerusahaan: hp, deskripsiPerusahaan: desc, alamatPerusahaan: alamat, logo: base64EditCompLogo ||
+            "" };
             let res = await fetchGAS(payloadData); showLoading(false);
-            if(res.status === "success") { SESSION_COMPANY.namaPerusahaan = nama; SESSION_COMPANY.noHpPerusahaan = hp; SESSION_COMPANY.deskripsiPerusahaan = desc; SESSION_COMPANY.alamatPerusahaan = alamat; if(base64EditCompLogo) SESSION_COMPANY.logo = base64EditCompLogo; localStorage.setItem('goBorneo_partner_session', JSON.stringify({ user: SESSION_USER, company: SESSION_COMPANY })); populateDashboardData(); closeEditPerusahaan(); showAlert("Sukses", "Profil Perusahaan Diperbarui", "fa-check"); } else { showAlert("Gagal", res.message, "fa-xmark", true); }
-        } catch(e) { showLoading(false); showAlert("Error", e.message, "fa-wifi", true); }
+            if(res.status === "success") { SESSION_COMPANY.namaPerusahaan = nama; SESSION_COMPANY.noHpPerusahaan = hp;
+            SESSION_COMPANY.deskripsiPerusahaan = desc; SESSION_COMPANY.alamatPerusahaan = alamat; if(base64EditCompLogo) SESSION_COMPANY.logo = base64EditCompLogo; localStorage.setItem('goBorneo_partner_session', JSON.stringify({ user: SESSION_USER, company: SESSION_COMPANY })); populateDashboardData(); closeEditPerusahaan();
+            showAlert("Sukses", "Profil Perusahaan Diperbarui", "fa-check"); } else { showAlert("Gagal", res.message, "fa-xmark", true);
+            }
+        } catch(e) { showLoading(false); showAlert("Error", e.message, "fa-wifi", true);
+        }
     }
 
     function executeLogout() {
         closeAlert();
         if(pesananPollingInterval) { clearInterval(pesananPollingInterval); pesananPollingInterval = null; }
-        if(seatPollingInterval) { clearInterval(seatPollingInterval); seatPollingInterval = null; }
+        if(seatPollingInterval) { clearInterval(seatPollingInterval); seatPollingInterval = null;
+        }
         localStorage.removeItem('goBorneo_partner_session'); SESSION_USER = null; SESSION_COMPANY = null;
         ['loginUser','loginPass','compDesc','compLogoFile'].forEach(id => { if(document.getElementById(id)) document.getElementById(id).value = ""; }); document.getElementById('descCounter').innerText = "0/50"; document.getElementById('previewCompLogo').src = ""; document.getElementById('previewCompLogo').style.display = "none";
-        base64CompLogo = ""; base64EditCompLogo = ""; base64ArmadaFoto = ""; document.getElementById('addFasilitasPreviewContainer').innerHTML = ""; globalLayananList = []; activeLayananIndex = -1; if(cropperInstance) cancelCrop();
+        base64CompLogo = "";
+        base64EditCompLogo = ""; base64ArmadaFoto = ""; document.getElementById('addFasilitasPreviewContainer').innerHTML = ""; globalLayananList = []; activeLayananIndex = -1; if(cropperInstance) cancelCrop();
         switchSubView('layanan'); switchPage('pageLogin');
     }
 </script>
