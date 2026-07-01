@@ -945,7 +945,7 @@
             <div class="input-group"><label style="font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; display: block;">Nama Perusahaan</label><input type="text" id="ecNama" style="padding-left: 16px;"></div>
             <div class="input-group"><label style="font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; display: block;">Nomor HP Kantor</label><input type="tel" id="ecHp" style="padding-left: 16px;"></div>
             <div class="input-group"><label style="font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; display: block;">Deskripsi Singkat</label><textarea id="ecDesc" style="padding-left: 16px; padding-top:16px;"></textarea></div>
-            <div class="input-group"><label style="font-size: 13px; font-weight: 700; color: var(--text-muted; margin-bottom: 8px; display: block;">Alamat Garasi / Kantor</label><textarea id="ecAlamat" style="padding-left: 16px; padding-top:16px;"></textarea></div>
+            <div class="input-group"><label style="font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; display: block;">Alamat Garasi / Kantor</label><textarea id="ecAlamat" style="padding-left: 16px; padding-top:16px;"></textarea></div>
         </div>
     </div>
 
@@ -1633,17 +1633,20 @@
                    `*Lihat dan Unduh Gambar Tiket Anda di sini:*\n${imgUrl}\n\n` +
                    `_Catatan: Tautan gambar tiket ini akan kedaluwarsa dan dihapus secara otomatis dari sistem dalam waktu 2 hari setelah jadwal keberangkatan._`;
         
-        // Paksakan membuka aplikasi native WhatsApp (Universal & GitHub Pages friendly)
-        let waUrlScheme = `whatsapp://send?text=${encodeURIComponent(text)}`;
-        let waUrlWeb = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+        // Format wa.me yang diuji berhasil
+        let waUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
 
-        // Mencoba membuka via URI Scheme (Aplikasi langsung)
-        window.location.href = waUrlScheme;
+        // Membuat tag link dinamis secara tersembunyi agar persis seperti klik pengguna manual
+        let tempLink = document.createElement('a');
+        tempLink.href = waUrl;
+        tempLink.target = '_blank'; // Gunakan tab baru agar intent OS lebih optimal menangkapnya
+        document.body.appendChild(tempLink);
         
-        // Fallback ke WhatsApp API/Web jika aplikasi tidak merespon/tidak ada
-        setTimeout(() => {
-            window.open(waUrlWeb, '_blank');
-        }, 800);
+        // Eksekusi klik otomatis
+        tempLink.click();
+        
+        // Bersihkan setelah klik
+        document.body.removeChild(tempLink);
     }
 
     // ================= CONFIRM MODAL LOGIC =================
