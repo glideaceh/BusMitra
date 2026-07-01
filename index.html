@@ -168,10 +168,8 @@
 
         /* ================= KUSTOM STYLE RIBBON & BADGE PESANAN BARU ================= */
         .status-ribbon-bottom-left {
-            position: absolute;
-            left: -23px; bottom: 4px; font-size: 12px; font-weight: 800; padding: 8px 16px;
-            border-radius: 0 12px 12px 0; color: white;
-            box-shadow: 4px 4px 15px rgba(0,0,0,0.15);
+            position: absolute; left: -23px; bottom: 4px; font-size: 12px; font-weight: 800; padding: 8px 16px;
+            border-radius: 0 12px 12px 0; color: white; box-shadow: 4px 4px 15px rgba(0,0,0,0.15);
             animation: slideRibbon 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; z-index: 10; letter-spacing: 0.5px;
         }
         .status-ribbon-bottom-left.aktif { background: linear-gradient(135deg, #10b981, #059669); }
@@ -184,11 +182,9 @@
         }
 
         .modern-date-badge {
-            display: inline-flex;
-            align-items: center; gap: 8px; background: linear-gradient(135deg, rgba(2, 132, 199, 0.08), rgba(56, 189, 248, 0.08));
+            display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, rgba(2, 132, 199, 0.08), rgba(56, 189, 248, 0.08));
             border: 1px solid rgba(2, 132, 199, 0.2); padding: 8px 25px; width: 100%; border-radius: 12px; font-size: 12px;
-            color: orange; font-weight: 800;
-            box-shadow: 0 4px 15px rgba(2, 132, 199, 0.05); transition: all 0.3s; animation: pulseBadge 2s infinite;
+            color: orange; font-weight: 800; box-shadow: 0 4px 15px rgba(2, 132, 199, 0.05); transition: all 0.3s; animation: pulseBadge 2s infinite;
         }
         @keyframes pulseBadge {
             0% { box-shadow: 0 0 0 0 rgba(2, 132, 199, 0.2); }
@@ -216,12 +212,9 @@
         .clear-btn { position: absolute; right: 10px; color: #94a3b8; cursor: pointer; display: none; padding: 5px; }
 
         .search-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; background: var(--bg-card); backdrop-filter: blur(15px);
-            z-index: 60; padding: 15px 20px; transform: translateY(-100%);
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 15px;
-            border-bottom: 1px solid var(--glass-border);
+            position: fixed; top: 0; left: 0; width: 100%; background: var(--bg-card); backdrop-filter: blur(15px);
+            z-index: 60; padding: 15px 20px; transform: translateY(-100%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 15px; border-bottom: 1px solid var(--glass-border);
         }
         .search-overlay.show { transform: translateY(0); }
         .header-search-web { display: none; }
@@ -255,19 +248,45 @@
         @keyframes scanLaser { 0% { top: 0; opacity: 0;} 10% { opacity: 1;} 90% { opacity: 1;} 100% { top: 100%; opacity: 0;} }
 
         .right-side-drawer {
-            position: fixed;
-            top: 0; right: -100%; width: 100%; height: 100vh;
+            position: fixed; top: 0; right: -100%; width: 100%; height: 100vh;
             background: var(--bg-body); z-index: 2000; overflow-y: auto; overflow-x: hidden;
             transition: right 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); visibility: hidden;
         }
         .right-side-drawer.open { right: 0; visibility: visible; }
         @media (min-width: 768px) {
             .right-side-drawer { width: 500px; right: -500px; border-left: 1px solid var(--glass-border); box-shadow: -10px 0 40px rgba(0,0,0,0.1); }
+            
+            /* Dihapus #pageMainApp { display: block; } agar tidak tumpang tindih dengan login */
+            #pageMainApp .bottom-nav { display: none !important; }
+            .hamburger-btn { display: block !important; }
+            
+            #pageMainApp .app-header { padding: 20px 40px; }
+            #pageMainApp .container { margin-left: 0; max-width: 100%; padding: 30px 40px; }
+            
+            #layananCardContainer, #pesananCardContainer { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; }
+            #layananCardContainer > h3, #pesananCardContainer > div.order-header-wrapper { grid-column: 1 / -1; margin-bottom: 0px; width: 100%; }
+            .ticket-card { margin-bottom: 0; } 
+            
+            .pesanan-header-full { margin: -30px -40px 30px -40px !important; padding: 20px 40px !important; width: calc(100% + 80px) !important; box-sizing: border-box; }
+            .fab-btn { right: 40px; bottom: 40px; }
+            .search-trigger-mobile { display: none !important; }
+            .header-search-web { display: flex !important; align-items: center; background: #f1f5f9; border-radius: 20px; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); width: 40px; height: 40px; overflow: hidden; position: relative; }
+            .header-search-web.expanded { width: 300px; padding: 0 10px; background: #fff; border: 1px solid var(--primary); box-shadow: 0 4px 15px rgba(2, 132, 199, 0.1); }
+            .header-search-web input { border:none; background:transparent; outline:none; width:100%; padding-left: 36px; padding-right: 30px; opacity:0; transition: 0.3s; pointer-events: none; font-size: 14px; height: 100%;}
+            .header-search-web.expanded input { opacity:1; pointer-events: auto; }
+            .search-icon-trigger { width: 40px; height: 40px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; color:var(--text-muted); position:absolute; left:0; z-index: 2;}
+            .header-search-web.expanded .search-icon-trigger { color: var(--primary); }
+            .search-close-trigger { position: absolute; right: 10px; cursor:pointer; color:#94a3b8; display:none; padding: 5px;}
+            .header-search-web.expanded .search-close-trigger { display:block; }
+
+            .drawer-modal { justify-content: flex-end; align-items: stretch; }
+            .drawer-modal .drawer-content { width: 450px; max-height: 100vh; height: 100vh; border-radius: 0; transform: translateX(100%) translateY(0) !important; padding-bottom: 0; }
+            .drawer-modal.open .drawer-content { transform: translateX(0) translateY(0) !important; }
+            .drawer-handle { display: none; }
         }
 
         .desktop-sidebar {
-            position: fixed;
-            top: 0; left: -280px; width: 280px; height: 100vh;
+            position: fixed; top: 0; left: -280px; width: 280px; height: 100vh;
             background: var(--bg-card); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); z-index: 3000;
             transition: left 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 4px 0 25px rgba(0,0,0,0.08); display: flex; flex-direction: column; border-right: 1px solid var(--glass-border);
         }
@@ -379,37 +398,6 @@
 
         .btn-logout-glass { width: 100%; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: #ef4444; padding: 14px; border-radius: 16px; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; z-index: 1; position: relative; margin-bottom: 20px;}
         .btn-logout-glass:hover { background: #ef4444; color: white; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2); }
-
-        /* ================= TAMPILAN RESPONSIVE DESKTOP ================= */
-        @media (min-width: 768px) {
-            #pageMainApp { display: block; }
-            #pageMainApp .bottom-nav { display: none !important; }
-            .hamburger-btn { display: block !important; }
-            
-            #pageMainApp .app-header { padding: 20px 40px; }
-            #pageMainApp .container { margin-left: 0; max-width: 100%; padding: 30px 40px; }
-            
-            #layananCardContainer, #pesananCardContainer { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; }
-            #layananCardContainer > h3, #pesananCardContainer > div.order-header-wrapper { grid-column: 1 / -1; margin-bottom: 0px; width: 100%; }
-            .ticket-card { margin-bottom: 0; } 
-            
-            .pesanan-header-full { margin: -30px -40px 30px -40px !important; padding: 20px 40px !important; width: calc(100% + 80px) !important; box-sizing: border-box; }
-            .fab-btn { right: 40px; bottom: 40px; }
-            .search-trigger-mobile { display: none !important; }
-            .header-search-web { display: flex !important; align-items: center; background: #f1f5f9; border-radius: 20px; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); width: 40px; height: 40px; overflow: hidden; position: relative; }
-            .header-search-web.expanded { width: 300px; padding: 0 10px; background: #fff; border: 1px solid var(--primary); box-shadow: 0 4px 15px rgba(2, 132, 199, 0.1); }
-            .header-search-web input { border:none; background:transparent; outline:none; width:100%; padding-left: 36px; padding-right: 30px; opacity:0; transition: 0.3s; pointer-events: none; font-size: 14px; height: 100%;}
-            .header-search-web.expanded input { opacity:1; pointer-events: auto; }
-            .search-icon-trigger { width: 40px; height: 40px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; color:var(--text-muted); position:absolute; left:0; z-index: 2;}
-            .header-search-web.expanded .search-icon-trigger { color: var(--primary); }
-            .search-close-trigger { position: absolute; right: 10px; cursor:pointer; color:#94a3b8; display:none; padding: 5px;}
-            .header-search-web.expanded .search-close-trigger { display:block; }
-
-            .drawer-modal { justify-content: flex-end; align-items: stretch; }
-            .drawer-modal .drawer-content { width: 450px; max-height: 100vh; height: 100vh; border-radius: 0; transform: translateX(100%) translateY(0) !important; padding-bottom: 0; }
-            .drawer-modal.open .drawer-content { transform: translateX(0) translateY(0) !important; }
-            .drawer-handle { display: none; }
-        }
 
         /* ================= KUSTOM CONFIRM POPUP ================= */
         .custom-confirm-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 10000; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: 0.3s; }
@@ -945,7 +933,7 @@
             <div class="input-group"><label style="font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; display: block;">Nama Perusahaan</label><input type="text" id="ecNama" style="padding-left: 16px;"></div>
             <div class="input-group"><label style="font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; display: block;">Nomor HP Kantor</label><input type="tel" id="ecHp" style="padding-left: 16px;"></div>
             <div class="input-group"><label style="font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; display: block;">Deskripsi Singkat</label><textarea id="ecDesc" style="padding-left: 16px; padding-top:16px;"></textarea></div>
-            <div class="input-group"><label style="font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; display: block;">Alamat Garasi / Kantor</label><textarea id="ecAlamat" style="padding-left: 16px; padding-top:16px;"></textarea></div>
+            <div class="input-group"><label style="font-size: 13px; font-weight: 700; color: var(--text-muted; margin-bottom: 8px; display: block;">Alamat Garasi / Kantor</label><textarea id="ecAlamat" style="padding-left: 16px; padding-top:16px;"></textarea></div>
         </div>
     </div>
 
@@ -1053,7 +1041,7 @@
     window.addEventListener('popstate', function(e) {
         if (isHandlingPopState) return;
         if (backButtonHandlerStack.length > 0) {
-            isHandlingPopState = true;
+             isHandlingPopState = true;
             let closeFnId = backButtonHandlerStack.pop();
             executeCloseFunctionById(closeFnId, true);
             setTimeout(() => { isHandlingPopState = false; }, 100);
@@ -1085,7 +1073,7 @@
     }
 
     const GAS_API_URL = "https://script.google.com/macros/s/AKfycbz9oI7WVGzV2nrgAyW965T_2XKw7uxHYkU13ouJVlb8iRzmnVXEPGhDvqtNjxOnKQsYLg/exec";
-
+    
     // ================= GLOBAL VARIABLES =================
     let SESSION_USER = null; let SESSION_COMPANY = null;
     let indonesianRegionsDatabase = [];
@@ -1103,11 +1091,11 @@
     let customConfirmCallback = null;
     let currentPaymentOrderId = "";
     let currentPesananFilter = 'all';
-
+    
     // Interval Management
     let pesananPollingInterval = null;
     let seatPollingInterval = null;
-
+    
     // Variabel Akses Kursi (Perbaikan Real-Time Timezone)
     let _tempD = new Date();
     let currentSeatDate = new Date(_tempD.getTime() - (_tempD.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
@@ -1150,8 +1138,7 @@
 
     // ================= INIT & ROUTING =================
     window.onload = () => {
-        initCityData();
-        fetchFacilitiesData(); initTimePickerOptions();
+        initCityData(); fetchFacilitiesData(); initTimePickerOptions();
         let savedSession = localStorage.getItem('goBorneo_partner_session');
         if(savedSession) {
             let parsed = JSON.parse(savedSession);
@@ -1159,7 +1146,7 @@
             populateDashboardData(); switchPage('pageMainApp'); loadLayananData();
         }
     };
-
+    
     function switchPage(pageId) {
         document.querySelectorAll('.page').forEach(p => { p.style.display = 'none'; p.classList.remove('active-page'); });
         let target = document.getElementById(pageId);
@@ -1240,6 +1227,7 @@
             document.getElementById('seatGridContainer').style.display = 'grid';
             renderSeatLayout();
         });
+        
         if(!seatPollingInterval) {
             seatPollingInterval = setInterval(() => {
                 fetchPesananDataSilently();
@@ -1262,6 +1250,7 @@
         
         let bookedApp = [];
         let bookedManual = [];
+        
         globalPesananList.forEach(order => {
             if(order.merkKendaraan === item.merk && isSameDate(order.tanggalBooking, currentSeatDate)) {
                 let isManual = (order.role === "Mitra") || order.isManualLocal;
@@ -1273,11 +1262,13 @@
                 }
             }
         });
+        
         let gridHtml = '';
         const cols = ['A', 'B', 'C', 'D'];
         const numCols = cols.length;
         const numRows = Math.ceil(kapasitas / numCols); 
         let totalRendered = 0;
+        
         for(let row = 1; row <= numRows; row++) {
             for(let c = 0; c < numCols; c++) {
                 if (totalRendered >= kapasitas) break;
@@ -1286,12 +1277,15 @@
                 let isAppBooked = bookedApp.includes(seatNo);
                 let isManualBooked = bookedManual.includes(seatNo);
                 let isSelected = selectedManualSeats.includes(seatNo);
+                
                 let seatClass = 'available';
                 if(isAppBooked) seatClass = 'booked';
                 else if(isManualBooked) seatClass = 'manual';
                 else if(isSelected) seatClass = 'selected';
+                
                 let onclickFn = (isAppBooked || isManualBooked) ? '' : `onclick="toggleSeatSelection('${seatNo}')"`;
                 let iconColorStyle = isSelected ? 'style="color: #fff"' : '';
+                
                 gridHtml += `
                     <div class="seat-item ${seatClass}" ${onclickFn}>
                         <i class="fa-solid fa-chair" ${iconColorStyle}></i>
@@ -1338,8 +1332,10 @@
         
         let firstDay = new Date(currentSeatCalYear, currentSeatCalMonth, 1).getDay(); 
         let daysInMonth = new Date(currentSeatCalYear, currentSeatCalMonth + 1, 0).getDate();
+        
         let gridHtml = `<div style="font-size:11px; font-weight:700; color:#94a3b8;">Min</div><div style="font-size:11px; font-weight:700; color:#94a3b8;">Sen</div><div style="font-size:11px; font-weight:700; color:#94a3b8;">Sel</div><div style="font-size:11px; font-weight:700; color:#94a3b8;">Rab</div><div style="font-size:11px; font-weight:700; color:#94a3b8;">Kam</div><div style="font-size:11px; font-weight:700; color:#94a3b8;">Jum</div><div style="font-size:11px; font-weight:700; color:#94a3b8;">Sab</div>`;
         for (let i = 0; i < firstDay; i++) gridHtml += `<div></div>`;
+        
         for (let day = 1; day <= daysInMonth; day++) { 
             let mStr = (currentSeatCalMonth + 1).toString().padStart(2, '0');
             let dStr = day.toString().padStart(2, '0'); 
@@ -1349,6 +1345,7 @@
             let style = isSelected 
                 ? "background: var(--primary); color: #fff; box-shadow: 0 4px 10px rgba(2,132,199,0.3);" 
                 : "background: #f1f5f9; color: var(--text-main);";
+                
             gridHtml += `<div onclick="selectSeatDate('${fullDateStr}')" style="width:38px; height:38px; border-radius:12px; display:flex; align-items:center; justify-content:center; margin:auto; cursor:pointer; font-size:13px; font-weight:700; transition:0.2s; ${style}">${day}</div>`;
         } 
         document.getElementById('seatCalendarGrid').innerHTML = gridHtml;
@@ -1391,8 +1388,8 @@
         let now = new Date();
         let timeString = now.toTimeString().split(' ')[0].substring(0, 5); 
         let fullDateTimeBooking = currentSeatDate + " " + timeString;
-        let paymentStatus = document.querySelector('input[name="manualPaymentStatus"]:checked').value;
         
+        let paymentStatus = document.querySelector('input[name="manualPaymentStatus"]:checked').value;
         let inputNama = document.getElementById('manualInputNamaPenumpang').value.trim();
         let inputHp = document.getElementById('manualInputNoHp').value.trim();
         
@@ -1419,6 +1416,7 @@
                 tujuan: activeBus.tujuan,
                 statusBooking: paymentStatus
             };
+            
             let res = await fetchGAS(payload);
             
             if(res.status === "success" || res.status === 200 || !res.error) {
@@ -1442,11 +1440,10 @@
                     selectedManualSeats = [];
                     renderSeatLayout();
                     closeManualPaymentModal();
-                    
                     showAlert("Sukses", "Pesanan berhasil diproses dan tersinkronisasi.", "fa-check");
-                    // Tampilkan Popup Tiket untuk Cetak/Share
+                    
                     lastGeneratedTicket = newOrder;
-                    showManualTicketResult(newOrder);
+                    showManualTicketResult(newOrder); // Ini juga akan memicu Auto Upload Image
                 } else {
                     // Fallback local jika data tidak ditemukan di sheet
                     newOrder = {
@@ -1563,7 +1560,58 @@
                 colorLight : "#ffffff",
                 correctLevel : QRCode.CorrectLevel.M
             });
+
+            // Trigger Upload Otomatis Gambar Tiket ke Drive jika belum pernah dirender
+            if (!order.imgUrl) {
+                setTimeout(() => {
+                    autoUploadTicket(order);
+                }, 150); // Tunggu ekstra 150ms agar QRCode sempurna masuk ke DOM sebelum canvas meng-capture.
+            }
         }, 150);
+    }
+
+    // Fungsi Render Canvas & Upload ke GAS (Berjalan di Latar Belakang)
+    async function autoUploadTicket(order) {
+        const btnWa = document.getElementById('btnShareWa');
+        const originalText = '<i class="fa-brands fa-whatsapp"></i> Bagikan (WA)';
+        
+        // Ubah state tombol WA sebagai indikator
+        btnWa.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyiapkan Link...';
+        btnWa.disabled = true;
+
+        try {
+            const ticketElement = document.getElementById('printableTicketCard');
+            // Skala 1.5 dan kompresi JPEG 0.7 untuk ukuran ringan, proses cepat & kualitas baik
+            const canvas = await html2canvas(ticketElement, { scale: 1.5, useCORS: true });
+            const base64Image = canvas.toDataURL("image/jpeg", 0.7);
+
+            // Kirim Payload ke Google Apps Script (Sistem Upload Drive)
+            const payload = {
+                action: "uploadTicket",
+                base64: base64Image,
+                filename: "Ticket_" + order.idBooking,
+                tanggalBooking: order.tanggalBooking
+            };
+
+            let res = await fetchGAS(payload);
+
+            if (res.status === "success" && res.imgUrl) {
+                // Simpan url di memori agar bisa dipakai berulang kali tanpa merender lagi
+                order.imgUrl = res.imgUrl; 
+                if (lastGeneratedTicket && lastGeneratedTicket.idBooking === order.idBooking) {
+                    lastGeneratedTicket.imgUrl = res.imgUrl;
+                }
+            } else {
+                showAlert('Error', res.message || 'Gagal mengunggah gambar tiket ke server.', 'fa-xmark', true);
+            }
+
+        } catch (e) {
+            console.error("Gagal Render Tiket Otomatis", e);
+        } finally {
+            // Kembalikan tombol ke kondisi semula
+            btnWa.innerHTML = originalText;
+            btnWa.disabled = false;
+        }
     }
 
     function closeManualTicketModal(fromPopState = false) {
@@ -1575,72 +1623,49 @@
         window.print();
     }
 
-    // ================= FUNGSI SHARE WHATSAPP TIKET (UPDATE SUPER CEPAT) =================
-    async function shareWhatsAppManualTicket() {
+    // ================= FUNGSI SHARE WHATSAPP TIKET (UPDATE BARU) =================
+    function shareWhatsAppManualTicket() {
         if(!lastGeneratedTicket) return;
-        const btn = document.getElementById('btnShareWa');
-        const originalText = btn.innerHTML;
-        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memuat...';
-        btn.disabled = true;
-
-        const ticketElement = document.getElementById('printableTicketCard');
-
-        try {
-            // 1. Render gambar secara lokal di perangkat
-            const canvas = await html2canvas(ticketElement, { scale: 1.5, useCORS: true });
-            
-            canvas.toBlob(async (blob) => {
-                let tgl = formatTglIndo(lastGeneratedTicket.tanggalBooking);
-                
-                // Susun Teks Pesan
-                let textPesan = `*E-TICKET GO BORNEO*\n\n` +
-                                `Detail Pesanan Anda:\n` +
-                                `• *ID Booking:* ${lastGeneratedTicket.idBooking}\n` +
-                                `• *Nama:* ${lastGeneratedTicket.namaPenumpang}\n` +
-                                `• *Armada:* ${lastGeneratedTicket.merkKendaraan}\n` +
-                                `• *Rute:* ${lastGeneratedTicket.asal} - ${lastGeneratedTicket.tujuan}\n` +
-                                `• *Kursi:* ${lastGeneratedTicket.nomorKursi}\n` +
-                                `• *Tgl Berangkat:* ${tgl}\n` +
-                                `• *Total:* Rp ${formatNumber(lastGeneratedTicket.harga)}\n` +
-                                `• *Status:* ${lastGeneratedTicket.statusBooking.toUpperCase()}\n`;
-
-                // 2. Buat File dari Blob gambar
-                const file = new File([blob], `Ticket_${lastGeneratedTicket.idBooking}.jpg`, { type: 'image/jpeg' });
-
-                // 3. Cek dukungan Web Share API (Fitur Native HP)
-                if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                    try {
-                        // Ini akan memunculkan menu "Share" bawaan HP (seperti saat kirim foto dari galeri)
-                        await navigator.share({
-                            title: 'E-Ticket Go Borneo',
-                            text: textPesan,
-                            files: [file]
-                        });
-                    } catch (err) {
-                        console.log('Share dibatalkan atau gagal:', err);
-                    }
-                } else {
-                    // 4. FALLBACK: Jika dibuka di PC/Browser lama, langsung buka WA Web/App instan (tanpa gambar fisik)
-                    let waUrl = `https://wa.me/?text=${encodeURIComponent(textPesan)}`;
-                    let tempLink = document.createElement('a');
-                    tempLink.href = waUrl;
-                    tempLink.target = '_blank';
-                    document.body.appendChild(tempLink);
-                    tempLink.click();
-                    document.body.removeChild(tempLink);
-                }
-
-                // Kembalikan tombol seperti semula
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            }, 'image/jpeg', 0.8);
-
-        } catch (e) {
-            showAlert('Error', 'Terjadi kesalahan saat memproses gambar tiket', 'fa-xmark', true);
-            btn.innerHTML = originalText;
-            btn.disabled = false;
+        
+        // Cek apakah link gambar sudah selesai digenerate
+        if(!lastGeneratedTicket.imgUrl) {
+            showAlert('Mohon Tunggu', 'Link gambar tiket sedang diproses, silakan coba beberapa detik lagi.', 'fa-clock', true);
+            return;
         }
+
+        // Langsung eksekusi share teks + link ke WA
+        bukaWhatsAppDenganLink(lastGeneratedTicket, lastGeneratedTicket.imgUrl);
     }
+
+    function bukaWhatsAppDenganLink(order, imgUrl) {
+        let tgl = formatTglIndo(order.tanggalBooking);
+        // Susun Format Pesan WhatsApp & Link Gambar
+        let text = `*E-TICKET GO BORNEO*\n\n` +
+                   `Detail Pesanan Anda:\n` +
+                   `• *ID Booking:* ${order.idBooking}\n` +
+                   `• *Nama:* ${order.namaPenumpang}\n` +
+                   `• *Armada:* ${order.merkKendaraan}\n` +
+                   `• *Rute:* ${order.asal} - ${order.tujuan}\n` +
+                   `• *Kursi:* ${order.nomorKursi}\n` +
+                   `• *Tgl Berangkat:* ${tgl}\n` +
+                   `• *Total:* Rp ${formatNumber(order.harga)}\n` +
+                   `• *Status:* ${order.statusBooking.toUpperCase()}\n\n` +
+                   `*Lihat dan Unduh Gambar Tiket Anda di sini:*\n${imgUrl}\n\n` +
+                   `_Catatan: Tautan gambar tiket ini akan kedaluwarsa dan dihapus secara otomatis dari sistem dalam waktu 2 hari setelah jadwal keberangkatan._`;
+        
+        // Paksakan membuka aplikasi native WhatsApp (Universal & GitHub Pages friendly)
+        let waUrlScheme = `whatsapp://send?text=${encodeURIComponent(text)}`;
+        let waUrlWeb = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+
+        // Mencoba membuka via URI Scheme (Aplikasi langsung)
+        window.location.href = waUrlScheme;
+        
+        // Fallback ke WhatsApp API/Web jika aplikasi tidak merespon/tidak ada
+        setTimeout(() => {
+            window.open(waUrlWeb, '_blank');
+        }, 800);
+    }
+
     // ================= CONFIRM MODAL LOGIC =================
     function showConfirmModal(title, msg, iconClass, isDanger, callback) {
         document.getElementById('confirmTitle').innerText = title;
@@ -1848,6 +1873,7 @@
             }
         }
     });
+    
     function setPesananFilter(type) {
         currentPesananFilter = type;
         document.getElementById('orderFilterMenu').classList.remove('open');
