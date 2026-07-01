@@ -168,8 +168,10 @@
 
         /* ================= KUSTOM STYLE RIBBON & BADGE PESANAN BARU ================= */
         .status-ribbon-bottom-left {
-            position: absolute; left: -23px; bottom: 4px; font-size: 12px; font-weight: 800; padding: 8px 16px;
-            border-radius: 0 12px 12px 0; color: white; box-shadow: 4px 4px 15px rgba(0,0,0,0.15);
+            position: absolute;
+            left: -23px; bottom: 4px; font-size: 12px; font-weight: 800; padding: 8px 16px;
+            border-radius: 0 12px 12px 0; color: white;
+            box-shadow: 4px 4px 15px rgba(0,0,0,0.15);
             animation: slideRibbon 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; z-index: 10; letter-spacing: 0.5px;
         }
         .status-ribbon-bottom-left.aktif { background: linear-gradient(135deg, #10b981, #059669); }
@@ -182,9 +184,11 @@
         }
 
         .modern-date-badge {
-            display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, rgba(2, 132, 199, 0.08), rgba(56, 189, 248, 0.08));
+            display: inline-flex;
+            align-items: center; gap: 8px; background: linear-gradient(135deg, rgba(2, 132, 199, 0.08), rgba(56, 189, 248, 0.08));
             border: 1px solid rgba(2, 132, 199, 0.2); padding: 8px 25px; width: 100%; border-radius: 12px; font-size: 12px;
-            color: orange; font-weight: 800; box-shadow: 0 4px 15px rgba(2, 132, 199, 0.05); transition: all 0.3s; animation: pulseBadge 2s infinite;
+            color: orange; font-weight: 800;
+            box-shadow: 0 4px 15px rgba(2, 132, 199, 0.05); transition: all 0.3s; animation: pulseBadge 2s infinite;
         }
         @keyframes pulseBadge {
             0% { box-shadow: 0 0 0 0 rgba(2, 132, 199, 0.2); }
@@ -212,9 +216,12 @@
         .clear-btn { position: absolute; right: 10px; color: #94a3b8; cursor: pointer; display: none; padding: 5px; }
 
         .search-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; background: var(--bg-card); backdrop-filter: blur(15px);
-            z-index: 60; padding: 15px 20px; transform: translateY(-100%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 15px; border-bottom: 1px solid var(--glass-border);
+            position: fixed;
+            top: 0; left: 0; width: 100%; background: var(--bg-card); backdrop-filter: blur(15px);
+            z-index: 60; padding: 15px 20px; transform: translateY(-100%);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 15px;
+            border-bottom: 1px solid var(--glass-border);
         }
         .search-overlay.show { transform: translateY(0); }
         .header-search-web { display: none; }
@@ -248,7 +255,8 @@
         @keyframes scanLaser { 0% { top: 0; opacity: 0;} 10% { opacity: 1;} 90% { opacity: 1;} 100% { top: 100%; opacity: 0;} }
 
         .right-side-drawer {
-            position: fixed; top: 0; right: -100%; width: 100%; height: 100vh;
+            position: fixed;
+            top: 0; right: -100%; width: 100%; height: 100vh;
             background: var(--bg-body); z-index: 2000; overflow-y: auto; overflow-x: hidden;
             transition: right 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); visibility: hidden;
         }
@@ -258,7 +266,8 @@
         }
 
         .desktop-sidebar {
-            position: fixed; top: 0; left: -280px; width: 280px; height: 100vh;
+            position: fixed;
+            top: 0; left: -280px; width: 280px; height: 100vh;
             background: var(--bg-card); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); z-index: 3000;
             transition: left 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 4px 0 25px rgba(0,0,0,0.08); display: flex; flex-direction: column; border-right: 1px solid var(--glass-border);
         }
@@ -462,36 +471,33 @@
 
         /* ================= DESAIN TIKET BOARDING PASS ================= */
         .boarding-pass-container {
-            display: flex; flex-direction: column; /* DEFAULT: Portrait untuk Mobile & WA Share */
+            display: flex; flex-direction: column; 
             background: #fff; border-radius: 12px; border: 1px solid #cbd5e1; overflow: hidden;
-            width: 100%; max-width: 360px; margin: 0 auto; font-family: 'Inter', sans-serif;
-            color: #0f172a;
+            width: 100%; max-width: 360px; margin: 0 auto; font-family: 'Inter', sans-serif; color: #0f172a;
         }
         .bp-main { padding: 20px; border-bottom: 2px dashed #cbd5e1; position: relative; }
-        .bp-stub { padding: 20px; background: #f8fafc; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .bp-stub { padding: 20px; background: #ffffff; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         
         #ticketQrCode img { display: block; margin: 0 auto; }
 
         /* ================= MEDIA PRINT (CETAK TIKET) ================= */
         @media print {
-            @page { size: landscape; margin: 15mm; } /* Paksa Landscape & beri margin agar tidak terpotong */
+            @page { size: 210mm 100mm; margin: 0; }
+            html, body { width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; background: #fff; }
             body * { visibility: hidden; }
             #manualTicketResultModal, #manualTicketResultModal * { visibility: visible; }
             #manualTicketResultModal {
-                position: absolute; left: 0; top: 0; width: 100%; height: 100%; background: white; box-shadow: none; display: flex; align-items: center; justify-content: center;
+                position: fixed; left: 0; top: 0; width: 100%; height: 100%; background: white; box-shadow: none; display: flex; align-items: center; justify-content: center; margin: 0; padding: 0; z-index: 999999;
             }
             .drawer-close, .btn-primary, #headerActionGroup, .bottom-nav, .drawer-header, .drawer-handle { display: none !important; }
-            .drawer-content { transform: none !important; max-height: none !important; box-shadow: none !important; padding: 0 !important; width: 100% !important; background: transparent !important; }
-            
-            /* Ubah layout tiket menjadi Landscape untuk Print PDF */
-            .boarding-pass-container { 
-                flex-direction: row !important; max-width: 800px !important; 
-                width: 100% !important; border: 2px solid #000 !important; 
-                border-radius: 12px !important; margin: 0 auto !important;
-                page-break-inside: avoid;
+            .drawer-content { 
+                transform: none !important; max-height: none !important; box-shadow: none !important; padding: 0 !important; width: 100% !important; background: transparent !important; display: flex; justify-content: center; align-items: center;
             }
-            .bp-main { flex: 2; border-bottom: none !important; border-right: 2px dashed #000 !important; padding: 30px !important;}
-            .bp-stub { flex: 1; padding: 30px !important;}
+            .boarding-pass-container { 
+                flex-direction: row !important; width: 190mm !important; max-width: 100% !important; border: 2px solid #000 !important; border-radius: 12px !important; margin: 0 auto !important; page-break-inside: avoid; page-break-after: avoid; page-break-before: avoid;
+            }
+            .bp-main { flex: 2; border-bottom: none !important; border-right: 2px dashed #000 !important; padding: 20px !important;}
+            .bp-stub { flex: 1; padding: 20px !important; display: flex; flex-direction: column; justify-content: center; align-items: center;}
         }
     </style>
 </head>
@@ -939,7 +945,7 @@
             <div class="input-group"><label style="font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; display: block;">Nama Perusahaan</label><input type="text" id="ecNama" style="padding-left: 16px;"></div>
             <div class="input-group"><label style="font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; display: block;">Nomor HP Kantor</label><input type="tel" id="ecHp" style="padding-left: 16px;"></div>
             <div class="input-group"><label style="font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; display: block;">Deskripsi Singkat</label><textarea id="ecDesc" style="padding-left: 16px; padding-top:16px;"></textarea></div>
-            <div class="input-group"><label style="font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; display: block;">Alamat Garasi / Kantor</label><textarea id="ecAlamat" style="padding-left: 16px; padding-top:16px;"></textarea></div>
+            <div class="input-group"><label style="font-size: 13px; font-weight: 700; color: var(--text-muted; margin-bottom: 8px; display: block;">Alamat Garasi / Kantor</label><textarea id="ecAlamat" style="padding-left: 16px; padding-top:16px;"></textarea></div>
         </div>
     </div>
 
@@ -1024,7 +1030,7 @@
     <div id="facilityModal" class="drawer-modal"><div class="drawer-content"><div class="drawer-handle"></div><div class="drawer-header"><h3>Pilih Fasilitas</h3><button class="drawer-close" onclick="closeFacilityModal()"><i class="fa-solid fa-xmark"></i></button></div><p style="font-size: 13px; color: var(--text-muted); margin-top: -10px; margin-bottom: 10px;">Pilih fasilitas yang tersedia di armada ini (Bisa pilih banyak).</p><div id="facilityCapsuleContainer" class="facility-capsules-container"></div><button class="btn-primary" style="margin-top: 24px;" onclick="saveSelectedFacilities()">Simpan Fasilitas</button></div></div>
     <div id="cropperModal" class="drawer-modal"><div class="drawer-content" style="max-height: 90vh;"><div class="drawer-handle"></div><div class="drawer-header"><h3>Sesuaikan Foto</h3><button class="drawer-close" onclick="cancelCrop()"><i class="fa-solid fa-xmark"></i></button></div><div class="cropper-container-wrapper"><img id="cropperImage" src=""></div><div style="display: flex; gap: 12px;"><button class="btn-primary" style="background: #f1f5f9; color: var(--text-main); box-shadow: none;" onclick="cancelCrop()">Batal</button><button class="btn-primary" onclick="applyCrop()">Potong & Simpan</button></div></div></div>
 
-    <script>
+   <script>
     // ================= HISTORY / BACK BUTTON MANAGER =================
     let backButtonHandlerStack = [];
     let isHandlingPopState = false;
@@ -1053,7 +1059,7 @@
             setTimeout(() => { isHandlingPopState = false; }, 100);
         }
     });
-    
+
     function executeCloseFunctionById(id, fromPopState = false) {
         switch(id) {
             case 'aksesKursi': closeAksesKursi(fromPopState); break;
@@ -1079,7 +1085,7 @@
     }
 
     const GAS_API_URL = "https://script.google.com/macros/s/AKfycbz9oI7WVGzV2nrgAyW965T_2XKw7uxHYkU13ouJVlb8iRzmnVXEPGhDvqtNjxOnKQsYLg/exec";
-    
+
     // ================= GLOBAL VARIABLES =================
     let SESSION_USER = null; let SESSION_COMPANY = null;
     let indonesianRegionsDatabase = [];
@@ -1097,11 +1103,11 @@
     let customConfirmCallback = null;
     let currentPaymentOrderId = "";
     let currentPesananFilter = 'all';
-    
+
     // Interval Management
     let pesananPollingInterval = null;
     let seatPollingInterval = null;
-    
+
     // Variabel Akses Kursi (Perbaikan Real-Time Timezone)
     let _tempD = new Date();
     let currentSeatDate = new Date(_tempD.getTime() - (_tempD.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
@@ -1153,7 +1159,7 @@
             populateDashboardData(); switchPage('pageMainApp'); loadLayananData();
         }
     };
-    
+
     function switchPage(pageId) {
         document.querySelectorAll('.page').forEach(p => { p.style.display = 'none'; p.classList.remove('active-page'); });
         let target = document.getElementById(pageId);
@@ -1228,14 +1234,12 @@
         // Memunculkan loading terlebih dahulu
         document.getElementById('seatGridContainer').style.display = 'none';
         document.getElementById('seatLoading').style.display = 'block';
-        
         fetchPesananDataSilently().then(() => {
             // Sembunyikan loading dan munculkan grid
             document.getElementById('seatLoading').style.display = 'none';
             document.getElementById('seatGridContainer').style.display = 'grid';
             renderSeatLayout();
         });
-        
         if(!seatPollingInterval) {
             seatPollingInterval = setInterval(() => {
                 fetchPesananDataSilently();
@@ -1258,7 +1262,6 @@
         
         let bookedApp = [];
         let bookedManual = [];
-        
         globalPesananList.forEach(order => {
             if(order.merkKendaraan === item.merk && isSameDate(order.tanggalBooking, currentSeatDate)) {
                 let isManual = (order.role === "Mitra") || order.isManualLocal;
@@ -1270,13 +1273,11 @@
                 }
             }
         });
-        
         let gridHtml = '';
         const cols = ['A', 'B', 'C', 'D'];
         const numCols = cols.length;
         const numRows = Math.ceil(kapasitas / numCols); 
         let totalRendered = 0;
-        
         for(let row = 1; row <= numRows; row++) {
             for(let c = 0; c < numCols; c++) {
                 if (totalRendered >= kapasitas) break;
@@ -1285,15 +1286,12 @@
                 let isAppBooked = bookedApp.includes(seatNo);
                 let isManualBooked = bookedManual.includes(seatNo);
                 let isSelected = selectedManualSeats.includes(seatNo);
-                
                 let seatClass = 'available';
                 if(isAppBooked) seatClass = 'booked';
                 else if(isManualBooked) seatClass = 'manual';
                 else if(isSelected) seatClass = 'selected';
-                
                 let onclickFn = (isAppBooked || isManualBooked) ? '' : `onclick="toggleSeatSelection('${seatNo}')"`;
                 let iconColorStyle = isSelected ? 'style="color: #fff"' : '';
-                
                 gridHtml += `
                     <div class="seat-item ${seatClass}" ${onclickFn}>
                         <i class="fa-solid fa-chair" ${iconColorStyle}></i>
@@ -1340,10 +1338,8 @@
         
         let firstDay = new Date(currentSeatCalYear, currentSeatCalMonth, 1).getDay(); 
         let daysInMonth = new Date(currentSeatCalYear, currentSeatCalMonth + 1, 0).getDate();
-        
         let gridHtml = `<div style="font-size:11px; font-weight:700; color:#94a3b8;">Min</div><div style="font-size:11px; font-weight:700; color:#94a3b8;">Sen</div><div style="font-size:11px; font-weight:700; color:#94a3b8;">Sel</div><div style="font-size:11px; font-weight:700; color:#94a3b8;">Rab</div><div style="font-size:11px; font-weight:700; color:#94a3b8;">Kam</div><div style="font-size:11px; font-weight:700; color:#94a3b8;">Jum</div><div style="font-size:11px; font-weight:700; color:#94a3b8;">Sab</div>`;
         for (let i = 0; i < firstDay; i++) gridHtml += `<div></div>`;
-        
         for (let day = 1; day <= daysInMonth; day++) { 
             let mStr = (currentSeatCalMonth + 1).toString().padStart(2, '0');
             let dStr = day.toString().padStart(2, '0'); 
@@ -1353,7 +1349,6 @@
             let style = isSelected 
                 ? "background: var(--primary); color: #fff; box-shadow: 0 4px 10px rgba(2,132,199,0.3);" 
                 : "background: #f1f5f9; color: var(--text-main);";
-                
             gridHtml += `<div onclick="selectSeatDate('${fullDateStr}')" style="width:38px; height:38px; border-radius:12px; display:flex; align-items:center; justify-content:center; margin:auto; cursor:pointer; font-size:13px; font-weight:700; transition:0.2s; ${style}">${day}</div>`;
         } 
         document.getElementById('seatCalendarGrid').innerHTML = gridHtml;
@@ -1380,7 +1375,8 @@
             return showAlert("Perhatian", "Pilih minimal 1 kursi untuk dipesan secara manual.", "fa-triangle-exclamation", true);
         }
         document.getElementById('manualInputNamaPenumpang').value = "";
-        document.getElementById('manualInputNoHp').value = ""; // Clear input from previous use
+        document.getElementById('manualInputNoHp').value = "";
+        
         document.getElementById('manualBookingPaymentModal').classList.add('show');
         pushBackButtonHandler('manualBookingPaymentModal');
     }
@@ -1408,7 +1404,7 @@
             let payload = {
                 action: "manualBooking", 
                 userId: "MANUAL", 
-                role: "Mitra", // Penanda kursi manual dipesan oleh Mitra (Kolom P)
+                role: "Mitra", 
                 username: SESSION_USER.username,
                 namaPerusahaan: SESSION_COMPANY.namaPerusahaan,
                 emailPenumpang: SESSION_USER.email, 
@@ -1417,19 +1413,17 @@
                 tanggalBooking: fullDateTimeBooking, 
                 nomorKursi: selectedManualSeats.join(", "),
                 namaPenumpang: finalNamaPenumpang, 
-                noHp: finalNoHp, // Menggunakan finalNoHp dari input (Kolom E)
+                noHp: finalNoHp, 
                 harga: activeBus.harga * selectedManualSeats.length,
                 asal: activeBus.asal,
                 tujuan: activeBus.tujuan,
                 statusBooking: paymentStatus
             };
-            
             let res = await fetchGAS(payload);
             
             if(res.status === "success" || res.status === 200 || !res.error) {
                 // Tunggu muatkan dulu data pesanan terbaru (memastikan ID Booking termuat sinkron dari Server/Sheet)
                 await fetchPesananDataSilently();
-                
                 let generatedId = res.idBooking;
                 let newOrder;
 
@@ -1471,7 +1465,6 @@
                         statusBooking: payload.statusBooking,
                         isManualLocal: true 
                     };
-                    
                     globalPesananList.push(newOrder);
                     selectedManualSeats = []; 
                     renderSeatLayout();
@@ -1520,7 +1513,7 @@
                         <p style="margin:0; font-size:14px; font-weight:800;">${order.idBooking}</p>
                     </div>
                 </div>
-                <div style="display:flex; justify-content:space-between; align-items:center; background:#f1f5f9; padding:10px; border-radius:8px; margin-bottom:15px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; background:#ffffff; border: 1px solid #e2e8f0; padding:10px; border-radius:8px; margin-bottom:15px;">
                     <div style="text-align:center;">
                         <p style="margin:0; font-size:16px; font-weight:800; color:#0284c7;">${order.asal}</p>
                     </div>
@@ -1582,67 +1575,75 @@
         window.print();
     }
 
+    // ================= FUNGSI SHARE WHATSAPP TIKET (UPDATE BARU) =================
     async function shareWhatsAppManualTicket() {
         if(!lastGeneratedTicket) return;
         const btn = document.getElementById('btnShareWa');
         const originalText = btn.innerHTML;
         btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memproses...';
         btn.disabled = true;
-        
         const ticketElement = document.getElementById('printableTicketCard');
         
         // Timeout agar browser sempat merender loading sebelum thread diblokir canvas
         setTimeout(async () => {
             try {
-                const canvas = await html2canvas(ticketElement, { scale: 2, useCORS: true });
-                canvas.toBlob(async (blob) => {
-                    const file = new File([blob], `Ticket_${lastGeneratedTicket.idBooking}.jpg`, { type: 'image/jpeg' });
-                    
-                    // Cek ketersediaan navigator.share (Mobile)
-                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                        try {
-                            await navigator.share({
-                                files: [file],
-                                title: 'E-Ticket Go Borneo',
-                                text: `Berikut adalah e-ticket untuk pesanan ${lastGeneratedTicket.idBooking}.`
-                            });
-                            btn.innerHTML = originalText;
-                            btn.disabled = false;
-                        } catch (err) {
-                            console.error("Share failed:", err);
-                            fallbackDownloadAndShare(canvas.toDataURL("image/jpeg"));
-                        }
-                    } else {
-                        // Fallback Desktop PC/Laptop (Otomatis Download + Buka WA Web)
-                        fallbackDownloadAndShare(canvas.toDataURL("image/jpeg"));
-                    }
-                }, 'image/jpeg', 0.9);
+                // Skala 1.5 dan kompresi JPEG 0.7 untuk ukuran ringan, proses cepat & kualitas baik
+                const canvas = await html2canvas(ticketElement, { scale: 1.5, useCORS: true });
+                const base64Image = canvas.toDataURL("image/jpeg", 0.7);
+
+                // Kirim Payload ke Google Apps Script (Sistem Upload Drive)
+                const payload = {
+                    action: "uploadTicket",
+                    base64: base64Image,
+                    filename: "Ticket_" + lastGeneratedTicket.idBooking,
+                    tanggalBooking: lastGeneratedTicket.tanggalBooking
+                };
+
+                let res = await fetchGAS(payload);
+
+                if (res.status === "success" && res.imgUrl) {
+                    bukaWhatsAppDenganLink(lastGeneratedTicket, res.imgUrl);
+                } else {
+                    showAlert('Error', res.message || 'Gagal mengunggah gambar tiket ke server.', 'fa-xmark', true);
+                }
+
             } catch (e) {
-                showAlert('Error', 'Gagal memproses gambar tiket', 'fa-xmark', true);
+                showAlert('Error', 'Terjadi kesalahan saat memproses gambar tiket', 'fa-xmark', true);
+            } finally {
                 btn.innerHTML = originalText;
                 btn.disabled = false;
             }
         }, 100);
     }
 
-    function fallbackDownloadAndShare(dataUrl) {
-        // Download JPG
-        let a = document.createElement('a');
-        a.href = dataUrl;
-        a.download = `Ticket_${lastGeneratedTicket.idBooking}.jpg`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-
-        // Buka Tab Whatsapp
-        let o = lastGeneratedTicket;
-        let text = `*E-TICKET GO BORNEO*\n\nID Booking: ${o.idBooking}\nNama: ${o.namaPenumpang}\nArmada: ${o.merkKendaraan}\nRute: ${o.asal} - ${o.tujuan}\nKursi: ${o.nomorKursi}\nTgl Berangkat: ${formatTglIndo(o.tanggalBooking)}\nTotal: Rp ${formatNumber(o.harga)}\nStatus: ${o.statusBooking.toUpperCase()}\n\n_Catatan: File tiket (JPG) telah terunduh ke perangkat Anda. Silakan lampirkan gambar tiket tersebut saat mengirim pesan ini._`;
-        let waUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
-        setTimeout(() => { window.open(waUrl, '_blank'); }, 500);
+    function bukaWhatsAppDenganLink(order, imgUrl) {
+        let tgl = formatTglIndo(order.tanggalBooking);
         
-        const btn = document.getElementById('btnShareWa');
-        btn.innerHTML = '<i class="fa-brands fa-whatsapp"></i> Bagikan (WA)';
-        btn.disabled = false;
+        // Susun Format Pesan WhatsApp & Link Gambar
+        let text = `*E-TICKET GO BORNEO*\n\n` +
+                   `Detail Pesanan Anda:\n` +
+                   `• *ID Booking:* ${order.idBooking}\n` +
+                   `• *Nama:* ${order.namaPenumpang}\n` +
+                   `• *Armada:* ${order.merkKendaraan}\n` +
+                   `• *Rute:* ${order.asal} - ${order.tujuan}\n` +
+                   `• *Kursi:* ${order.nomorKursi}\n` +
+                   `• *Tgl Berangkat:* ${tgl}\n` +
+                   `• *Total:* Rp ${formatNumber(order.harga)}\n` +
+                   `• *Status:* ${order.statusBooking.toUpperCase()}\n\n` +
+                   `*Lihat dan Unduh Gambar Tiket Anda di sini:*\n${imgUrl}\n\n` +
+                   `_Catatan: Tautan gambar tiket ini akan kedaluwarsa dan dihapus secara otomatis dari sistem dalam waktu 2 hari setelah jadwal keberangkatan._`;
+        
+        // Paksakan membuka aplikasi native WhatsApp (Universal & GitHub Pages friendly)
+        let waUrlScheme = `whatsapp://send?text=${encodeURIComponent(text)}`;
+        let waUrlWeb = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+
+        // Mencoba membuka via URI Scheme (Aplikasi langsung)
+        window.location.href = waUrlScheme;
+        
+        // Fallback ke WhatsApp API/Web jika aplikasi tidak merespon/tidak ada
+        setTimeout(() => {
+            window.open(waUrlWeb, '_blank');
+        }, 800);
     }
 
     // ================= CONFIRM MODAL LOGIC =================
@@ -1676,7 +1677,7 @@
         showConfirmModal("Keluar Akun", "Sesi Anda akan diakhiri. Apakah Anda yakin ingin keluar dari sistem Partner?", "fa-arrow-right-from-bracket", false, executeLogout);
     }
 
-    // ================= KONFIRMASI PEMBAYARAN MODAL =================
+    // ================= KONFIRMASI PEMPEMBAYARAN MODAL =================
     function openPaymentModal(idBooking) { 
         currentPaymentOrderId = idBooking;
         document.getElementById('paymentConfirmModal').classList.add('show');
@@ -1852,7 +1853,6 @@
             }
         }
     });
-    
     function setPesananFilter(type) {
         currentPesananFilter = type;
         document.getElementById('orderFilterMenu').classList.remove('open');
@@ -2118,7 +2118,8 @@
                     renderSeatLayout();
                 }
             }
-        } catch(e) { console.error("Gagal sinkronisasi data pesanan real-time:", e); }
+        } catch(e) { console.error("Gagal sinkronisasi data pesanan real-time:", e);
+        }
     }
 
     function renderPesananCards(dataList) {
@@ -2358,7 +2359,7 @@
             localStorage.setItem('goBorneo_partner_session', JSON.stringify({ user: SESSION_USER, company: SESSION_COMPANY })); populateDashboardData(); closeEditPribadi(); showAlert("Sukses", "Profil Pribadi Diperbarui", "fa-check");
             } else { showAlert("Gagal", res.message, "fa-xmark", true); }
         } catch(e) { showLoading(false);
-            showAlert("Error", e.message, "fa-wifi", true); }
+        showAlert("Error", e.message, "fa-wifi", true); }
     }
 
     function openEditPerusahaan() { 
