@@ -28,8 +28,10 @@
             --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg-body); color: var(--text-main); min-height: 100vh; overflow-x: hidden; margin-top: 0px;}
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg-body); color: var(--text-main); min-height: 100vh; overflow-x: hidden;
+            margin-top: 0px;}
 
         /* Utilitas & Animasi */
         .page { display: none; width: 100%; min-height: 100vh; animation: fadeIn 0.4s ease-out; }
@@ -60,21 +62,29 @@
             background: url('https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=1080&q=80') center/cover no-repeat fixed;
             padding: 20px; flex-direction: column; min-height: 100vh; position: relative; align-items: center; justify-content: center;
         }
-        .auth-page::before { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 0; }
+        .auth-page::before { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px); z-index: 0; }
         .auth-header, .auth-card { position: relative; z-index: 1; width: 100%; max-width: 450px; }
         .auth-header { padding: 30px 20px 20px 20px; text-align: center; color: white; }
         .auth-header h1 { font-size: 32px; font-weight: 800; margin-bottom: 8px; text-shadow: 0 2px 10px rgba(0,0,0,0.3); }
         .auth-header p { font-size: 14px; opacity: 0.9; }
-        .auth-card { background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 35px; padding: 30px 20px 40px 20px; display: flex; flex-direction: column; box-shadow: 0 -10px 40px rgba(0,0,0,0.2); color: #fff; height: auto; }
+        .auth-card { background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 35px; padding: 30px 20px 40px 20px; display: flex; flex-direction: column;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.2); color: #fff; height: auto; }
         .auth-title { font-size: 24px; font-weight: 700; color: #fff; margin-bottom: 5px; }
         .auth-subtitle { font-size: 14px; color: rgba(255,255,255,0.7); margin-bottom: 25px; }
-        .auth-input-group { border: 1px solid rgba(255,255,255,0.3); border-radius: 16px; padding: 10px 15px; margin-bottom: 16px; display: flex; flex-direction: column; position: relative; background: rgba(255, 255, 255, 0.1); transition: 0.3s; }
-        .auth-input-group:focus-within { border-color: #38bdf8; background: rgba(255, 255, 255, 0.2); box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.15); }
+        .auth-input-group { border: 1px solid rgba(255,255,255,0.3); border-radius: 16px;
+            padding: 10px 15px; margin-bottom: 16px; display: flex; flex-direction: column; position: relative; background: rgba(255, 255, 255, 0.1); transition: 0.3s;
+        }
+        .auth-input-group:focus-within { border-color: #38bdf8; background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.15); }
         .auth-input-group label { font-size: 10px; color: rgba(255,255,255,0.7); margin-bottom: 4px; text-transform: uppercase; font-weight: 600; }
         .auth-input-group input, .auth-input-group textarea { border: none; outline: none; font-size: 15px; color: #fff; width: 90%; background: transparent; font-family: 'Inter', sans-serif; }
         .auth-input-group input::placeholder, .auth-input-group textarea::placeholder { color: rgba(255,255,255,0.5); }
         .auth-input-group textarea { height: 60px; resize: none; margin-top: 5px; }
-        .btn-auth { background: linear-gradient(135deg, #0ea5e9, #0284c7); color: white; border: none; width: 100%; padding: 16px; border-radius: 16px; font-size: 16px; font-weight: 700; margin-top: 10px; cursor: pointer; transition: 0.2s; box-shadow: 0 6px 20px rgba(2, 132, 199, 0.4); }
+        .btn-auth { background: linear-gradient(135deg, #0ea5e9, #0284c7); color: white; border: none; width: 100%;
+            padding: 16px; border-radius: 16px; font-size: 16px; font-weight: 700; margin-top: 10px; cursor: pointer; transition: 0.2s;
+            box-shadow: 0 6px 20px rgba(2, 132, 199, 0.4); }
         .btn-auth:active { transform: scale(0.97); }
         .auth-footer { text-align: center; margin-top: 24px; color: rgba(255,255,255,0.8); font-size: 14px; }
         .auth-footer span { color: #38bdf8; font-weight: 700; cursor: pointer; text-decoration: underline; text-underline-offset: 4px; }
@@ -213,7 +223,8 @@
 
         .search-overlay {
             position: fixed; top: 0; left: 0; width: 100%; background: var(--bg-card); backdrop-filter: blur(15px);
-            z-index: 60; padding: 15px 20px; transform: translateY(-100%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 60; padding: 15px 20px; transform: translateY(-100%);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             box-shadow: 0 4px 20px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 15px; border-bottom: 1px solid var(--glass-border);
         }
         .search-overlay.show { transform: translateY(0); }
@@ -256,7 +267,6 @@
         @media (min-width: 768px) {
             .right-side-drawer { width: 500px; right: -500px; border-left: 1px solid var(--glass-border); box-shadow: -10px 0 40px rgba(0,0,0,0.1); }
             
-            /* Dihapus #pageMainApp { display: block; } agar tidak tumpang tindih dengan login */
             #pageMainApp .bottom-nav { display: none !important; }
             .hamburger-btn { display: block !important; }
             
@@ -1041,7 +1051,7 @@
     window.addEventListener('popstate', function(e) {
         if (isHandlingPopState) return;
         if (backButtonHandlerStack.length > 0) {
-             isHandlingPopState = true;
+            isHandlingPopState = true;
             let closeFnId = backButtonHandlerStack.pop();
             executeCloseFunctionById(closeFnId, true);
             setTimeout(() => { isHandlingPopState = false; }, 100);
@@ -1073,7 +1083,7 @@
     }
 
     const GAS_API_URL = "https://script.google.com/macros/s/AKfycbz9oI7WVGzV2nrgAyW965T_2XKw7uxHYkU13ouJVlb8iRzmnVXEPGhDvqtNjxOnKQsYLg/exec";
-    
+
     // ================= GLOBAL VARIABLES =================
     let SESSION_USER = null; let SESSION_COMPANY = null;
     let indonesianRegionsDatabase = [];
@@ -1091,11 +1101,11 @@
     let customConfirmCallback = null;
     let currentPaymentOrderId = "";
     let currentPesananFilter = 'all';
-    
+
     // Interval Management
     let pesananPollingInterval = null;
     let seatPollingInterval = null;
-    
+
     // Variabel Akses Kursi (Perbaikan Real-Time Timezone)
     let _tempD = new Date();
     let currentSeatDate = new Date(_tempD.getTime() - (_tempD.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
@@ -1146,7 +1156,7 @@
             populateDashboardData(); switchPage('pageMainApp'); loadLayananData();
         }
     };
-    
+
     function switchPage(pageId) {
         document.querySelectorAll('.page').forEach(p => { p.style.display = 'none'; p.classList.remove('active-page'); });
         let target = document.getElementById(pageId);
@@ -1227,7 +1237,7 @@
             document.getElementById('seatGridContainer').style.display = 'grid';
             renderSeatLayout();
         });
-        
+
         if(!seatPollingInterval) {
             seatPollingInterval = setInterval(() => {
                 fetchPesananDataSilently();
@@ -1250,7 +1260,6 @@
         
         let bookedApp = [];
         let bookedManual = [];
-        
         globalPesananList.forEach(order => {
             if(order.merkKendaraan === item.merk && isSameDate(order.tanggalBooking, currentSeatDate)) {
                 let isManual = (order.role === "Mitra") || order.isManualLocal;
@@ -1262,13 +1271,13 @@
                 }
             }
         });
-        
+
         let gridHtml = '';
         const cols = ['A', 'B', 'C', 'D'];
         const numCols = cols.length;
         const numRows = Math.ceil(kapasitas / numCols); 
         let totalRendered = 0;
-        
+
         for(let row = 1; row <= numRows; row++) {
             for(let c = 0; c < numCols; c++) {
                 if (totalRendered >= kapasitas) break;
@@ -1277,15 +1286,15 @@
                 let isAppBooked = bookedApp.includes(seatNo);
                 let isManualBooked = bookedManual.includes(seatNo);
                 let isSelected = selectedManualSeats.includes(seatNo);
-                
+
                 let seatClass = 'available';
                 if(isAppBooked) seatClass = 'booked';
                 else if(isManualBooked) seatClass = 'manual';
                 else if(isSelected) seatClass = 'selected';
-                
+
                 let onclickFn = (isAppBooked || isManualBooked) ? '' : `onclick="toggleSeatSelection('${seatNo}')"`;
                 let iconColorStyle = isSelected ? 'style="color: #fff"' : '';
-                
+
                 gridHtml += `
                     <div class="seat-item ${seatClass}" ${onclickFn}>
                         <i class="fa-solid fa-chair" ${iconColorStyle}></i>
@@ -1332,10 +1341,11 @@
         
         let firstDay = new Date(currentSeatCalYear, currentSeatCalMonth, 1).getDay(); 
         let daysInMonth = new Date(currentSeatCalYear, currentSeatCalMonth + 1, 0).getDate();
-        
+
         let gridHtml = `<div style="font-size:11px; font-weight:700; color:#94a3b8;">Min</div><div style="font-size:11px; font-weight:700; color:#94a3b8;">Sen</div><div style="font-size:11px; font-weight:700; color:#94a3b8;">Sel</div><div style="font-size:11px; font-weight:700; color:#94a3b8;">Rab</div><div style="font-size:11px; font-weight:700; color:#94a3b8;">Kam</div><div style="font-size:11px; font-weight:700; color:#94a3b8;">Jum</div><div style="font-size:11px; font-weight:700; color:#94a3b8;">Sab</div>`;
+
         for (let i = 0; i < firstDay; i++) gridHtml += `<div></div>`;
-        
+
         for (let day = 1; day <= daysInMonth; day++) { 
             let mStr = (currentSeatCalMonth + 1).toString().padStart(2, '0');
             let dStr = day.toString().padStart(2, '0'); 
@@ -1345,7 +1355,6 @@
             let style = isSelected 
                 ? "background: var(--primary); color: #fff; box-shadow: 0 4px 10px rgba(2,132,199,0.3);" 
                 : "background: #f1f5f9; color: var(--text-main);";
-                
             gridHtml += `<div onclick="selectSeatDate('${fullDateStr}')" style="width:38px; height:38px; border-radius:12px; display:flex; align-items:center; justify-content:center; margin:auto; cursor:pointer; font-size:13px; font-weight:700; transition:0.2s; ${style}">${day}</div>`;
         } 
         document.getElementById('seatCalendarGrid').innerHTML = gridHtml;
@@ -1388,7 +1397,7 @@
         let now = new Date();
         let timeString = now.toTimeString().split(' ')[0].substring(0, 5); 
         let fullDateTimeBooking = currentSeatDate + " " + timeString;
-        
+
         let paymentStatus = document.querySelector('input[name="manualPaymentStatus"]:checked').value;
         let inputNama = document.getElementById('manualInputNamaPenumpang').value.trim();
         let inputHp = document.getElementById('manualInputNoHp').value.trim();
@@ -1416,7 +1425,7 @@
                 tujuan: activeBus.tujuan,
                 statusBooking: paymentStatus
             };
-            
+
             let res = await fetchGAS(payload);
             
             if(res.status === "success" || res.status === 200 || !res.error) {
@@ -1436,6 +1445,7 @@
                 }
 
                 showLoading(false);
+
                 if(newOrder) {
                     selectedManualSeats = [];
                     renderSeatLayout();
@@ -1443,7 +1453,7 @@
                     showAlert("Sukses", "Pesanan berhasil diproses dan tersinkronisasi.", "fa-check");
                     
                     lastGeneratedTicket = newOrder;
-                    showManualTicketResult(newOrder); // Ini juga akan memicu Auto Upload Image
+                    showManualTicketResult(newOrder);
                 } else {
                     // Fallback local jika data tidak ditemukan di sheet
                     newOrder = {
@@ -1462,6 +1472,7 @@
                         statusBooking: payload.statusBooking,
                         isManualLocal: true 
                     };
+
                     globalPesananList.push(newOrder);
                     selectedManualSeats = []; 
                     renderSeatLayout();
@@ -1565,7 +1576,7 @@
             if (!order.imgUrl) {
                 setTimeout(() => {
                     autoUploadTicket(order);
-                }, 150); // Tunggu ekstra 150ms agar QRCode sempurna masuk ke DOM sebelum canvas meng-capture.
+                }, 150);
             }
         }, 150);
     }
@@ -1590,17 +1601,21 @@
                 action: "uploadTicket",
                 base64: base64Image,
                 filename: "Ticket_" + order.idBooking,
-                tanggalBooking: order.tanggalBooking
+                tanggalBooking: order.tanggalBooking,
+                idBooking: order.idBooking
             };
 
             let res = await fetchGAS(payload);
-
             if (res.status === "success" && res.imgUrl) {
                 // Simpan url di memori agar bisa dipakai berulang kali tanpa merender lagi
-                order.imgUrl = res.imgUrl; 
+                order.imgUrl = res.imgUrl;
                 if (lastGeneratedTicket && lastGeneratedTicket.idBooking === order.idBooking) {
                     lastGeneratedTicket.imgUrl = res.imgUrl;
                 }
+                
+                // Update ke globalPesananList
+                let idx = globalPesananList.findIndex(o => o.idBooking === order.idBooking);
+                if(idx > -1) globalPesananList[idx].imgUrl = res.imgUrl;
             } else {
                 showAlert('Error', res.message || 'Gagal mengunggah gambar tiket ke server.', 'fa-xmark', true);
             }
@@ -1639,6 +1654,7 @@
 
     function bukaWhatsAppDenganLink(order, imgUrl) {
         let tgl = formatTglIndo(order.tanggalBooking);
+        
         // Susun Format Pesan WhatsApp & Link Gambar
         let text = `*E-TICKET GO BORNEO*\n\n` +
                    `Detail Pesanan Anda:\n` +
@@ -1652,7 +1668,7 @@
                    `• *Status:* ${order.statusBooking.toUpperCase()}\n\n` +
                    `*Lihat dan Unduh Gambar Tiket Anda di sini:*\n${imgUrl}\n\n` +
                    `_Catatan: Tautan gambar tiket ini akan kedaluwarsa dan dihapus secara otomatis dari sistem dalam waktu 2 hari setelah jadwal keberangkatan._`;
-        
+                   
         // Paksakan membuka aplikasi native WhatsApp (Universal & GitHub Pages friendly)
         let waUrlScheme = `whatsapp://send?text=${encodeURIComponent(text)}`;
         let waUrlWeb = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
@@ -1720,10 +1736,12 @@
         if(!currentPaymentOrderId || !SESSION_COMPANY) return;
         let idToConfirm = currentPaymentOrderId; closePaymentModal();
         let suffixes = ["", "-popup"];
+        
         suffixes.forEach(suffix => { let btnConfirm = document.getElementById(`btn-confirm-${idToConfirm}${suffix}`); let badgeEl = document.getElementById(`badge-${idToConfirm}${suffix}`); if(btnConfirm) btnConfirm.style.display = 'none'; if(badgeEl) { badgeEl.className = 'status-ribbon-bottom-left aktif'; badgeEl.innerText = 'LUNAS'; } });
         let orderIdx = globalPesananList.findIndex(o => o.idBooking === idToConfirm);
+        
         if(orderIdx > -1) { globalPesananList[orderIdx].statusBooking = 'Lunas'; updateDashboardPesananStats();
-        if(orderChartInstance) { let activeType = document.querySelector('.chart-filter-btn.active').id.replace('btn-chart-',''); updateChartFilter(activeType); } }
+            if(orderChartInstance) { let activeType = document.querySelector('.chart-filter-btn.active').id.replace('btn-chart-',''); updateChartFilter(activeType); } }
         showAlert("Berhasil", "Pesanan tiket sudah dibayarkan.", "fa-check");
         try {
             let res = await fetchGAS({ action: "confirmPayment", idBooking: idToConfirm, namaPerusahaan: SESSION_COMPANY.namaPerusahaan, statusBooking: "Lunas" });
@@ -1740,7 +1758,7 @@
     function formatTglIndo(tglStr) {
         if (!tglStr) return "-";
         try { const date = new Date(tglStr); if (isNaN(date.getTime())) return tglStr;
-        const options = { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' }; return date.toLocaleDateString('id-ID', options);
+            const options = { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' }; return date.toLocaleDateString('id-ID', options);
         } catch(e) { return tglStr; }
     }
     function formatNumber(angka) { if(!angka) return "0";
@@ -1757,6 +1775,7 @@
     function calculateRealChartData(type) {
         let labels = [];
         let data = []; let lunasOrders = globalPesananList.filter(o => o.statusBooking.toLowerCase() === 'lunas');
+        
         if (type === 'hari') {
             labels = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
             data = [0, 0, 0, 0, 0, 0, 0];
@@ -1769,8 +1788,7 @@
         } else if (type === 'tahun') {
             let yearCounts = {};
             lunasOrders.forEach(o => { let d = new Date(o.tanggalBooking); if(!isNaN(d.getTime())) { let y = d.getFullYear(); yearCounts[y] = (yearCounts[y] || 0) + 1; } });
-            labels = Object.keys(yearCounts).sort(); if(labels.length === 0) { labels = [new Date().getFullYear().toString()]; yearCounts[labels[0]] = 0;
-            }
+            labels = Object.keys(yearCounts).sort(); if(labels.length === 0) { labels = [new Date().getFullYear().toString()]; yearCounts[labels[0]] = 0; }
             data = labels.map(y => yearCounts[y]);
         }
         return { labels, data };
@@ -1873,7 +1891,7 @@
             }
         }
     });
-    
+
     function setPesananFilter(type) {
         currentPesananFilter = type;
         document.getElementById('orderFilterMenu').classList.remove('open');
@@ -2139,8 +2157,7 @@
                     renderSeatLayout();
                 }
             }
-        } catch(e) { console.error("Gagal sinkronisasi data pesanan real-time:", e);
-        }
+        } catch(e) { console.error("Gagal sinkronisasi data pesanan real-time:", e); }
     }
 
     function renderPesananCards(dataList) {
@@ -2401,8 +2418,7 @@
         if(!nama || !hp || !desc || !alamat) return showAlert("Perhatian", "Semua kolom wajib diisi", "fa-triangle-exclamation", true);
         showLoading(true);
         try {
-            let payloadData = { action: "editCompany", username: SESSION_USER.username, namaPerusahaan: nama, noHpPerusahaan: hp, deskripsiPerusahaan: desc, alamatPerusahaan: alamat, logo: base64EditCompLogo ||
-            "" };
+            let payloadData = { action: "editCompany", username: SESSION_USER.username, namaPerusahaan: nama, noHpPerusahaan: hp, deskripsiPerusahaan: desc, alamatPerusahaan: alamat, logo: base64EditCompLogo || "" };
             let res = await fetchGAS(payloadData); showLoading(false);
             if(res.status === "success") { SESSION_COMPANY.namaPerusahaan = nama; SESSION_COMPANY.noHpPerusahaan = hp;
             SESSION_COMPANY.deskripsiPerusahaan = desc; SESSION_COMPANY.alamatPerusahaan = alamat; if(base64EditCompLogo) SESSION_COMPANY.logo = base64EditCompLogo; localStorage.setItem('goBorneo_partner_session', JSON.stringify({ user: SESSION_USER, company: SESSION_COMPANY })); populateDashboardData(); closeEditPerusahaan();
@@ -2412,7 +2428,7 @@
         }
     }
 
-    function executeLogout() {
+  function executeLogout() {
         closeAlert();
         if(pesananPollingInterval) { clearInterval(pesananPollingInterval); pesananPollingInterval = null; }
         if(seatPollingInterval) { clearInterval(seatPollingInterval); seatPollingInterval = null;
