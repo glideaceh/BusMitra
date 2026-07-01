@@ -1575,80 +1575,72 @@
         window.print();
     }
 
-    // ================= FUNGSI SHARE WHATSAPP TIKET (UPDATE BARU) =================
+    // ================= FUNGSI SHARE WHATSAPP TIKET (UPDATE SUPER CEPAT) =================
     async function shareWhatsAppManualTicket() {
         if(!lastGeneratedTicket) return;
         const btn = document.getElementById('btnShareWa');
         const originalText = btn.innerHTML;
-        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memproses...';
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memuat...';
         btn.disabled = true;
+
         const ticketElement = document.getElementById('printableTicketCard');
-        
-        // Timeout agar browser sempat merender loading sebelum thread diblokir canvas
-        setTimeout(async () => {
-            try {
-                // Skala 1.5 dan kompresi JPEG 0.7 untuk ukuran ringan, proses cepat & kualitas baik
-                const canvas = await html2canvas(ticketElement, { scale: 1.5, useCORS: true });
-                const base64Image = canvas.toDataURL("image/jpeg", 0.7);
 
-                // Kirim Payload ke Google Apps Script (Sistem Upload Drive)
-                const payload = {
-                    action: "uploadTicket",
-                    base64: base64Image,
-                    filename: "Ticket_" + lastGeneratedTicket.idBooking,
-                    tanggalBooking: lastGeneratedTicket.tanggalBooking
-                };
+        try {
+            // 1. Render gambar secara lokal di perangkat
+            const canvas = await html2canvas(ticketElement, { scale: 1.5, useCORS: true });
+            
+            canvas.toBlob(async (blob) => {
+                let tgl = formatTglIndo(lastGeneratedTicket.tanggalBooking);
+                
+                // Susun Teks Pesan
+                let textPesan = `*E-TICKET GO BORNEO*\n\n` +
+                                `Detail Pesanan Anda:\n` +
+                                `• *ID Booking:* ${lastGeneratedTicket.idBooking}\n` +
+                                `• *Nama:* ${lastGeneratedTicket.namaPenumpang}\n` +
+                                `• *Armada:* ${lastGeneratedTicket.merkKendaraan}\n` +
+                                `• *Rute:* ${lastGeneratedTicket.asal} - ${lastGeneratedTicket.tujuan}\n` +
+                                `• *Kursi:* ${lastGeneratedTicket.nomorKursi}\n` +
+                                `• *Tgl Berangkat:* ${tgl}\n` +
+                                `• *Total:* Rp ${formatNumber(lastGeneratedTicket.harga)}\n` +
+                                `• *Status:* ${lastGeneratedTicket.statusBooking.toUpperCase()}\n`;
 
-                let res = await fetchGAS(payload);
+                // 2. Buat File dari Blob gambar
+                const file = new File([blob], `Ticket_${lastGeneratedTicket.idBooking}.jpg`, { type: 'image/jpeg' });
 
-                if (res.status === "success" && res.imgUrl) {
-                    bukaWhatsAppDenganLink(lastGeneratedTicket, res.imgUrl);
+                // 3. Cek dukungan Web Share API (Fitur Native HP)
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    try {
+                        // Ini akan memunculkan menu "Share" bawaan HP (seperti saat kirim foto dari galeri)
+                        await navigator.share({
+                            title: 'E-Ticket Go Borneo',
+                            text: textPesan,
+                            files: [file]
+                        });
+                    } catch (err) {
+                        console.log('Share dibatalkan atau gagal:', err);
+                    }
                 } else {
-                    showAlert('Error', res.message || 'Gagal mengunggah gambar tiket ke server.', 'fa-xmark', true);
+                    // 4. FALLBACK: Jika dibuka di PC/Browser lama, langsung buka WA Web/App instan (tanpa gambar fisik)
+                    let waUrl = `https://wa.me/?text=${encodeURIComponent(textPesan)}`;
+                    let tempLink = document.createElement('a');
+                    tempLink.href = waUrl;
+                    tempLink.target = '_blank';
+                    document.body.appendChild(tempLink);
+                    tempLink.click();
+                    document.body.removeChild(tempLink);
                 }
 
-            } catch (e) {
-                showAlert('Error', 'Terjadi kesalahan saat memproses gambar tiket', 'fa-xmark', true);
-            } finally {
+                // Kembalikan tombol seperti semula
                 btn.innerHTML = originalText;
                 btn.disabled = false;
-            }
-        }, 100);
+            }, 'image/jpeg', 0.8);
+
+        } catch (e) {
+            showAlert('Error', 'Terjadi kesalahan saat memproses gambar tiket', 'fa-xmark', true);
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        }
     }
-
-    function bukaWhatsAppDenganLink(order, imgUrl) {
-        let tgl = formatTglIndo(order.tanggalBooking);
-        
-        // Susun Format Pesan WhatsApp & Link Gambar
-        let text = `*E-TICKET GO BORNEO*\n\n` +
-                   `Detail Pesanan Anda:\n` +
-                   `• *ID Booking:* ${order.idBooking}\n` +
-                   `• *Nama:* ${order.namaPenumpang}\n` +
-                   `• *Armada:* ${order.merkKendaraan}\n` +
-                   `• *Rute:* ${order.asal} - ${order.tujuan}\n` +
-                   `• *Kursi:* ${order.nomorKursi}\n` +
-                   `• *Tgl Berangkat:* ${tgl}\n` +
-                   `• *Total:* Rp ${formatNumber(order.harga)}\n` +
-                   `• *Status:* ${order.statusBooking.toUpperCase()}\n\n` +
-                   `*Lihat dan Unduh Gambar Tiket Anda di sini:*\n${imgUrl}\n\n` +
-                   `_Catatan: Tautan gambar tiket ini akan kedaluwarsa dan dihapus secara otomatis dari sistem dalam waktu 2 hari setelah jadwal keberangkatan._`;
-        
-        // Format wa.me yang diuji berhasil
-        let waUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
-
-        // Membuat tag link dinamis secara tersembunyi agar persis seperti klik pengguna manual
-        let tempLink = document.createElement('a');
-        tempLink.href = waUrl;
-        tempLink.target = '_blank'; // Gunakan tab baru agar intent OS lebih optimal menangkapnya
-        document.body.appendChild(tempLink);
-        
-        // Eksekusi klik otomatis
-        tempLink.click();
-        
-        // Bersihkan setelah klik
-        document.body.removeChild(tempLink);
-    }
-
     // ================= CONFIRM MODAL LOGIC =================
     function showConfirmModal(title, msg, iconClass, isDanger, callback) {
         document.getElementById('confirmTitle').innerText = title;
