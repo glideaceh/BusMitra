@@ -14,126 +14,9 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/glideaceh/BusMitra/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/glideaceh/BusMitra/stylemitra.css">
     <style>
-        /* CSS Untuk Menghapus Ikon Mata Default dari Edge/Chrome */
-        input[type="password"]::-ms-reveal,
-        input[type="password"]::-ms-clear { display: none !important; }
-        input[type="password"]::-webkit-contacts-auto-fill-button,
-        input[type="password"]::-webkit-credentials-auto-fill-button { visibility: hidden; display: none !important; pointer-events: none; position: absolute; right: 0; }
-        
-        /* CSS Info Waktu - Desktop */
-        .sub-info-container {
-            display: flex; align-items: center; gap: 8px; flex-direction: row; background: rgba(241, 245, 249, 0.9); padding: 6px 12px; border-radius: 12px; border: 1px solid #e2e8f0;
-        }
-        .sub-countdown {
-            font-size: 11px; font-weight: 800; color: #10b981; transition: color 0.3s ease;
-        }
-        .sub-countdown.near-expire { color: #ef4444 !important; }
-        
-        .btn-renew {
-            background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: none; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; box-shadow: 0 2px 5px rgba(245, 158, 11, 0.3);
-        }
-
-        /* CSS Info Waktu - Mobile */
-        .sub-card-mobile {
-            background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 20px; padding: 16px 20px; margin: 0 20px 20px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); animation: radar-pulse 3s infinite;
-        }
-        @keyframes radar-pulse {
-            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
-            50% { box-shadow: 0 0 0 15px rgba(16, 185, 129, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
-        }
-
-        @media (max-width: 768px) { #globalHeaderTimer { display: none !important; } }
-        @media (min-width: 769px) { #mobileHeaderTimer { display: none !important; } }
-
-        /* Perbaikan CSS Alert Toast Overlay (Anti-Tembus, Hilang Total & Pindah ke Tengah Atas) */
-        .alert-toast {
-            position: fixed;
-            top: 20px; left: 50%; z-index: 2147483647 !important; /* Max int untuk z-index tertinggi */
-            background: #fff;
-            border-radius: 20px; padding: 15px 25px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.15); display: flex; align-items: center; gap: 15px;
-            opacity: 0; visibility: hidden;
-            transform: translate(-50%, -50px) scale(0.95);
-            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55) !important;
-            pointer-events: none; min-width: 280px; max-width: auto;
-        }
-        .alert-toast.show {
-            opacity: 1;
-            visibility: visible; transform: translate(-50%, 0) scale(1);
-            pointer-events: auto;
-        }
-
-        /* CSS Overlay Langganan Berbayar */
-        .subscription-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(15px); z-index: 99999; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
-        }
-        .subscription-overlay.show { opacity: 1; pointer-events: auto; }
-        .subscription-box {
-            background: #fff; width: 90%; max-width: 400px; padding: 25px; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); text-align: center; max-height: 90vh; overflow-y: auto;
-        }
-        .subscription-box i.warn-icon { font-size: 50px; color: #f59e0b; margin-bottom: 15px; }
-        .subscription-box i.wait-icon { font-size: 50px; color: #3b82f6; margin-bottom: 15px; }
-        .subscription-box h2 { font-size: 20px; font-weight: 800; margin: 0 0 10px 0; color: var(--text-main); }
-        .subscription-box p { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; line-height: 1.5; }
-        
-        .qty-wrapper { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 20px; }
-        .qty-btn { background: #f1f5f9; border: none; width: 40px; height: 40px; border-radius: 10px; font-size: 16px; font-weight: 700; color: var(--primary); cursor: pointer; transition: 0.2s;}
-        .qty-btn:hover { background: #e2e8f0; }
-        .qty-val { font-size: 18px; font-weight: 800; min-width: 40px; }
-        .total-price { font-size: 22px; font-weight: 900; color: #10b981; margin-bottom: 20px; }
-        
-        /* Tombol Animasi Modern */
-        .btn-pay-animated {
-            background: linear-gradient(270deg, #10b981, #3b82f6, #10b981); background-size: 200% 200%; color: white; border: none; width: 100%; padding: 16px; border-radius: 14px; font-size: 16px; font-weight: 800; cursor: pointer; box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4); transition: all 0.3s ease; position: relative; overflow: hidden; animation: gradientMove 3s ease infinite;
-        }
-        .btn-pay-animated:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 15px 35px rgba(16, 185, 129, 0.5); }
-        .btn-pay-animated::after {
-            content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); transform: skewX(-20deg); animation: shineBtn 2.5s infinite;
-        }
-        @keyframes gradientMove { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-        @keyframes shineBtn { 0% { left: -100%; } 20% { left: 200%; } 100% { left: 200%; } }
-
-        /* Modern Rekening Card */
-        .rek-card-modern {
-            display: flex; align-items: center; gap: 15px; background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 15px; margin-bottom: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: transform 0.3s ease; text-align: left;
-        }
-        .rek-card-modern:hover { transform: translateY(-2px); border-color: #cbd5e1; }
-        .rek-logo { width: 50px; height: 50px; object-fit: contain; border-radius: 8px; background: #f8fafc; padding: 5px; }
-        .rek-info h4 { margin: 0 0 4px 0; color: var(--text-main); font-size: 15px; font-weight: 800; }
-        .rek-info p.norek { margin: 0 0 2px 0; font-size: 14px; font-weight: 700; color: var(--primary); letter-spacing: 1px;}
-        .rek-info p.name { margin: 0; font-size: 11px; color: #64748b; font-weight: 600; text-transform: uppercase;}
-
-        /* Modern Payment Button (for Submits) */
-        .btn-modern-pay {
-            background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; border: none; width: 100%; padding: 16px; border-radius: 16px; font-size: 15px; font-weight: 800; cursor: pointer; box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; overflow: hidden;
-        }
-        .btn-modern-pay:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(37, 99, 235, 0.5); }
-        .btn-modern-pay:active { transform: translateY(0); }
-        .btn-modern-pay::after {
-            content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent); transform: skewX(-20deg); animation: shine 3s infinite;
-        }
-        @keyframes shine { 0% { left: -100%; } 20% { left: 200%; } 100% { left: 200%; } }
-
-        /* CSS Riwayat Card Animasi Modern */
-        .riwayat-card {
-            background: #fff; border-radius: 16px; border: 1px solid #e2e8f0; padding: 16px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: all 0.3s ease; animation: slideUpFade 0.5s ease forwards; opacity: 0; transform: translateY(15px); cursor: pointer; position: relative; overflow: hidden;
-        }
-        .riwayat-card::before {
-            content: ""; position: absolute; left: 0; top: 0; height: 100%; width: 4px; background: #e2e8f0; transition: 0.3s;
-        }
-        .riwayat-card:hover { transform: translateY(-3px) scale(1.01); box-shadow: 0 10px 25px rgba(0,0,0,0.06); border-color: #cbd5e1; }
-        .riwayat-card:hover::before { background: var(--primary); }
-        @keyframes slideUpFade { to { opacity: 1; transform: translateY(0); } }
-        
-        .status-badge-modern { padding: 6px 12px; border-radius: 10px; font-size: 11px; font-weight: 800; letter-spacing: 0.5px; }
-        .status-badge-modern.pending { background: #fffbeb; color: #d97706; border: 1px solid #fde68a; }
-        .status-badge-modern.selesai { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
-        .status-badge-modern.ditolak { background: #fef2f2; color: #ef4444; border: 1px solid #fecaca; }
-        
-        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-muted); font-size: 11px; font-weight: 600; cursor: pointer; transition: 0.3s; position: relative; }
+       
     </style>
 </head>
 <body>
@@ -350,7 +233,7 @@
 
     <div id="pageOnboarding" class="page auth-page">
         <div class="auth-header" style="padding-bottom: 10px;">
-            <h1>Profil Armada</h1>
+             <h1>Profil Armada</h1>
         </div>
         <div class="auth-card" style="border-radius: 30px; padding-top: 30px;">
             <h2 class="auth-title">Profil Perusahaan</h2>
@@ -372,7 +255,7 @@
             <div class="auth-input-group"><label class="form-label">No. HP Kantor Resmi</label><input type="tel" id="compHp" placeholder="Nomor telepon operasional kantor"></div>
             <div class="auth-input-group"><label class="form-label">Alamat Kantor Pusat</label><textarea id="compAlamat" placeholder="Lokasi fisik kantor/loket utama"></textarea></div>
             <button class="btn-auth" onclick="handleCompanyRegister()" style="margin-top: 10px;">Aktifkan Dashboard</button>
-        </div>
+         </div>
     </div>
 
     <div id="pageMainApp" class="page">
@@ -391,7 +274,7 @@
 
             <div style="display: flex; align-items: center; gap: 10px; margin-left: auto;">
                 <div id="globalHeaderTimer" class="sub-info-container" style="display: none;">
-                    <span style="font-size: 11px; font-weight: 700; color: #64748b;">Masa Aktif:</span>
+                    <span id="subLabelDesk" style="font-size: 11px; font-weight: 700; color: #64748b;">Masa Aktif:</span>
                     <div id="subCountdownText" class="sub-countdown">Menghitung...</div>
                     <button class="btn-renew" onclick="showSubscriptionModal(false)">Perpanjang</button>
                 </div>
@@ -461,7 +344,7 @@
             <div class="container" style="position: relative; z-index: 10; padding-top: 40px;">
                 <div id="mobileHeaderTimer" class="sub-card-mobile" style="display: none;">
                     <div>
-                        <div style="font-size: 11px; font-weight: 700; color: #94a3b8; margin-bottom: 4px;">Masa Aktif:</div>
+                        <div id="subLabelMob" style="font-size: 11px; font-weight: 700; color: #94a3b8; margin-bottom: 4px;">Masa Aktif:</div>
                         <div id="mobileSubCountdownText" class="sub-countdown" style="font-size: 14px; color: #34d399;">Menghitung...</div>
                     </div>
                     <button class="btn-renew" style="padding: 8px 16px; font-size: 12px; border-radius: 8px; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);" onclick="showSubscriptionModal(false)">Perpanjang</button>
@@ -501,7 +384,7 @@
         </div>
 
         <div class="bottom-nav">
-            <div class="nav-item active" onclick="switchSubView('layanan')"><i class="fa-solid fa-bus-simple"></i>Layanan</div>
+             <div class="nav-item active" onclick="switchSubView('layanan')"><i class="fa-solid fa-bus-simple"></i>Layanan</div>
             <div class="nav-item" onclick="switchSubView('pesanan')"><i class="fa-solid fa-ticket"></i>Pesanan</div>
             <div class="nav-item" onclick="switchSubView('riwayat')"><i class="fa-solid fa-clock-rotate-left"></i>Riwayat</div>
             <div class="nav-item" onclick="switchSubView('profil')"><i class="fa-solid fa-user"></i>Profil</div>
@@ -539,7 +422,7 @@
                 <div style="flex: 1;">
                     <div class="input-group"><i class="fa-regular fa-circle-dot icon-left" style="color: var(--primary);"></i><input type="text" id="addAsal" placeholder="Kota Asal" readonly onclick="openRegionSelection('addAsal')"></div>
                     <div class="input-group"><i class="fa-solid fa-location-dot icon-left" style="color: #ef4444;"></i><input type="text" id="addTujuan" placeholder="Kota Tujuan" readonly onclick="openRegionSelection('addTujuan')"></div>
-                </div>
+                 </div>
             </div>
             <div style="display: flex; gap: 12px;">
                 <div class="input-group" style="flex: 1;"><label style="font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; display: block;">Berangkat</label><input type="text" id="addJamB" placeholder="00:00" readonly onclick="openTimeSelection('addJamB')" style="padding-left: 16px; text-align: center; font-weight: 700;"></div>
@@ -548,7 +431,7 @@
             <div style="height: 40px;"></div>
         </div>
     </div>
-
+    
     <div id="pageEditService" class="right-side-drawer container" style="padding: 0;">
         <div style="position: sticky; top: 0; background: rgba(248, 250, 252, 0.9); backdrop-filter: blur(10px); padding: 15px 20px; z-index: 50; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e2e8f0; margin: 0;">
             <div style="display: flex; align-items: center; gap: 15px;">
@@ -573,11 +456,10 @@
             <div style="height: 40px;"></div>
         </div>
     </div>
-
+    
     <div id="pageAksesKursi" class="right-side-drawer container" style="padding: 0; background: var(--bg-body);"><div style="position: sticky; top: 0; background: rgba(248, 250, 252, 0.9); backdrop-filter: blur(10px); padding: 15px 20px; z-index: 50; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e2e8f0; margin: 0;"><div style="display: flex; align-items: center; gap: 15px;"><button onclick="closeAksesKursi()" style="background: none; border: none; font-size: 20px; color: var(--text-muted); cursor: pointer;"><i class="fa-solid fa-arrow-left"></i></button><h2 style="font-size: 18px; margin: 0;">Manajemen Kursi</h2></div><button class="btn-primary" style="width: auto; padding: 10px 20px; font-size: 14px; border-radius: 12px; background: linear-gradient(135deg, #10b981, #059669);" onclick="promptManualBookingPayment()">Simpan Pesanan</button></div><div style="padding: 20px;"><div class="seat-calendar-trigger" onclick="openSeatCalendar()"><div class="info"><div class="icon"><i class="fa-solid fa-calendar-days"></i></div><div class="text"><span>Tanggal Booking</span><b id="displaySeatDate">-</b></div></div><i class="fa-solid fa-chevron-right" style="color: var(--text-muted);"></i></div><div class="seat-legend"><div class="legend-item"><div class="legend-box avail"></div> Tersedia</div><div class="legend-item"><div class="legend-box booked"></div> Terisi (App)</div><div class="legend-item"><div class="legend-box manual"></div> Pesanan Anda</div></div><div class="seat-grid-container"><div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;"><div style="font-size: 16px; font-weight: 800; color: var(--text-main);">Pilih Posisi Kursi</div><div class="steering-wheel" style="margin-bottom: 0; padding-right: 0;"><i class="fa-solid fa-dharmachakra"></i></div></div><div id="seatLoading" style="text-align:center; padding:20px; display:none;"><i class="fa-solid fa-spinner fa-spin fa-2x" style="color:var(--primary);"></i><p style="margin-top:10px; font-weight:600; font-size:12px; color:var(--text-muted);">Memuat kursi...</p></div><div id="seatGridContainer" class="seat-grid"></div></div><div style="height: 60px;"></div></div></div>
     
     <div id="modalEditPribadi" class="right-side-drawer container" style="padding: 0;"><div style="position: sticky; top: 0; background: rgba(248, 250, 252, 0.9); backdrop-filter: blur(10px); padding: 15px 20px; z-index: 50; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e2e8f0; margin: 0;"><div style="display: flex; align-items: center; gap: 15px;"><button onclick="closeEditPribadi()" style="background: none; border: none; font-size: 20px; color: var(--text-muted); cursor: pointer;"><i class="fa-solid fa-arrow-left"></i></button><h2 style="font-size: 18px; margin: 0;">Edit Profil Pribadi</h2></div><button class="btn-primary" style="width: auto; padding: 10px 20px; font-size: 14px; border-radius: 12px;" onclick="submitEditPribadi()">Simpan</button></div><div class="glass-panel" style="padding: 20px; margin: 20px;"><div class="input-group"><label style="font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; display: block;">Nama Lengkap</label><input type="text" id="epNama" style="padding-left: 16px;"></div><div class="input-group"><label style="font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; display: block;">Nomor HP</label><input type="tel" id="epHp" style="padding-left: 16px;"></div><div class="input-group"><label style="font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; display: block;">Alamat</label><textarea id="epAlamat" style="padding-left: 16px; padding-top:16px;"></textarea></div></div></div>
-
     <div id="modalEditPerusahaan" class="right-side-drawer container" style="padding: 0;"><div style="position: sticky; top: 0; background: rgba(248, 250, 252, 0.9); backdrop-filter: blur(10px); padding: 15px 20px; z-index: 50; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e2e8f0; margin: 0;"><div style="display: flex; align-items: center; gap: 15px;"><button onclick="closeEditPerusahaan()" style="background: none; border: none; font-size: 20px; color: var(--text-muted); cursor: pointer;"><i class="fa-solid fa-arrow-left"></i></button><h2 style="font-size: 18px; margin: 0;">Edit Perusahaan</h2></div><button class="btn-primary" style="width: auto; padding: 10px 20px; font-size: 14px; border-radius: 12px;" onclick="submitEditPerusahaan()">Simpan</button></div><div class="glass-panel" style="padding: 20px; margin: 20px;"><div class="image-upload-box" onclick="document.getElementById('editCompLogoInput').click()" style="margin-bottom: 20px;"><i class="fa-solid fa-camera"></i><p>Ubah Logo Perusahaan (1:1)</p><div style="text-align: center;"><img id="previewEditCompLogo" class="image-preview" src="" style="position: relative; width: 100px; height: 100px; object-fit: cover; border-radius: 12px; margin-top: 12px; display: none;"></div></div><input type="file" id="editCompLogoInput" accept="image/png, image/jpeg" style="display: none;" onchange="handleImageSelection(event, 'previewEditCompLogo', 1/1)"><div class="input-group"><label style="font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; display: block;">Nama Perusahaan</label><input type="text" id="ecNama" style="padding-left: 16px;"></div><div class="input-group"><label style="font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; display: block;">Nomor HP Kantor</label><input type="tel" id="ecHp" style="padding-left: 16px;"></div><div class="input-group"><label style="font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; display: block;">Deskripsi Singkat</label><textarea id="ecDesc" style="padding-left: 16px; padding-top:16px;"></textarea></div><div class="input-group"><label style="font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; display: block;">Alamat Garasi / Kantor</label><textarea id="ecAlamat" style="padding-left: 16px; padding-top:16px;"></textarea></div></div></div>
     
     <div id="regionModal" class="drawer-modal"><div class="drawer-content"><div class="drawer-handle"></div><div class="drawer-header"><h3 id="regionModalTitle">Pilih Kota</h3><button class="drawer-close" onclick="closeRegionModal()"><i class="fa-solid fa-xmark"></i></button></div><div class="search-box-modal" id="regionSearchBoxWrapper"><i class="fa-solid fa-magnifying-glass" style="color: var(--text-muted);"></i><div class="search-input-wrapper"><input type="text" id="regionSearchInput" placeholder="Cari kabupaten / kota..." onkeyup="filterRegions()" oninput="toggleClearBtn(this)"><i class="fa-solid fa-xmark clear-btn" onclick="clearSearch('regionSearchInput')"></i></div></div><ul class="modal-list" id="regionListContainer"></ul></div></div>
@@ -644,13 +526,16 @@
     let activeLayananIndex = -1; let currentCalYear = new Date().getFullYear(); let currentCalMonth = new Date().getMonth();
     let oldMerkForEdit = ""; let oldJamBForEdit = "";
     let html5QrCode = null; let orderChartInstance = null;
-    let customConfirmCallback = null; let currentPaymentOrderId = ""; let currentPesananFilter = 'all';
+    let customConfirmCallback = null; let currentPaymentOrderId = "";
+    let currentPesananFilter = 'all';
     let pesananPollingInterval = null; let seatPollingInterval = null; let subscriptionCheckInterval = null; let realtimeSyncInterval = null;
     let globalPaketList = []; let subMultiplier = 1; let serverTimeDelta = 0;
-    let selectedPaketIndex = -1; // New var for custom dropdown
+    let selectedPaketIndex = -1;
     
-    let _tempD = new Date(); let currentSeatDate = new Date(_tempD.getTime() - (_tempD.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
-    let selectedManualSeats = []; let currentSeatCalYear = new Date().getFullYear(); let currentSeatCalMonth = new Date().getMonth();
+    let _tempD = new Date();
+    let currentSeatDate = new Date(_tempD.getTime() - (_tempD.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
+    let selectedManualSeats = []; let currentSeatCalYear = new Date().getFullYear();
+    let currentSeatCalMonth = new Date().getMonth();
     let lastGeneratedTicket = null;
 
     // ================= FUNGSI BANTUAN TANGGAL =================
@@ -683,6 +568,7 @@
             if(isSubscriptionExpired()) { setTimeout(() => { showSubscriptionModal(true); }, 2000); }
         }
     };
+    
     function switchPage(pageId) {
         document.querySelectorAll('.page').forEach(p => { p.style.display = 'none'; p.classList.remove('active-page'); });
         let target = document.getElementById(pageId);
@@ -697,7 +583,7 @@
         if(tab === 'layanan' && items[0]) items[0].classList.add('active'); 
         if(tab === 'pesanan' && items[1]) items[1].classList.add('active');
         if(tab === 'riwayat' && items[2]) items[2].classList.add('active');
-        if(tab === 'profil' && items[3]) items[3].classList.add('active'); 
+        if(tab === 'profil' && items[3]) items[3].classList.add('active');
     }
 
     function switchSubView(tab) {
@@ -713,21 +599,35 @@
         document.getElementById('mobileHeaderTimer').style.display = 'none';
 
         if(tab === 'layanan') {
-            mainHeader.style.display = 'flex'; document.getElementById('subLayanan').style.display = 'block';
+            mainHeader.style.display = 'flex';
+            document.getElementById('subLayanan').style.display = 'block';
             if(document.querySelectorAll('.nav-item')[0]) document.querySelectorAll('.nav-item')[0].classList.add('active');
+            
+            // Tampilkan Header Timer di Web Mode (Sebelah kiri tombol icon search)
+            if(window.innerWidth > 768) {
+                document.getElementById('globalHeaderTimer').style.display = 'flex';
+            }
+            
             loadLayananData(); if(pesananPollingInterval) { clearInterval(pesananPollingInterval); pesananPollingInterval = null; }
         } else if(tab === 'pesanan') {
-            mainHeader.style.display = 'none'; document.getElementById('subPesanan').style.display = 'block';
+            mainHeader.style.display = 'none';
+            document.getElementById('subPesanan').style.display = 'block';
             if(document.querySelectorAll('.nav-item')[1]) document.querySelectorAll('.nav-item')[1].classList.add('active');
             loadPesananData(); if(!pesananPollingInterval) { pesananPollingInterval = setInterval(fetchPesananDataSilently, 5000); }
         } else if(tab === 'riwayat') {
-            mainHeader.style.display = 'none'; document.getElementById('subRiwayat').style.display = 'block';
+            mainHeader.style.display = 'none';
+            document.getElementById('subRiwayat').style.display = 'block';
             if(document.querySelectorAll('.nav-item')[2]) document.querySelectorAll('.nav-item')[2].classList.add('active');
             loadRiwayatData(); if(pesananPollingInterval) { clearInterval(pesananPollingInterval); pesananPollingInterval = null; }
         } else if(tab === 'profil') {
             mainHeader.style.display = 'flex';
             document.getElementById('headerBrandGroup').style.display = 'none'; document.getElementById('headerActionGroup').style.display = 'none'; document.getElementById('headerProfileTitle').style.display = 'block';
-            if(window.innerWidth > 768) document.getElementById('globalHeaderTimer').style.display = 'flex'; else document.getElementById('mobileHeaderTimer').style.display = 'flex';
+            
+            if(window.innerWidth > 768) {
+                document.getElementById('globalHeaderTimer').style.display = 'flex'; 
+            } else {
+                document.getElementById('mobileHeaderTimer').style.display = 'flex';
+            }
             
             let profSec = document.getElementById('subProfil'); profSec.style.display = 'block'; profSec.classList.remove('fade-in-smooth'); void profSec.offsetWidth; profSec.classList.add('fade-in-smooth');
             if(document.querySelectorAll('.nav-item')[3]) document.querySelectorAll('.nav-item')[3].classList.add('active');
@@ -751,12 +651,24 @@
         subscriptionCheckInterval = setInterval(() => {
             if(!SESSION_USER || !SESSION_USER.expiredAt) return;
             let timeLeft = new Date(SESSION_USER.expiredAt).getTime() - getServerAdjustedTime();
+            
+            let labelDesk = document.getElementById('subLabelDesk');
+            let labelMob = document.getElementById('subLabelMob');
             let dtDesk = document.getElementById('subCountdownText');
             let dtMob = document.getElementById('mobileSubCountdownText');
+            let btnsRenew = document.querySelectorAll('.btn-renew');
             
             if(timeLeft <= 0) {
+                if(SESSION_USER.isTrial) {
+                    if(labelDesk) labelDesk.innerText = "Trial Habis:";
+                    if(labelMob) labelMob.innerText = "Trial Habis:";
+                } else {
+                    if(labelDesk) labelDesk.innerText = "Masa Aktif:";
+                    if(labelMob) labelMob.innerText = "Masa Aktif:";
+                }
                 dtDesk.innerText = "Waktu Habis!"; dtMob.innerText = "Waktu Habis!";
                 dtDesk.className = "sub-countdown near-expire"; dtMob.className = "sub-countdown near-expire";
+                btnsRenew.forEach(btn => btn.innerText = SESSION_USER.isTrial ? "Berlangganan" : "Perpanjang");
                 if(!document.getElementById('subscriptionOverlay').classList.contains('show')) {
                     showSubscriptionModal(true);
                 }
@@ -772,6 +684,17 @@
                 
                 if (timeLeft < 86400000) { dtDesk.className = "sub-countdown near-expire"; dtMob.className = "sub-countdown near-expire"; } 
                 else { dtDesk.className = "sub-countdown"; dtMob.className = "sub-countdown"; }
+
+                // Perubahan text label & button sesuai mode Trial atau Reguler
+                if (SESSION_USER.isTrial) {
+                    if(labelDesk) labelDesk.innerText = "Trial Aktif:";
+                    if(labelMob) labelMob.innerText = "Trial Aktif:";
+                    btnsRenew.forEach(btn => btn.innerText = "Berlangganan");
+                } else {
+                    if(labelDesk) labelDesk.innerText = "Masa Aktif:";
+                    if(labelMob) labelMob.innerText = "Masa Aktif:";
+                    btnsRenew.forEach(btn => btn.innerText = "Perpanjang");
+                }
             }
         }, 1000);
     }
@@ -784,25 +707,22 @@
                 let res = await fetchGAS({action: "checkExpiry", username: SESSION_USER.username});
                 if(res.status === "success") {
                     let oldPending = SESSION_USER.hasPendingPayment;
-                    SESSION_USER.hasPendingPayment = res.hasPendingPayment; // update current status
+                    SESSION_USER.hasPendingPayment = res.hasPendingPayment;
                     
                     let oldExpiry = new Date(SESSION_USER.expiredAt).getTime();
                     let newExpiry = new Date(res.expiredAt).getTime();
 
-                    // Jika expiry bertambah (dikonfirmasi admin) ATAU status pending berubah
                     if (newExpiry > oldExpiry || oldPending !== res.hasPendingPayment) {
                         SESSION_USER.expiredAt = res.expiredAt;
                         localStorage.setItem('goBorneo_partner_session', JSON.stringify({ 
                             user: SESSION_USER, company: SESSION_COMPANY, paket: globalPaketList, rekening: globalRekeningList, serverTime: new Date(getServerAdjustedTime()).toISOString() 
                         }));
-                        
-                        // Perbarui modal jika sedang terbuka
                         if(document.getElementById('subscriptionOverlay').classList.contains('show')) {
                             if(!isSubscriptionExpired() && !SESSION_USER.hasPendingPayment) {
                                 closeSubscriptionModal();
                                 showAlert("Sukses", "Pembayaran Terkonfirmasi. Masa Aktif Diperbarui", "fa-check");
                             } else {
-                                showSubscriptionModal(isSubscriptionExpired()); // refresh modal UI
+                                showSubscriptionModal(isSubscriptionExpired());
                             }
                         } else if(!isSubscriptionExpired() && oldPending === true && res.hasPendingPayment === false) {
                              showAlert("Sukses", "Pembayaran Anda telah disetujui Admin", "fa-check");
@@ -823,20 +743,14 @@
         let descEl = document.getElementById('subModalDesc');
         let iconEl = document.getElementById('subModalIcon');
         let isExp = isSubscriptionExpired();
-
-        // 1. Tampilkan state "Menunggu Konfirmasi" jika ada request langganan yg tertunda
+        
         if (SESSION_USER.hasPendingPayment) {
             document.getElementById('subPaymentForm').style.display = 'none';
             document.getElementById('subPendingView').style.display = 'block';
             
-            if(isForced && isExp) {
-                 document.getElementById('btnKeluarPending').style.display = 'block';
-            } else {
-                 document.getElementById('btnKeluarPending').style.display = 'none';
-            }
-        } 
-        // 2. Tampilkan form pembelian normal
-        else {
+            if(isForced && isExp) { document.getElementById('btnKeluarPending').style.display = 'block'; }
+            else { document.getElementById('btnKeluarPending').style.display = 'none'; }
+        } else {
             document.getElementById('subPaymentForm').style.display = 'block';
             document.getElementById('subPendingView').style.display = 'none';
             
@@ -850,24 +764,30 @@
                     descEl.innerText = "Masa aktif Anda habis. Perpanjang untuk melanjutkan kelola armada.";
                 }
             } else {
-                iconEl.className = "fa-solid fa-shield-halved warn-icon";
-                iconEl.style.color = "#10b981";
-                titleEl.innerText = "Perpanjang Masa Aktif";
-                descEl.innerText = "Masa aktif Anda masih berlaku. Perpanjang lebih awal untuk mencegah gangguan layanan.";
+                if (SESSION_USER.isTrial) {
+                    iconEl.className = "fa-solid fa-box-open warn-icon";
+                    iconEl.style.color = "#3b82f6";
+                    titleEl.innerText = "Berlangganan Paket";
+                    descEl.innerText = "Ayo berlangganan. Beli paket segera, jangan tunggu masa Trial habis untuk menggunakan layanan Anda";
+                } else {
+                    iconEl.className = "fa-solid fa-shield-halved warn-icon";
+                    iconEl.style.color = "#10b981";
+                    titleEl.innerText = "Perpanjang Masa Aktif";
+                    descEl.innerText = "Masa aktif Anda masih berlaku. Perpanjang lebih awal untuk mencegah gangguan layanan.";
+                }
             }
 
-            // Render modern dropdown opsi paket
+            // Render modern dropdown opsi paket TANPA HARGA
             let optsHtml = '';
             if(globalPaketList && globalPaketList.length > 0) {
                 globalPaketList.forEach((paket, idx) => { 
-                    optsHtml += `<div class="custom-option" onclick="selectPaketValue(${idx}, '${paket.nama}')">${paket.nama} - ${formatRupiah(paket.harga)}</div>`; 
+                    optsHtml += `<div class="custom-option" onclick="selectPaketValue(${idx}, '${paket.nama}')">${paket.nama}</div>`; 
                 });
             } else { 
                 optsHtml = `<div class="custom-option">Tidak ada paket tersedia</div>`;
             }
             document.getElementById('paketSelectOptions').innerHTML = optsHtml;
-            
-            // Set default pilihan pertama
+
             if(selectedPaketIndex === -1 && globalPaketList.length > 0) {
                 selectPaketValue(0, globalPaketList[0].nama);
             } else {
@@ -911,8 +831,7 @@
     }
 
     function parseDurationToDays(paketName) {
-      let name = paketName.toLowerCase();
-      let num = parseInt(name.replace(/[^0-9]/g, '')) || 1;
+      let name = paketName.toLowerCase(); let num = parseInt(name.replace(/[^0-9]/g, '')) || 1;
       if (name.includes("bulan")) return num * 30; if (name.includes("hari")) return num * 1;
       if (name.includes("minggu")) return num * 7; if (name.includes("tahun")) return num * 365;
       return 30;
@@ -939,7 +858,6 @@
         }
         document.getElementById('rekeningListContainer').innerHTML = htmlRek;
         
-        // Tampilkan Summary Pemesanan
         let selectedPaket = globalPaketList[selectedPaketIndex];
         let totalPaid = selectedPaket.harga * subMultiplier;
         let totalBulan = Math.round(parseDurationToDays(selectedPaket.nama) / 30 * subMultiplier);
@@ -998,20 +916,19 @@
                 let res = await fetchGAS(payload);
                 showLoading(false);
                 if(res.status === "success") {
-                    SESSION_USER.hasPendingPayment = true; // Langsung ubah ke state pending
+                    SESSION_USER.hasPendingPayment = true;
                     closePaymentDrawer();
                     showAlert("Sukses", res.message, "fa-circle-check");
-                    // Simpan local state
                     localStorage.setItem('goBorneo_partner_session', JSON.stringify({ 
                         user: SESSION_USER, company: SESSION_COMPANY, paket: globalPaketList, rekening: globalRekeningList, serverTime: new Date(getServerAdjustedTime()).toISOString() 
                     }));
-                    // Perbarui tampilan
                     showSubscriptionModal(isSubscriptionExpired());
                 } else { 
                     showAlert("Gagal", res.message, "fa-circle-xmark", true);
                 }
             } catch(err) {
-               showLoading(false); showAlert("Error Koneksi", err.message, "fa-wifi", true);
+               showLoading(false);
+               showAlert("Error Koneksi", err.message, "fa-wifi", true);
             } finally { btn.innerHTML = oriTxt; btn.disabled = false; }
         };
         reader.readAsDataURL(fileInput.files[0]);
@@ -1053,12 +970,11 @@
                     <p style="margin:0 0 5px 0; font-size:14px; font-weight:800; color:var(--text-main);">Pembelian paket layanan selama ${item.bulan} bulan</p>
                     <div style="display:flex; justify-content:space-between; align-items:center;">
                         <span style="font-size:12px; color:var(--text-muted);"><i class="fa-regular fa-calendar"></i> ${tglStr}</span>
-                        <span style="font-size:13px; font-weight:800; color:var(--primary);">${formatRupiah(item.harga)}</span>
                     </div>
                 </div>
-                <div style="margin-left: 15px; text-align:right;">
-                    <div class="status-badge-modern ${badgeClass}">${item.status.toUpperCase()}</div>
-                    <div style="font-size:10px; color:var(--text-muted); margin-top:6px; text-decoration:underline;">Lihat Struk</div>
+                <div style="margin-left: 15px; text-align:right; display:flex; flex-direction:column; align-items:flex-end;">
+                    <div class="status-badge-modern ${badgeClass}" style="font-size:10px; padding:4px 8px; margin-bottom:6px;">${item.status.toUpperCase()}</div>
+                    <span style="font-size:15px; font-weight:900; color:var(--primary);">${formatRupiah(item.harga)}</span>
                 </div>
             </div>`;
         });
@@ -1076,14 +992,20 @@
 
     function openRiwayatImageModal(imgUrl) {
         if(!imgUrl) { return showAlert("Info", "Struk gambar tidak tersedia.", "fa-circle-exclamation", true); }
-        document.getElementById('riwayatImgPreview').src = imgUrl;
+        let directUrl = imgUrl;
+        // Fallback untuk convert Drive viewer link menjadi direct download link supaya tampil di <img> tag
+        if (imgUrl.includes('drive.google.com/file/d/')) {
+            let id = imgUrl.split('/file/d/')[1].split('/')[0];
+            directUrl = "https://drive.google.com/uc?export=view&id=" + id;
+        }
+        document.getElementById('riwayatImgPreview').src = directUrl;
         document.getElementById('riwayatImageModal').classList.add('open');
         pushBackButtonHandler('riwayatImageModal');
     }
     
     function closeRiwayatImageModal(fromPopState = false) { 
         document.getElementById('riwayatImageModal').classList.remove('open'); 
-        if (!fromPopState) popBackButtonHandler(); 
+        if (!fromPopState) popBackButtonHandler();
     }
 
     // ================= SISA FUNGSI BAWAAN (TANPA UBAH) =================
@@ -1115,24 +1037,33 @@
         let container = document.getElementById('seatGridContainer'); if(container) container.innerHTML = gridHtml;
     }
     function toggleSeatSelection(seatNo) { let index = selectedManualSeats.indexOf(seatNo); if(index > -1) selectedManualSeats.splice(index, 1);
-        else selectedManualSeats.push(seatNo); renderSeatLayout(); }
+        else selectedManualSeats.push(seatNo); renderSeatLayout();
+    }
 
-    function openSeatCalendar() { let parsed = new Date(currentSeatDate); if(!isNaN(parsed.getTime())) { currentSeatCalYear = parsed.getFullYear(); currentSeatCalMonth = parsed.getMonth(); } renderSeatCalendar(); document.getElementById('seatCalendarModal').classList.add('open'); pushBackButtonHandler('seatCalendar'); }
-    function closeSeatCalendar(fromPopState = false) { document.getElementById('seatCalendarModal').classList.remove('open'); if (!fromPopState) popBackButtonHandler(); }
+    function openSeatCalendar() { let parsed = new Date(currentSeatDate); if(!isNaN(parsed.getTime())) { currentSeatCalYear = parsed.getFullYear(); currentSeatCalMonth = parsed.getMonth();
+    } renderSeatCalendar(); document.getElementById('seatCalendarModal').classList.add('open'); pushBackButtonHandler('seatCalendar'); }
+    function closeSeatCalendar(fromPopState = false) { document.getElementById('seatCalendarModal').classList.remove('open'); if (!fromPopState) popBackButtonHandler();
+    }
     function renderSeatCalendar() { 
         const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
         document.getElementById('seatCalMonthYearTitle').innerText = `${monthNames[currentSeatCalMonth]} ${currentSeatCalYear}`; let firstDay = new Date(currentSeatCalYear, currentSeatCalMonth, 1).getDay(); let daysInMonth = new Date(currentSeatCalYear, currentSeatCalMonth + 1, 0).getDate();
         let gridHtml = `<div style="font-size:11px; font-weight:700; color:#94a3b8;">Min</div><div style="font-size:11px; font-weight:700; color:#94a3b8;">Sen</div><div style="font-size:11px; font-weight:700; color:#94a3b8;">Sel</div><div style="font-size:11px; font-weight:700; color:#94a3b8;">Rab</div><div style="font-size:11px; font-weight:700; color:#94a3b8;">Kam</div><div style="font-size:11px; font-weight:700; color:#94a3b8;">Jum</div><div style="font-size:11px; font-weight:700; color:#94a3b8;">Sab</div>`;
         for (let i = 0; i < firstDay; i++) gridHtml += `<div></div>`;
         for (let day = 1; day <= daysInMonth; day++) { let mStr = (currentSeatCalMonth + 1).toString().padStart(2, '0');
-        let dStr = day.toString().padStart(2, '0'); let fullDateStr = `${currentSeatCalYear}-${mStr}-${dStr}`; let isSelected = (fullDateStr === currentSeatDate); let style = isSelected ? "background: var(--primary); color: #fff; box-shadow: 0 4px 10px rgba(2,132,199,0.3);" : "background: #f1f5f9; color: var(--text-main);";
+        let dStr = day.toString().padStart(2, '0'); let fullDateStr = `${currentSeatCalYear}-${mStr}-${dStr}`; let isSelected = (fullDateStr === currentSeatDate); let style = isSelected ?
+        "background: var(--primary); color: #fff; box-shadow: 0 4px 10px rgba(2,132,199,0.3);" : "background: #f1f5f9; color: var(--text-main);";
         gridHtml += `<div onclick="selectSeatDate('${fullDateStr}')" style="width:38px; height:38px; border-radius:12px; display:flex; align-items:center; justify-content:center; margin:auto; cursor:pointer; font-size:13px; font-weight:700; transition:0.2s; ${style}">${day}</div>`; } document.getElementById('seatCalendarGrid').innerHTML = gridHtml;
     }
-    function changeSeatCalendarMonth(dir) { currentSeatCalMonth += dir; if (currentSeatCalMonth > 11) { currentSeatCalMonth = 0; currentSeatCalYear++; } else if (currentSeatCalMonth < 0) { currentSeatCalMonth = 11; currentSeatCalYear--; } renderSeatCalendar(); }
-    function selectSeatDate(dateStr) { currentSeatDate = dateStr; selectedManualSeats = []; document.getElementById('displaySeatDate').innerText = formatTglIndo(dateStr); renderSeatLayout(); closeSeatCalendar(); }
+    function changeSeatCalendarMonth(dir) { currentSeatCalMonth += dir; if (currentSeatCalMonth > 11) { currentSeatCalMonth = 0; currentSeatCalYear++;
+    } else if (currentSeatCalMonth < 0) { currentSeatCalMonth = 11; currentSeatCalYear--; } renderSeatCalendar();
+    }
+    function selectSeatDate(dateStr) { currentSeatDate = dateStr; selectedManualSeats = []; document.getElementById('displaySeatDate').innerText = formatTglIndo(dateStr); renderSeatLayout(); closeSeatCalendar();
+    }
     
-    function promptManualBookingPayment() { if(selectedManualSeats.length === 0) { return showAlert("Perhatian", "Pilih minimal 1 kursi.", "fa-triangle-exclamation", true); } document.getElementById('manualInputNamaPenumpang').value = ""; document.getElementById('manualInputNoHp').value = ""; document.getElementById('manualBookingPaymentModal').classList.add('show'); pushBackButtonHandler('manualBookingPaymentModal'); }
-    function closeManualPaymentModal(fromPopState = false) { document.getElementById('manualBookingPaymentModal').classList.remove('show'); if(!fromPopState) popBackButtonHandler(); }
+    function promptManualBookingPayment() { if(selectedManualSeats.length === 0) { return showAlert("Perhatian", "Pilih minimal 1 kursi.", "fa-triangle-exclamation", true);
+    } document.getElementById('manualInputNamaPenumpang').value = ""; document.getElementById('manualInputNoHp').value = ""; document.getElementById('manualBookingPaymentModal').classList.add('show'); pushBackButtonHandler('manualBookingPaymentModal'); }
+    function closeManualPaymentModal(fromPopState = false) { document.getElementById('manualBookingPaymentModal').classList.remove('show');
+    if(!fromPopState) popBackButtonHandler(); }
     
     async function executeManualBooking() { 
         const activeBus = globalLayananList[activeLayananIndex];
@@ -1144,177 +1075,425 @@
             let res = await fetchGAS(payload); 
             if(res.status === "success" || res.status === 200 || !res.error) { 
                 await fetchPesananDataSilently();
-                let generatedId = res.idBooking; let newOrder; if(generatedId) { newOrder = globalPesananList.find(o => o.idBooking === generatedId); } if(!newOrder) { let seatsStr = selectedManualSeats.join(", "); newOrder = globalPesananList.find(o => o.merkKendaraan === payload.merkKendaraan && o.nomorKursi === seatsStr && o.namaPenumpang === payload.namaPenumpang); } showLoading(false);
-                if(newOrder) { selectedManualSeats = []; renderSeatLayout(); closeManualPaymentModal(); showAlert("Sukses", "Pesanan berhasil diproses.", "fa-check"); lastGeneratedTicket = newOrder; showManualTicketResult(newOrder); } else { newOrder = { idBooking: generatedId || "MENUNGGU_SINKRONISASI", userId: "MANUAL", role: "Mitra", merkKendaraan: payload.merkKendaraan, tanggalBooking: payload.tanggalBooking, nomorKursi: payload.nomorKursi, namaPenumpang: payload.namaPenumpang, namaPerusahaan: payload.namaPerusahaan, noHp: payload.noHp, harga: payload.harga, asal: payload.asal, tujuan: payload.tujuan, statusBooking: payload.statusBooking, isManualLocal: true };
-                globalPesananList.push(newOrder); selectedManualSeats = []; renderSeatLayout(); closeManualPaymentModal(); showAlert("Sukses", "Pesanan diproses, memuat sinkronisasi.", "fa-check"); lastGeneratedTicket = newOrder; showManualTicketResult(newOrder); } 
-            } else { showLoading(false); showAlert("Gagal", res.message, "fa-xmark", true); } 
-        } catch(e) { showLoading(false); showAlert("Error Koneksi", e.message, "fa-wifi", true); } 
+                let generatedId = res.idBooking; let newOrder; if(generatedId) { newOrder = globalPesananList.find(o => o.idBooking === generatedId);
+                } if(!newOrder) { let seatsStr = selectedManualSeats.join(", "); newOrder = globalPesananList.find(o => o.merkKendaraan === payload.merkKendaraan && o.nomorKursi === seatsStr && o.namaPenumpang === payload.namaPenumpang);
+                } showLoading(false);
+                if(newOrder) { selectedManualSeats = []; renderSeatLayout(); closeManualPaymentModal(); showAlert("Sukses", "Pesanan berhasil diproses.", "fa-check"); lastGeneratedTicket = newOrder; showManualTicketResult(newOrder);
+                } else { newOrder = { idBooking: generatedId || "MENUNGGU_SINKRONISASI", userId: "MANUAL", role: "Mitra", merkKendaraan: payload.merkKendaraan, tanggalBooking: payload.tanggalBooking, nomorKursi: payload.nomorKursi, namaPenumpang: payload.namaPenumpang, namaPerusahaan: payload.namaPerusahaan, noHp: payload.noHp, harga: payload.harga, asal: payload.asal, tujuan: payload.tujuan, statusBooking: payload.statusBooking, isManualLocal: true };
+                globalPesananList.push(newOrder); selectedManualSeats = []; renderSeatLayout(); closeManualPaymentModal(); showAlert("Sukses", "Pesanan diproses, memuat sinkronisasi.", "fa-check"); lastGeneratedTicket = newOrder; showManualTicketResult(newOrder);
+                } 
+            } else { showLoading(false);
+            showAlert("Gagal", res.message, "fa-xmark", true); } 
+        } catch(e) { showLoading(false);
+        showAlert("Error Koneksi", e.message, "fa-wifi", true); } 
     }
 
-    function openTicketDetail(idBooking) { let targetedOrder = globalPesananList.find(o => o.idBooking === idBooking); if(targetedOrder) { lastGeneratedTicket = targetedOrder; showManualTicketResult(targetedOrder); } }
+    function openTicketDetail(idBooking) { let targetedOrder = globalPesananList.find(o => o.idBooking === idBooking);
+    if(targetedOrder) { lastGeneratedTicket = targetedOrder; showManualTicketResult(targetedOrder); } }
     
-    function generateBoardingPassHTML(order) { let tgl = formatTglIndo(order.tanggalBooking); return `<div class="boarding-pass-container" id="printableTicketCard"><div class="bp-main"><div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #0284c7; padding-bottom:10px; margin-bottom:15px;"><h2 style="margin:0; color:#0284c7; font-weight:800; font-size:20px;">E-TICKET</h2><span style="font-weight:700; font-size:14px; color:#475569;">${SESSION_COMPANY.namaPerusahaan}</span></div><div style="display:flex; justify-content:space-between; margin-bottom:15px;"><div><p style="margin:0; font-size:10px; color:#64748b; font-weight:700; text-transform:uppercase;">Nama Penumpang</p><p style="margin:0; font-size:16px; font-weight:800; text-transform:capitalize;">${order.namaPenumpang}</p></div><div style="text-align:right;"><p style="margin:0; font-size:10px; color:#64748b; font-weight:700; text-transform:uppercase;">ID Booking</p><p style="margin:0; font-size:14px; font-weight:800;">${order.idBooking}</p></div></div><div style="display:flex; justify-content:space-between; align-items:center; background:#ffffff; border: 1px solid #e2e8f0; padding:10px; border-radius:8px; margin-bottom:15px;"><div style="text-align:center;"><p style="margin:0; font-size:16px; font-weight:800; color:#0284c7;">${order.asal}</p></div><i class="fa-solid fa-arrow-right" style="color:#94a3b8;"></i><div style="text-align:center;"><p style="margin:0; font-size:16px; font-weight:800; color:#0284c7;">${order.tujuan}</p></div></div><div style="display:flex; justify-content:space-between;"><div><p style="margin:0; font-size:10px; color:#64748b; font-weight:700; text-transform:uppercase;">Tanggal Berangkat</p><p style="margin:0; font-size:13px; font-weight:700;">${tgl}</p></div><div><p style="margin:0; font-size:10px; color:#64748b; font-weight:700; text-transform:uppercase;">Armada</p><p style="margin:0; font-size:13px; font-weight:700;">${order.merkKendaraan}</p></div><div style="text-align:right;"><p style="margin:0; font-size:10px; color:#64748b; font-weight:700; text-transform:uppercase;">Status / Harga</p><p style="margin:0; font-size:13px; font-weight:800; color:${order.statusBooking.toLowerCase()==='lunas'?'#16a34a':'#dc2626'};">${order.statusBooking.toUpperCase()} / Rp ${formatNumber(order.harga)}</p></div></div></div><div class="bp-stub"><p style="margin:0 0 5px 0; font-size:10px; color:#64748b; font-weight:700; text-transform:uppercase;">Kursi</p><p style="margin:0 0 15px 0; font-size:24px; font-weight:900; color:#0f172a;">${order.nomorKursi}</p><div id="ticketQrCode"></div><p style="margin:8px 0 0 0; font-size:9px; color:#94a3b8; font-weight:600; text-align:center;">Scan untuk<br>verifikasi tiket</p></div></div>`; }
+    function generateBoardingPassHTML(order) { let tgl = formatTglIndo(order.tanggalBooking);
+    return `<div class="boarding-pass-container" id="printableTicketCard"><div class="bp-main"><div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #0284c7; padding-bottom:10px; margin-bottom:15px;"><h2 style="margin:0; color:#0284c7; font-weight:800; font-size:20px;">E-TICKET</h2><span style="font-weight:700; font-size:14px; color:#475569;">${SESSION_COMPANY.namaPerusahaan}</span></div><div style="display:flex; justify-content:space-between; margin-bottom:15px;"><div><p style="margin:0; font-size:10px; color:#64748b; font-weight:700; text-transform:uppercase;">Nama Penumpang</p><p style="margin:0; font-size:16px; font-weight:800; text-transform:capitalize;">${order.namaPenumpang}</p></div><div style="text-align:right;"><p style="margin:0; font-size:10px; color:#64748b; font-weight:700; text-transform:uppercase;">ID Booking</p><p style="margin:0; font-size:14px; font-weight:800;">${order.idBooking}</p></div></div><div style="display:flex; justify-content:space-between; align-items:center; background:#ffffff; border: 1px solid #e2e8f0; padding:10px; border-radius:8px; margin-bottom:15px;"><div style="text-align:center;"><p style="margin:0; font-size:16px; font-weight:800; color:#0284c7;">${order.asal}</p></div><i class="fa-solid fa-arrow-right" style="color:#94a3b8;"></i><div style="text-align:center;"><p style="margin:0; font-size:16px; font-weight:800; color:#0284c7;">${order.tujuan}</p></div></div><div style="display:flex; justify-content:space-between;"><div><p style="margin:0; font-size:10px; color:#64748b; font-weight:700; text-transform:uppercase;">Tanggal Berangkat</p><p style="margin:0; font-size:13px; font-weight:700;">${tgl}</p></div><div><p style="margin:0; font-size:10px; color:#64748b; font-weight:700; text-transform:uppercase;">Armada</p><p style="margin:0; font-size:13px; font-weight:700;">${order.merkKendaraan}</p></div><div style="text-align:right;"><p style="margin:0; font-size:10px; color:#64748b; font-weight:700; text-transform:uppercase;">Status / Harga</p><p style="margin:0; font-size:13px; font-weight:800; color:${order.statusBooking.toLowerCase()==='lunas'?'#16a34a':'#dc2626'};">${order.statusBooking.toUpperCase()} / Rp ${formatNumber(order.harga)}</p></div></div></div><div class="bp-stub"><p style="margin:0 0 5px 0; font-size:10px; color:#64748b; font-weight:700; text-transform:uppercase;">Kursi</p><p style="margin:0 0 15px 0; font-size:24px; font-weight:900; color:#0f172a;">${order.nomorKursi}</p><div id="ticketQrCode"></div><p style="margin:8px 0 0 0; font-size:9px; color:#94a3b8; font-weight:600; text-align:center;">Scan untuk<br>verifikasi tiket</p></div></div>`; }
     
     function showManualTicketResult(order) { document.getElementById('manualTicketContent').innerHTML = generateBoardingPassHTML(order); document.getElementById('manualTicketResultModal').classList.add('open'); pushBackButtonHandler('manualTicketResultModal'); setTimeout(() => { document.getElementById('ticketQrCode').innerHTML = ""; new QRCode(document.getElementById("ticketQrCode"), { text: order.idBooking, width: 80, height: 80, colorDark : "#000000", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.M }); if (!order.imgUrl) { setTimeout(() => { autoUploadTicket(order); }, 150); } }, 150); }
     
     async function autoUploadTicket(order) { const btnWa = document.getElementById('btnShareWa'); const originalText = '<i class="fa-brands fa-whatsapp"></i> Bagikan (WA)'; btnWa.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyiapkan Link...'; btnWa.disabled = true; 
-        try { const ticketElement = document.getElementById('printableTicketCard'); const canvas = await html2canvas(ticketElement, { scale: 1.5, useCORS: true }); const base64Image = canvas.toDataURL("image/jpeg", 0.7); const payload = { action: "uploadTicket", base64: base64Image, filename: "Ticket_" + order.idBooking, tanggalBooking: order.tanggalBooking, idBooking: order.idBooking }; let res = await fetchGAS(payload); if (res.status === "success" && res.imgUrl) { order.imgUrl = res.imgUrl; if (lastGeneratedTicket && lastGeneratedTicket.idBooking === order.idBooking) { lastGeneratedTicket.imgUrl = res.imgUrl; } let idx = globalPesananList.findIndex(o => o.idBooking === order.idBooking); if(idx > -1) globalPesananList[idx].imgUrl = res.imgUrl; } else { showAlert('Error', res.message || 'Gagal unggah.', 'fa-xmark', true); } } catch (e) { console.error("Gagal Render", e); } finally { btnWa.innerHTML = originalText; btnWa.disabled = false; } }
+        try { const ticketElement = document.getElementById('printableTicketCard');
+        const canvas = await html2canvas(ticketElement, { scale: 1.5, useCORS: true }); const base64Image = canvas.toDataURL("image/jpeg", 0.7);
+        const payload = { action: "uploadTicket", base64: base64Image, filename: "Ticket_" + order.idBooking, tanggalBooking: order.tanggalBooking, idBooking: order.idBooking };
+        let res = await fetchGAS(payload); if (res.status === "success" && res.imgUrl) { order.imgUrl = res.imgUrl;
+        if (lastGeneratedTicket && lastGeneratedTicket.idBooking === order.idBooking) { lastGeneratedTicket.imgUrl = res.imgUrl; } let idx = globalPesananList.findIndex(o => o.idBooking === order.idBooking);
+        if(idx > -1) globalPesananList[idx].imgUrl = res.imgUrl; } else { showAlert('Error', res.message || 'Gagal unggah.', 'fa-xmark', true);
+        } } catch (e) { console.error("Gagal Render", e); } finally { btnWa.innerHTML = originalText; btnWa.disabled = false;
+        } }
     
-    function closeManualTicketModal(fromPopState = false) { document.getElementById('manualTicketResultModal').classList.remove('open'); if(!fromPopState) popBackButtonHandler(); }
+    function closeManualTicketModal(fromPopState = false) { document.getElementById('manualTicketResultModal').classList.remove('open'); if(!fromPopState) popBackButtonHandler();
+    }
     function printManualTicket() { window.print(); }
-    function shareWhatsAppManualTicket() { if(!lastGeneratedTicket) return; if(!lastGeneratedTicket.imgUrl) { showAlert('Mohon Tunggu', 'Link gambar diproses.', 'fa-clock', true); return; } bukaWhatsAppDenganLink(lastGeneratedTicket, lastGeneratedTicket.imgUrl); }
-    function bukaWhatsAppDenganLink(order, imgUrl) { let tgl = formatTglIndo(order.tanggalBooking); let text = `*E-TICKET GO BORNEO*\n\nDetail:\n• *ID:* ${order.idBooking}\n• *Nama:* ${order.namaPenumpang}\n• *Armada:* ${order.merkKendaraan}\n• *Rute:* ${order.asal} - ${order.tujuan}\n• *Kursi:* ${order.nomorKursi}\n• *Tgl:* ${tgl}\n• *Total:* Rp ${formatNumber(order.harga)}\n• *Status:* ${order.statusBooking.toUpperCase()}\n\n*Unduh Tiket Anda:*\n${imgUrl}`; let waUrlScheme = `whatsapp://send?text=${encodeURIComponent(text)}`; let waUrlWeb = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`; window.location.href = waUrlScheme; setTimeout(() => { window.open(waUrlWeb, '_blank'); }, 800); }
+    function shareWhatsAppManualTicket() { if(!lastGeneratedTicket) return;
+    if(!lastGeneratedTicket.imgUrl) { showAlert('Mohon Tunggu', 'Link gambar diproses.', 'fa-clock', true); return; } bukaWhatsAppDenganLink(lastGeneratedTicket, lastGeneratedTicket.imgUrl);
+    }
+    function bukaWhatsAppDenganLink(order, imgUrl) { let tgl = formatTglIndo(order.tanggalBooking);
+    let text = `*E-TICKET GO BORNEO*\n\nDetail:\n• *ID:* ${order.idBooking}\n• *Nama:* ${order.namaPenumpang}\n• *Armada:* ${order.merkKendaraan}\n• *Rute:* ${order.asal} - ${order.tujuan}\n• *Kursi:* ${order.nomorKursi}\n• *Tgl:* ${tgl}\n• *Total:* Rp ${formatNumber(order.harga)}\n• *Status:* ${order.statusBooking.toUpperCase()}\n\n*Unduh Tiket Anda:*\n${imgUrl}`;
+    let waUrlScheme = `whatsapp://send?text=${encodeURIComponent(text)}`; let waUrlWeb = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`; window.location.href = waUrlScheme; setTimeout(() => { window.open(waUrlWeb, '_blank'); }, 800);
+    }
 
-    function showConfirmModal(title, msg, iconClass, isDanger, callback) { document.getElementById('confirmTitle').innerText = title; document.getElementById('confirmMessage').innerText = msg; let iconEl = document.getElementById('confirmIcon'); iconEl.className = `confirm-icon fa-solid ${iconClass}`; iconEl.style.color = isDanger ? "#ef4444" : "#f59e0b"; let btnYes = document.getElementById('confirmYesBtn'); btnYes.innerText = isDanger ? "Hapus" : "Keluar Akun"; btnYes.className = isDanger ? "confirm-btn btn-danger-confirm" : "confirm-btn btn-logout-confirm"; customConfirmCallback = callback; document.getElementById('customConfirmModal').classList.add('show'); pushBackButtonHandler('confirmModal'); }
-    function closeConfirmModal(fromPopState = false) { document.getElementById('customConfirmModal').classList.remove('show'); customConfirmCallback = null; if (!fromPopState) popBackButtonHandler(); }
-    function executeConfirmAction() { if(customConfirmCallback) customConfirmCallback(); closeConfirmModal(); }
-    function handleDeleteClick() { if(activeLayananIndex === -1) return; const item = globalLayananList[activeLayananIndex]; showConfirmModal("Konfirmasi Hapus", `Apakah Anda yakin ingin menghapus armada ${item.merk}?`, "fa-trash", true, executeDeleteService); }
-    function handleLogoutClick() { showConfirmModal("Keluar Akun", "Sesi Anda akan diakhiri. Apakah yakin keluar?", "fa-arrow-right-from-bracket", false, executeLogout); }
+    function showConfirmModal(title, msg, iconClass, isDanger, callback) { document.getElementById('confirmTitle').innerText = title; document.getElementById('confirmMessage').innerText = msg;
+    let iconEl = document.getElementById('confirmIcon'); iconEl.className = `confirm-icon fa-solid ${iconClass}`; iconEl.style.color = isDanger ? "#ef4444" : "#f59e0b"; let btnYes = document.getElementById('confirmYesBtn');
+    btnYes.innerText = isDanger ? "Hapus" : "Keluar Akun"; btnYes.className = isDanger ? "confirm-btn btn-danger-confirm" : "confirm-btn btn-logout-confirm"; customConfirmCallback = callback;
+    document.getElementById('customConfirmModal').classList.add('show'); pushBackButtonHandler('confirmModal'); }
+    function closeConfirmModal(fromPopState = false) { document.getElementById('customConfirmModal').classList.remove('show'); customConfirmCallback = null; if (!fromPopState) popBackButtonHandler();
+    }
+    function executeConfirmAction() { if(customConfirmCallback) customConfirmCallback(); closeConfirmModal();
+    }
+    function handleDeleteClick() { if(activeLayananIndex === -1) return; const item = globalLayananList[activeLayananIndex];
+    showConfirmModal("Konfirmasi Hapus", `Apakah Anda yakin ingin menghapus armada ${item.merk}?`, "fa-trash", true, executeDeleteService);
+    }
+    function handleLogoutClick() { showConfirmModal("Keluar Akun", "Sesi Anda akan diakhiri. Apakah yakin keluar?", "fa-arrow-right-from-bracket", false, executeLogout);
+    }
 
-    function openPaymentModal(idBooking) { currentPaymentOrderId = idBooking; document.getElementById('paymentConfirmModal').classList.add('show'); pushBackButtonHandler('paymentModal'); }
-    function closePaymentModal(fromPopState = false) { document.getElementById('paymentConfirmModal').classList.remove('show'); currentPaymentOrderId = ""; if (!fromPopState) popBackButtonHandler(); }
-    function handleSudahBayarClick() { let btn = document.getElementById('btnSudahBayar'); let originalText = btn.innerText; btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Memproses...`; btn.disabled = true; btn.style.opacity = '0.7'; setTimeout(() => { btn.innerHTML = originalText; btn.disabled = false; btn.style.opacity = '1'; executePaymentConfirm(); }, 3000); }
-    async function executePaymentConfirm() { if(!currentPaymentOrderId || !SESSION_COMPANY) return; let idToConfirm = currentPaymentOrderId; closePaymentModal(); let suffixes = ["", "-popup"]; suffixes.forEach(suffix => { let btnConfirm = document.getElementById(`btn-confirm-${idToConfirm}${suffix}`); let badgeEl = document.getElementById(`badge-${idToConfirm}${suffix}`); if(btnConfirm) btnConfirm.style.display = 'none'; if(badgeEl) { badgeEl.className = 'status-ribbon-bottom-left aktif'; badgeEl.innerText = 'LUNAS'; } }); let orderIdx = globalPesananList.findIndex(o => o.idBooking === idToConfirm); if(orderIdx > -1) { globalPesananList[orderIdx].statusBooking = 'Lunas'; updateDashboardPesananStats(); if(orderChartInstance) { let activeType = document.querySelector('.chart-filter-btn.active').id.replace('btn-chart-',''); updateChartFilter(activeType); } } showAlert("Berhasil", "Pesanan tiket dibayarkan.", "fa-check"); try { let res = await fetchGAS({ action: "confirmPayment", idBooking: idToConfirm, namaPerusahaan: SESSION_COMPANY.namaPerusahaan, statusBooking: "Lunas" }); if(res.status !== "success") { throw new Error(res.message); } } catch(e) { suffixes.forEach(suffix => { let btnConfirm = document.getElementById(`btn-confirm-${idToConfirm}${suffix}`); let badgeEl = document.getElementById(`badge-${idToConfirm}${suffix}`); if(btnConfirm) btnConfirm.style.display = 'inline-block'; if(badgeEl) { badgeEl.className = 'status-ribbon-bottom-left non-aktif'; badgeEl.innerText = 'BELUM BAYAR'; } }); if(orderIdx > -1) { globalPesananList[orderIdx].statusBooking = 'Belum Bayar'; updateDashboardPesananStats(); if(orderChartInstance) { let activeType = document.querySelector('.chart-filter-btn.active').id.replace('btn-chart-',''); updateChartFilter(activeType); } } showAlert("Koneksi Error", "Gagal sinkronisasi.", "fa-wifi", true); } }
+    function openPaymentModal(idBooking) { currentPaymentOrderId = idBooking; document.getElementById('paymentConfirmModal').classList.add('show'); pushBackButtonHandler('paymentModal');
+    }
+    function closePaymentModal(fromPopState = false) { document.getElementById('paymentConfirmModal').classList.remove('show'); currentPaymentOrderId = ""; if (!fromPopState) popBackButtonHandler();
+    }
+    function handleSudahBayarClick() { let btn = document.getElementById('btnSudahBayar'); let originalText = btn.innerText;
+    btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Memproses...`; btn.disabled = true; btn.style.opacity = '0.7';
+    setTimeout(() => { btn.innerHTML = originalText; btn.disabled = false; btn.style.opacity = '1'; executePaymentConfirm(); }, 3000);
+    }
+    async function executePaymentConfirm() { if(!currentPaymentOrderId || !SESSION_COMPANY) return; let idToConfirm = currentPaymentOrderId; closePaymentModal();
+    let suffixes = ["", "-popup"]; suffixes.forEach(suffix => { let btnConfirm = document.getElementById(`btn-confirm-${idToConfirm}${suffix}`); let badgeEl = document.getElementById(`badge-${idToConfirm}${suffix}`); if(btnConfirm) btnConfirm.style.display = 'none'; if(badgeEl) { badgeEl.className = 'status-ribbon-bottom-left aktif'; badgeEl.innerText = 'LUNAS'; } });
+    let orderIdx = globalPesananList.findIndex(o => o.idBooking === idToConfirm); if(orderIdx > -1) { globalPesananList[orderIdx].statusBooking = 'Lunas'; updateDashboardPesananStats();
+    if(orderChartInstance) { let activeType = document.querySelector('.chart-filter-btn.active').id.replace('btn-chart-',''); updateChartFilter(activeType); } } showAlert("Berhasil", "Pesanan tiket dibayarkan.", "fa-check");
+    try { let res = await fetchGAS({ action: "confirmPayment", idBooking: idToConfirm, namaPerusahaan: SESSION_COMPANY.namaPerusahaan, statusBooking: "Lunas" });
+    if(res.status !== "success") { throw new Error(res.message); } } catch(e) { suffixes.forEach(suffix => { let btnConfirm = document.getElementById(`btn-confirm-${idToConfirm}${suffix}`); let badgeEl = document.getElementById(`badge-${idToConfirm}${suffix}`); if(btnConfirm) btnConfirm.style.display = 'inline-block'; if(badgeEl) { badgeEl.className = 'status-ribbon-bottom-left non-aktif'; badgeEl.innerText = 'BELUM BAYAR'; } });
+    if(orderIdx > -1) { globalPesananList[orderIdx].statusBooking = 'Belum Bayar'; updateDashboardPesananStats(); if(orderChartInstance) { let activeType = document.querySelector('.chart-filter-btn.active').id.replace('btn-chart-',''); updateChartFilter(activeType);
+    } } showAlert("Koneksi Error", "Gagal sinkronisasi.", "fa-wifi", true); } }
 
-    function formatTglIndo(tglStr) { if (!tglStr) return "-"; try { const date = new Date(tglStr); if (isNaN(date.getTime())) return tglStr; const options = { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' }; return date.toLocaleDateString('id-ID', options); } catch(e) { return tglStr; } }
-    function formatNumber(angka) { if(!angka) return "0"; return new Intl.NumberFormat('id-ID').format(angka); }
-    function formatRupiah(angka) { return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka).replace("Rp", "Rp."); }
-    function hitungDurasi(jB, jS) { let [h1, m1] = jB.split(':').map(Number); let [h2, m2] = jS.split(':').map(Number); let dH = h2 - h1; let dM = m2 - m1; if (dM < 0) { dM += 60; dH -= 1; } if (dH < 0) dH += 24; let res = []; if (dH > 0) res.push(`${dH}j`); if (dM > 0) res.push(`${dM}m`); return res.join(' ') || "0m"; }
+    function formatTglIndo(tglStr) { if (!tglStr) return "-";
+    try { const date = new Date(tglStr); if (isNaN(date.getTime())) return tglStr;
+    const options = { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' }; return date.toLocaleDateString('id-ID', options);
+    } catch(e) { return tglStr; } }
+    function formatNumber(angka) { if(!angka) return "0"; return new Intl.NumberFormat('id-ID').format(angka);
+    }
+    function formatRupiah(angka) { return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka).replace("Rp", "Rp.");
+    }
+    function hitungDurasi(jB, jS) { let [h1, m1] = jB.split(':').map(Number); let [h2, m2] = jS.split(':').map(Number);
+    let dH = h2 - h1; let dM = m2 - m1; if (dM < 0) { dM += 60;
+    dH -= 1; } if (dH < 0) dH += 24; let res = []; if (dH > 0) res.push(`${dH}j`);
+    if (dM > 0) res.push(`${dM}m`); return res.join(' ') || "0m";
+    }
 
-    function calculateRealChartData(type) { let labels = []; let data = []; let lunasOrders = globalPesananList.filter(o => o.statusBooking.toLowerCase() === 'lunas'); if (type === 'hari') { labels = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab']; data = [0, 0, 0, 0, 0, 0, 0]; lunasOrders.forEach(o => { let d = new Date(o.tanggalBooking); if(!isNaN(d.getTime())) { data[d.getDay()]++; } }); let labelMin = labels.shift(); labels.push(labelMin); let valMin = data.shift(); data.push(valMin); } else if (type === 'bulan') { labels = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des']; data = Array(12).fill(0); let currentYear = new Date().getFullYear(); lunasOrders.forEach(o => { let d = new Date(o.tanggalBooking); if(!isNaN(d.getTime()) && d.getFullYear() === currentYear) { data[d.getMonth()]++; } }); } else if (type === 'tahun') { let yearCounts = {}; lunasOrders.forEach(o => { let d = new Date(o.tanggalBooking); if(!isNaN(d.getTime())) { let y = d.getFullYear(); yearCounts[y] = (yearCounts[y] || 0) + 1; } }); labels = Object.keys(yearCounts).sort(); if(labels.length === 0) { labels = [new Date().getFullYear().toString()]; yearCounts[labels[0]] = 0; } data = labels.map(y => yearCounts[y]); } return { labels, data }; }
-    function initStatisticsChart() { if (typeof Chart === 'undefined') return; const ctx = document.getElementById('orderAnalyticsChart'); if(!ctx) return; let gradientFill = ctx.getContext('2d').createLinearGradient(0, 0, 0, 180); gradientFill.addColorStop(0, 'rgba(2, 132, 199, 0.35)'); gradientFill.addColorStop(1, 'rgba(2, 132, 199, 0.01)'); orderChartInstance = new Chart(ctx, { type: 'line', data: { labels: [], datasets: [{ label: 'Pesanan Lunas', data: [], borderColor: '#0284c7', borderWidth: 2.5, backgroundColor: gradientFill, fill: true, tension: 0.35, pointBackgroundColor: '#0284c7', pointHoverRadius: 6 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: 'rgba(0, 0, 0, 0.04)' }, ticks: { font: { size: 10, family: 'Inter' }, color: '#64748b', precision: 0 } }, x: { grid: { display: false }, ticks: { font: { size: 10, family: 'Inter' }, color: '#64748b' } } } } }); updateChartFilter('hari'); }
-    function updateChartFilter(type) { document.querySelectorAll('.chart-filter-btn').forEach(btn => btn.classList.remove('active')); document.getElementById(`btn-chart-${type}`).classList.add('active'); if(!orderChartInstance) return; let chartData = calculateRealChartData(type); orderChartInstance.data.labels = chartData.labels; orderChartInstance.data.datasets[0].data = chartData.data; orderChartInstance.update(); }
+    function calculateRealChartData(type) { let labels = []; let data = [];
+    let lunasOrders = globalPesananList.filter(o => o.statusBooking.toLowerCase() === 'lunas'); if (type === 'hari') { labels = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
+    data = [0, 0, 0, 0, 0, 0, 0]; lunasOrders.forEach(o => { let d = new Date(o.tanggalBooking); if(!isNaN(d.getTime())) { data[d.getDay()]++; } });
+    let labelMin = labels.shift(); labels.push(labelMin); let valMin = data.shift(); data.push(valMin);
+    } else if (type === 'bulan') { labels = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'];
+    data = Array(12).fill(0); let currentYear = new Date().getFullYear(); lunasOrders.forEach(o => { let d = new Date(o.tanggalBooking); if(!isNaN(d.getTime()) && d.getFullYear() === currentYear) { data[d.getMonth()]++; } });
+    } else if (type === 'tahun') { let yearCounts = {};
+    lunasOrders.forEach(o => { let d = new Date(o.tanggalBooking); if(!isNaN(d.getTime())) { let y = d.getFullYear(); yearCounts[y] = (yearCounts[y] || 0) + 1; } });
+    labels = Object.keys(yearCounts).sort(); if(labels.length === 0) { labels = [new Date().getFullYear().toString()]; yearCounts[labels[0]] = 0; } data = labels.map(y => yearCounts[y]);
+    } return { labels, data }; }
+    function initStatisticsChart() { if (typeof Chart === 'undefined') return;
+    const ctx = document.getElementById('orderAnalyticsChart'); if(!ctx) return; let gradientFill = ctx.getContext('2d').createLinearGradient(0, 0, 0, 180); gradientFill.addColorStop(0, 'rgba(2, 132, 199, 0.35)');
+    gradientFill.addColorStop(1, 'rgba(2, 132, 199, 0.01)'); orderChartInstance = new Chart(ctx, { type: 'line', data: { labels: [], datasets: [{ label: 'Pesanan Lunas', data: [], borderColor: '#0284c7', borderWidth: 2.5, backgroundColor: gradientFill, fill: true, tension: 0.35, pointBackgroundColor: '#0284c7', pointHoverRadius: 6 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: 'rgba(0, 0, 0, 0.04)' }, ticks: { font: { size: 10, family: 'Inter' }, color: '#64748b', precision: 0 } }, x: { grid: { display: false }, ticks: { font: { size: 10, family: 'Inter' }, color: '#64748b' } } 
+    } } }); updateChartFilter('hari'); }
+    function updateChartFilter(type) { document.querySelectorAll('.chart-filter-btn').forEach(btn => btn.classList.remove('active')); document.getElementById(`btn-chart-${type}`).classList.add('active'); if(!orderChartInstance) return;
+    let chartData = calculateRealChartData(type); orderChartInstance.data.labels = chartData.labels; orderChartInstance.data.datasets[0].data = chartData.data; orderChartInstance.update();
+    }
 
-    function populateDashboardData() { if(!SESSION_USER || !SESSION_COMPANY) return; document.getElementById('layananCompName').innerText = SESSION_COMPANY.namaPerusahaan; let logoSrc = SESSION_COMPANY.logo ? SESSION_COMPANY.logo : "https://placehold.co/100x100?text=No+Logo"; document.getElementById('layananLogo').src = logoSrc; document.getElementById('profileLogoImg').src = logoSrc; document.getElementById('profileCompTitle').innerText = SESSION_COMPANY.namaPerusahaan; document.getElementById('profileUserTitle').innerText = `@${SESSION_USER.username}`; document.getElementById('pCompDesc').innerText = SESSION_COMPANY.deskripsiPerusahaan; document.getElementById('stat-total-armada').innerText = globalLayananList ? globalLayananList.length : 0; }
-    function updateDashboardPesananStats() { let belumBayar = 0; let lunas = 0; globalPesananList.forEach(o => { if (o.statusBooking.toLowerCase() === 'lunas') lunas++; else belumBayar++; }); if(document.getElementById('stat-pesanan-aktif')) document.getElementById('stat-pesanan-aktif').innerText = belumBayar; if(document.getElementById('stat-pesanan-selesai')) document.getElementById('stat-pesanan-selesai').innerText = lunas; }
+    function populateDashboardData() { if(!SESSION_USER || !SESSION_COMPANY) return; document.getElementById('layananCompName').innerText = SESSION_COMPANY.namaPerusahaan; let logoSrc = SESSION_COMPANY.logo ?
+    SESSION_COMPANY.logo : "https://placehold.co/100x100?text=No+Logo"; document.getElementById('layananLogo').src = logoSrc; document.getElementById('profileLogoImg').src = logoSrc; document.getElementById('profileCompTitle').innerText = SESSION_COMPANY.namaPerusahaan; document.getElementById('profileUserTitle').innerText = `@${SESSION_USER.username}`; document.getElementById('pCompDesc').innerText = SESSION_COMPANY.deskripsiPerusahaan;
+    document.getElementById('stat-total-armada').innerText = globalLayananList ? globalLayananList.length : 0; }
+    function updateDashboardPesananStats() { let belumBayar = 0;
+    let lunas = 0; globalPesananList.forEach(o => { if (o.statusBooking.toLowerCase() === 'lunas') lunas++; else belumBayar++; }); if(document.getElementById('stat-pesanan-aktif')) document.getElementById('stat-pesanan-aktif').innerText = belumBayar;
+    if(document.getElementById('stat-pesanan-selesai')) document.getElementById('stat-pesanan-selesai').innerText = lunas; }
 
-    function toggleDesktopSidebar(fromPopState = false) { let sidebar = document.getElementById('desktopSidebar'); let overlay = document.getElementById('desktopSidebarOverlay'); let wasOpen = sidebar && sidebar.classList.contains('open'); if(sidebar) sidebar.classList.toggle('open'); if(overlay) overlay.classList.toggle('open'); let isOpenNow = sidebar && sidebar.classList.contains('open'); if (isOpenNow) { pushBackButtonHandler('desktopSidebar'); } else if (wasOpen && !fromPopState) { popBackButtonHandler(); } }
-    function toggleClearBtn(input) { let btn = input.nextElementSibling; if(btn && btn.classList.contains('clear-btn')) { btn.style.display = input.value.length > 0 ? 'block' : 'none'; } }
-    function clearSearch(inputId) { let input = document.getElementById(inputId); if(input) { input.value = ''; toggleClearBtn(input); if(inputId === 'regionSearchInput') filterRegions(); if(inputId === 'layananSearchInputWeb') filterLayananWeb(); if(inputId === 'pesananSearchInput') filterPesananMobile(); if(inputId === 'layananSearchInput') filterLayananMobile(); if(inputId === 'riwayatSearchInput') filterRiwayat(); } }
-    function openLayananSearch() { document.getElementById('layananSearchOverlay').classList.add('show'); document.getElementById('layananSearchInput').focus(); pushBackButtonHandler('layananSearch'); }
-    function closeLayananSearch(fromPopState = false) { document.getElementById('layananSearchOverlay').classList.remove('show'); clearSearch('layananSearchInput'); if (!fromPopState) popBackButtonHandler(); }
-    function filterLayananMobile() { let val = document.getElementById('layananSearchInput').value.toLowerCase(); doSearchLayananDOM(val); }
-    function toggleWebSearch(forceClose = false) { let box = document.getElementById('webSearchExpand'); if(forceClose) { box.classList.remove('expanded'); clearSearch('layananSearchInputWeb'); return; } box.classList.toggle('expanded'); if(box.classList.contains('expanded')) { document.getElementById('layananSearchInputWeb').focus(); } else { clearSearch('layananSearchInputWeb'); } }
-    function filterLayananWeb() { let val = document.getElementById('layananSearchInputWeb').value.toLowerCase(); doSearchLayananDOM(val); }
-    function doSearchLayananDOM(val) { let cards = document.getElementById('layananCardContainer').querySelectorAll('.ticket-card'); cards.forEach(card => { let text = card.innerText.toLowerCase(); card.style.display = text.includes(val) ? '' : 'none'; }); }
-    function filterPesananMobile() { let val = document.getElementById('pesananSearchInput').value.toLowerCase(); let cards = document.querySelectorAll('.pesanan-card-item'); cards.forEach(card => { let text = card.innerText.toLowerCase(); card.style.display = text.includes(val) ? '' : 'none'; }); }
+    function toggleDesktopSidebar(fromPopState = false) { let sidebar = document.getElementById('desktopSidebar');
+    let overlay = document.getElementById('desktopSidebarOverlay'); let wasOpen = sidebar && sidebar.classList.contains('open'); if(sidebar) sidebar.classList.toggle('open'); if(overlay) overlay.classList.toggle('open'); let isOpenNow = sidebar && sidebar.classList.contains('open');
+    if (isOpenNow) { pushBackButtonHandler('desktopSidebar'); } else if (wasOpen && !fromPopState) { popBackButtonHandler();
+    } }
+    function toggleClearBtn(input) { let btn = input.nextElementSibling;
+    if(btn && btn.classList.contains('clear-btn')) { btn.style.display = input.value.length > 0 ? 'block' : 'none';
+    } }
+    function clearSearch(inputId) { let input = document.getElementById(inputId); if(input) { input.value = ''; toggleClearBtn(input);
+    if(inputId === 'regionSearchInput') filterRegions(); if(inputId === 'layananSearchInputWeb') filterLayananWeb(); if(inputId === 'pesananSearchInput') filterPesananMobile(); if(inputId === 'layananSearchInput') filterLayananMobile(); if(inputId === 'riwayatSearchInput') filterRiwayat();
+    } }
+    function openLayananSearch() { document.getElementById('layananSearchOverlay').classList.add('show'); document.getElementById('layananSearchInput').focus(); pushBackButtonHandler('layananSearch');
+    }
+    function closeLayananSearch(fromPopState = false) { document.getElementById('layananSearchOverlay').classList.remove('show'); clearSearch('layananSearchInput'); if (!fromPopState) popBackButtonHandler();
+    }
+    function filterLayananMobile() { let val = document.getElementById('layananSearchInput').value.toLowerCase(); doSearchLayananDOM(val);
+    }
+    function toggleWebSearch(forceClose = false) { let box = document.getElementById('webSearchExpand'); if(forceClose) { box.classList.remove('expanded'); clearSearch('layananSearchInputWeb'); return; } box.classList.toggle('expanded');
+    if(box.classList.contains('expanded')) { document.getElementById('layananSearchInputWeb').focus(); } else { clearSearch('layananSearchInputWeb'); } }
+    function filterLayananWeb() { let val = document.getElementById('layananSearchInputWeb').value.toLowerCase(); doSearchLayananDOM(val);
+    }
+    function doSearchLayananDOM(val) { let cards = document.getElementById('layananCardContainer').querySelectorAll('.ticket-card');
+    cards.forEach(card => { let text = card.innerText.toLowerCase(); card.style.display = text.includes(val) ? '' : 'none'; });
+    }
+    function filterPesananMobile() { let val = document.getElementById('pesananSearchInput').value.toLowerCase(); let cards = document.querySelectorAll('.pesanan-card-item');
+    cards.forEach(card => { let text = card.innerText.toLowerCase(); card.style.display = text.includes(val) ? '' : 'none'; });
+    }
     function toggleOrderFilter() { document.getElementById('orderFilterMenu').classList.toggle('open'); }
     document.addEventListener('click', function(e) { let filterDropdown = document.getElementById('orderFilterMenu'); if(filterDropdown && filterDropdown.classList.contains('open')) { if(!e.target.closest('.filter-dropdown')) { filterDropdown.classList.remove('open'); } } });
     function setPesananFilter(type) { currentPesananFilter = type; document.getElementById('orderFilterMenu').classList.remove('open'); renderPesananCards(globalPesananList); }
 
-    function openScanner() { document.getElementById('scannerModal').classList.add('open'); html5QrCode = new Html5Qrcode("reader"); html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 220, height: 220 } }, onScanSuccess, onScanFailure).catch(err => { console.error(err); showAlert("Akses Kamera", "Gagal membuka.", "fa-camera", true); }); pushBackButtonHandler('scanner'); }
-    function closeScanner(fromPopState = false) { document.getElementById('scannerModal').classList.remove('open'); if(html5QrCode) { html5QrCode.stop().then(() => { html5QrCode.clear(); html5QrCode = null; }).catch(err => console.log(err)); } if (!fromPopState) popBackButtonHandler(); }
+    function openScanner() { document.getElementById('scannerModal').classList.add('open'); html5QrCode = new Html5Qrcode("reader");
+    html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 220, height: 220 } }, onScanSuccess, onScanFailure).catch(err => { console.error(err); showAlert("Akses Kamera", "Gagal membuka.", "fa-camera", true); });
+    pushBackButtonHandler('scanner'); }
+    function closeScanner(fromPopState = false) { document.getElementById('scannerModal').classList.remove('open');
+    if(html5QrCode) { html5QrCode.stop().then(() => { html5QrCode.clear(); html5QrCode = null; }).catch(err => console.log(err)); } if (!fromPopState) popBackButtonHandler();
+    }
     function openScannedTicketDrawer() { document.getElementById('scannedTicketDrawer').classList.add('open'); pushBackButtonHandler('scannedTicket'); }
-    function closeScannedTicketDrawer(fromPopState = false) { document.getElementById('scannedTicketDrawer').classList.remove('open'); if (!fromPopState) popBackButtonHandler(); }
-    function onScanSuccess(decodedText, decodedResult) { closeScanner(); let targetedOrder = globalPesananList.find(o => o.idBooking === decodedText || o.idBooking.includes(decodedText)); if (targetedOrder) { document.getElementById('scannedTicketContent').innerHTML = `<div style="padding: 10px 20px 20px 20px;">${generateTicketCardHTML(targetedOrder, true, 0)}</div>`; openScannedTicketDrawer(); showAlert('Berhasil', 'Scan Tiket ditemukan.', 'fa-qrcode'); } else { showAlert('Tidak Ditemukan', 'Tiket tidak ada.', 'fa-circle-xmark', true); } }
+    function closeScannedTicketDrawer(fromPopState = false) { document.getElementById('scannedTicketDrawer').classList.remove('open');
+    if (!fromPopState) popBackButtonHandler(); }
+    function onScanSuccess(decodedText, decodedResult) { closeScanner();
+    let targetedOrder = globalPesananList.find(o => o.idBooking === decodedText || o.idBooking.includes(decodedText));
+    if (targetedOrder) { document.getElementById('scannedTicketContent').innerHTML = `<div style="padding: 10px 20px 20px 20px;">${generateTicketCardHTML(targetedOrder, true, 0)}</div>`; openScannedTicketDrawer(); showAlert('Berhasil', 'Scan Tiket ditemukan.', 'fa-qrcode');
+    } else { showAlert('Tidak Ditemukan', 'Tiket tidak ada.', 'fa-circle-xmark', true);
+    } }
     function onScanFailure(error) { }
 
-    function togglePassword(icon, inputId) { let input = document.getElementById(inputId); if (input.type === "password") { input.type = "text"; icon.classList.remove("fa-eye-slash"); icon.classList.add("fa-eye"); } else { input.type = "password"; icon.classList.remove("fa-eye"); icon.classList.add("fa-eye-slash"); } }
-    function showLoading(show) { document.getElementById('globalLoader').style.display = show ? "flex" : "none"; }
+    function togglePassword(icon, inputId) { let input = document.getElementById(inputId);
+    if (input.type === "password") { input.type = "text"; icon.classList.remove("fa-eye-slash"); icon.classList.add("fa-eye"); } else { input.type = "password"; icon.classList.remove("fa-eye"); icon.classList.add("fa-eye-slash");
+    } }
+    function showLoading(show) { document.getElementById('globalLoader').style.display = show ? "flex" : "none";
+    }
     
     function showAlert(title, message, iconClass = "fa-check", isError = false) { 
-        let toast = document.getElementById('alertToast'); let iconDiv = document.getElementById('alertIcon'); 
+        let toast = document.getElementById('alertToast');
+        let iconDiv = document.getElementById('alertIcon'); 
         document.getElementById('alertTitle').innerText = title; document.getElementById('alertMessage').innerText = message; 
-        iconDiv.className = isError ? "alert-icon error" : "alert-icon success"; iconDiv.innerHTML = `<i class="fa-solid ${iconClass}"></i>`; 
-        
-        // Remove class then add back to retrigger animation if clicked multiple times quickly
+        iconDiv.className = isError ? "alert-icon error" : "alert-icon success";
+        iconDiv.innerHTML = `<i class="fa-solid ${iconClass}"></i>`; 
         toast.classList.remove('show');
         void toast.offsetWidth; // trigger reflow
         toast.classList.add('show'); 
-        
-        setTimeout(closeAlert, 4000); 
+        setTimeout(closeAlert, 4000);
     }
     function closeAlert() { 
         let toast = document.getElementById('alertToast');
-        toast.classList.remove('show'); 
+        toast.classList.remove('show');
     }
 
-    function handleImageSelection(event, targetPreviewId, aspectRatio) { const file = event.target.files[0]; if(!file) return; currentTargetImageId = targetPreviewId; const reader = new FileReader(); reader.onload = (e) => { document.getElementById('cropperImage').src = e.target.result; document.getElementById('cropperModal').classList.add('open'); if(cropperInstance) cropperInstance.destroy(); cropperInstance = new Cropper(document.getElementById('cropperImage'), { aspectRatio: aspectRatio, viewMode: 2, autoCropArea: 1, responsive: true }); pushBackButtonHandler('cropperModal'); }; reader.readAsDataURL(file); }
-    function cancelCrop(fromPopState = false) { document.getElementById('cropperModal').classList.remove('open'); if(cropperInstance) cropperInstance.destroy(); document.getElementById('compLogoFile').value = ""; document.getElementById('addFotoFile').value = ""; document.getElementById('editFotoFile').value = ""; document.getElementById('editCompLogoInput').value = ""; if (!fromPopState) popBackButtonHandler(); }
-    function applyCrop() { if(!cropperInstance) return; const canvas = cropperInstance.getCroppedCanvas({ width: 400, fillColor: '#fff' }); const base64Image = canvas.toDataURL('image/jpeg', 0.6); document.getElementById(currentTargetImageId).src = base64Image; document.getElementById(currentTargetImageId).style.display = 'block'; if(currentTargetImageId === 'previewCompLogo') base64CompLogo = base64Image; else if (currentTargetImageId === 'previewEditCompLogo') base64EditCompLogo = base64Image; else if(currentTargetImageId === 'previewAddFoto' || currentTargetImageId === 'previewEditFoto') base64ArmadaFoto = base64Image; cancelCrop(); }
+    function handleImageSelection(event, targetPreviewId, aspectRatio) { const file = event.target.files[0]; if(!file) return; currentTargetImageId = targetPreviewId;
+    const reader = new FileReader(); reader.onload = (e) => { document.getElementById('cropperImage').src = e.target.result; document.getElementById('cropperModal').classList.add('open'); if(cropperInstance) cropperInstance.destroy();
+    cropperInstance = new Cropper(document.getElementById('cropperImage'), { aspectRatio: aspectRatio, viewMode: 2, autoCropArea: 1, responsive: true }); pushBackButtonHandler('cropperModal'); }; reader.readAsDataURL(file);
+    }
+    function cancelCrop(fromPopState = false) { document.getElementById('cropperModal').classList.remove('open'); if(cropperInstance) cropperInstance.destroy(); document.getElementById('compLogoFile').value = ""; document.getElementById('addFotoFile').value = "";
+    document.getElementById('editFotoFile').value = ""; document.getElementById('editCompLogoInput').value = ""; if (!fromPopState) popBackButtonHandler(); }
+    function applyCrop() { if(!cropperInstance) return;
+    const canvas = cropperInstance.getCroppedCanvas({ width: 400, fillColor: '#fff' }); const base64Image = canvas.toDataURL('image/jpeg', 0.6); document.getElementById(currentTargetImageId).src = base64Image; document.getElementById(currentTargetImageId).style.display = 'block';
+    if(currentTargetImageId === 'previewCompLogo') base64CompLogo = base64Image; else if (currentTargetImageId === 'previewEditCompLogo') base64EditCompLogo = base64Image;
+    else if(currentTargetImageId === 'previewAddFoto' || currentTargetImageId === 'previewEditFoto') base64ArmadaFoto = base64Image; cancelCrop();
+    }
 
-    async function initCityData() { try { const response = await fetch('https://raw.githubusercontent.com/yusufsyaifudin/wilayah-indonesia/master/data/list_of_area/regencies.json'); if (response.ok) { const rawData = await response.json(); indonesianRegionsDatabase = rawData.map(item => { let name = item.name.toLowerCase().replace('kabupaten ', 'Kab. ').replace('kota ', ''); return name.replace(/\b\w/g, c => c.toUpperCase()); }); } } catch (e) { } }
-    function openRegionSelection(targetInputId) { activeRegionInputTargetId = targetInputId; document.getElementById('regionModalTitle').innerText = targetInputId === "addAsal" || targetInputId === "editAsal" ? "Pilih Kota Asal" : "Pilih Kota Tujuan"; clearSearch('regionSearchInput'); renderRegionList(indonesianRegionsDatabase); document.getElementById('regionModal').classList.add('open'); pushBackButtonHandler('regionModal'); }
-    function closeRegionModal(fromPopState = false) { document.getElementById('regionModal').classList.remove('open'); if (!fromPopState) popBackButtonHandler(); }
-    function renderRegionList(items) { let listHtml = items.length === 0 ? `<li style="text-align:center; padding:20px; color:var(--text-muted);">Wilayah tidak ditemukan</li>` : ""; items.slice(0, 150).forEach(cityName => { listHtml += `<li class="modal-list-item" onclick="selectRegionValue('${cityName}')"><i class="fa-solid fa-location-dot"></i> <span>${cityName}</span></li>`; }); document.getElementById('regionListContainer').innerHTML = listHtml; }
-    function filterRegions() { renderRegionList(indonesianRegionsDatabase.filter(name => name.toLowerCase().includes(document.getElementById('regionSearchInput').value.toLowerCase().trim()))); }
-    function selectRegionValue(val) { document.getElementById(activeRegionInputTargetId).value = val; closeRegionModal(); }
+    async function initCityData() { try { const response = await fetch('https://raw.githubusercontent.com/yusufsyaifudin/wilayah-indonesia/master/data/list_of_area/regencies.json');
+    if (response.ok) { const rawData = await response.json(); indonesianRegionsDatabase = rawData.map(item => { let name = item.name.toLowerCase().replace('kabupaten ', 'Kab. ').replace('kota ', ''); return name.replace(/\b\w/g, c => c.toUpperCase()); });
+    } } catch (e) { } }
+    function openRegionSelection(targetInputId) { activeRegionInputTargetId = targetInputId;
+    document.getElementById('regionModalTitle').innerText = targetInputId === "addAsal" || targetInputId === "editAsal" ? "Pilih Kota Asal" : "Pilih Kota Tujuan"; clearSearch('regionSearchInput'); renderRegionList(indonesianRegionsDatabase); document.getElementById('regionModal').classList.add('open');
+    pushBackButtonHandler('regionModal'); }
+    function closeRegionModal(fromPopState = false) { document.getElementById('regionModal').classList.remove('open'); if (!fromPopState) popBackButtonHandler();
+    }
+    function renderRegionList(items) { let listHtml = items.length === 0 ?
+    `<li style="text-align:center; padding:20px; color:var(--text-muted);">Wilayah tidak ditemukan</li>` : ""; items.slice(0, 150).forEach(cityName => { listHtml += `<li class="modal-list-item" onclick="selectRegionValue('${cityName}')"><i class="fa-solid fa-location-dot"></i> <span>${cityName}</span></li>`; });
+    document.getElementById('regionListContainer').innerHTML = listHtml; }
+    function filterRegions() { renderRegionList(indonesianRegionsDatabase.filter(name => name.toLowerCase().includes(document.getElementById('regionSearchInput').value.toLowerCase().trim())));
+    }
+    function selectRegionValue(val) { document.getElementById(activeRegionInputTargetId).value = val; closeRegionModal();
+    }
     
-    function initTimePickerOptions() { let hourHtml = "", minHtml = ""; for(let i=0; i<24; i++) { let pad = i.toString().padStart(2, '0'); hourHtml += `<div class="time-opt-item" data-val="${pad}" onclick="selectTimeItem('hour', this)">${pad}</div>`; } for(let i=0; i<60; i+=5) { let pad = i.toString().padStart(2, '0'); minHtml += `<div class="time-opt-item" data-val="${pad}" onclick="selectTimeItem('minute', this)">${pad}</div>`; } document.getElementById('hourScrollBox').innerHTML = hourHtml; document.getElementById('minuteScrollBox').innerHTML = minHtml; }
-    function openTimeSelection(targetInputId) { activeTimeInputTargetId = targetInputId; document.getElementById('timeModalTitle').innerText = targetInputId === "addJamB" || targetInputId === "editJamB" ? "Jam Keberangkatan" : "Estimasi Jam Tiba"; let hBox = document.getElementById('hourScrollBox'); let mBox = document.getElementById('minuteScrollBox'); if(!hBox.querySelector('.selected')) hBox.children[0].classList.add('selected'); if(!mBox.querySelector('.selected')) mBox.children[0].classList.add('selected'); document.getElementById('timePickerModal').classList.add('open'); pushBackButtonHandler('timePicker'); }
-    function closeTimeModal(fromPopState = false) { document.getElementById('timePickerModal').classList.remove('open'); if (!fromPopState) popBackButtonHandler(); }
-    function selectTimeItem(type, element) { let parent = type === 'hour' ? document.getElementById('hourScrollBox') : document.getElementById('minuteScrollBox'); parent.querySelectorAll('.time-opt-item').forEach(item => item.classList.remove('selected')); element.classList.add('selected'); element.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
-    function handleTimeScroll(type) { clearTimeout(window[`scrollTimeTimeout_${type}`]); window[`scrollTimeTimeout_${type}`] = setTimeout(() => { let parent = type === 'hour' ? document.getElementById('hourScrollBox') : document.getElementById('minuteScrollBox'); let parentCenter = parent.getBoundingClientRect().top + (parent.clientHeight / 2); let closestElem = null; let closestDist = Infinity; parent.querySelectorAll('.time-opt-item').forEach(item => { let box = item.getBoundingClientRect(); let itemCenter = box.top + (box.height / 2); let dist = Math.abs(parentCenter - itemCenter); if(dist < closestDist) { closestDist = dist; closestElem = item; } }); if(closestElem && !closestElem.classList.contains('selected')) { parent.querySelectorAll('.time-opt-item').forEach(i => i.classList.remove('selected')); closestElem.classList.add('selected'); } }, 150); }
-    function saveSelectedTime() { let h = document.getElementById('hourScrollBox').querySelector('.selected').getAttribute('data-val'); let m = document.getElementById('minuteScrollBox').querySelector('.selected').getAttribute('data-val'); document.getElementById(activeTimeInputTargetId).value = `${h}:${m}`; closeTimeModal(); }
+    function initTimePickerOptions() { let hourHtml = "", minHtml = "";
+    for(let i=0; i<24; i++) { let pad = i.toString().padStart(2, '0'); hourHtml += `<div class="time-opt-item" data-val="${pad}" onclick="selectTimeItem('hour', this)">${pad}</div>`;
+    } for(let i=0; i<60; i+=5) { let pad = i.toString().padStart(2, '0'); minHtml += `<div class="time-opt-item" data-val="${pad}" onclick="selectTimeItem('minute', this)">${pad}</div>`;
+    } document.getElementById('hourScrollBox').innerHTML = hourHtml; document.getElementById('minuteScrollBox').innerHTML = minHtml; }
+    function openTimeSelection(targetInputId) { activeTimeInputTargetId = targetInputId;
+    document.getElementById('timeModalTitle').innerText = targetInputId === "addJamB" || targetInputId === "editJamB" ? "Jam Keberangkatan" : "Estimasi Jam Tiba"; let hBox = document.getElementById('hourScrollBox');
+    let mBox = document.getElementById('minuteScrollBox'); if(!hBox.querySelector('.selected')) hBox.children[0].classList.add('selected'); if(!mBox.querySelector('.selected')) mBox.children[0].classList.add('selected'); document.getElementById('timePickerModal').classList.add('open'); pushBackButtonHandler('timePicker'); }
+    function closeTimeModal(fromPopState = false) { document.getElementById('timePickerModal').classList.remove('open');
+    if (!fromPopState) popBackButtonHandler(); }
+    function selectTimeItem(type, element) { let parent = type === 'hour' ?
+    document.getElementById('hourScrollBox') : document.getElementById('minuteScrollBox'); parent.querySelectorAll('.time-opt-item').forEach(item => item.classList.remove('selected')); element.classList.add('selected'); element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    function handleTimeScroll(type) { clearTimeout(window[`scrollTimeTimeout_${type}`]); window[`scrollTimeTimeout_${type}`] = setTimeout(() => { let parent = type === 'hour' ? document.getElementById('hourScrollBox') : document.getElementById('minuteScrollBox'); let parentCenter = parent.getBoundingClientRect().top + (parent.clientHeight / 2); let closestElem = null; let closestDist = Infinity; parent.querySelectorAll('.time-opt-item').forEach(item => { let box = item.getBoundingClientRect(); let itemCenter = box.top + (box.height / 2); let dist = Math.abs(parentCenter - itemCenter); if(dist < closestDist) { closestDist = dist; closestElem = item; } }); if(closestElem && !closestElem.classList.contains('selected')) { parent.querySelectorAll('.time-opt-item').forEach(i => i.classList.remove('selected')); closestElem.classList.add('selected'); } }, 150);
+    }
+    function saveSelectedTime() { let h = document.getElementById('hourScrollBox').querySelector('.selected').getAttribute('data-val'); let m = document.getElementById('minuteScrollBox').querySelector('.selected').getAttribute('data-val'); document.getElementById(activeTimeInputTargetId).value = `${h}:${m}`; closeTimeModal();
+    }
 
-    async function fetchFacilitiesData() { try { let r = await fetch(GAS_API_URL + "?action=getFacilities"); globalFacilitiesDatabase = await r.json(); } catch (e) { } }
-    function openFacilitySelection(targetInputId) { activeFacilityTargetInput = targetInputId; renderFacilitiesCapsules(); document.getElementById('facilityModal').classList.add('open'); pushBackButtonHandler('facilityModal'); }
-    function closeFacilityModal(fromPopState = false) { document.getElementById('facilityModal').classList.remove('open'); if (!fromPopState) popBackButtonHandler(); }
-    function renderFacilitiesCapsules() { let html = ""; if (globalFacilitiesDatabase.length === 0) html = `<div style="width:100%; text-align:center;">Data tidak ditemukan.</div>`; else { globalFacilitiesDatabase.forEach(item => { let isActiveClass = selectedFasilitasArray.includes(item.nama) ? 'active' : ''; let iconImg = item.icon ? item.icon : "https://cdn-icons-png.flaticon.com/512/744/744465.png"; html += `<div class="capsule-btn ${isActiveClass}" onclick="toggleFacilityItem('${item.nama}')"><img src="${iconImg}"><span>${item.nama}</span></div>`; }); } document.getElementById('facilityCapsuleContainer').innerHTML = html; }
-    function toggleFacilityItem(nama) { let index = selectedFasilitasArray.indexOf(nama); if (index > -1) selectedFasilitasArray.splice(index, 1); else selectedFasilitasArray.push(nama); renderFacilitiesCapsules(); }
-    function saveSelectedFacilities() { if(activeFacilityTargetInput) { document.getElementById(activeFacilityTargetInput).value = selectedFasilitasArray.join(", "); } closeFacilityModal(); renderFormFacilitiesPreview(); }
-    function renderFormFacilitiesPreview() { let previewHtml = ""; let targetContainer = activeFacilityTargetInput === 'addFasilitas' ? 'addFasilitasPreviewContainer' : 'editFasilitasPreviewContainer'; selectedFasilitasArray.forEach(nama => { let found = globalFacilitiesDatabase.find(f => f.nama === nama); let iconUrl = found && found.icon ? found.icon : "https://cdn-icons-png.flaticon.com/512/744/744465.png"; previewHtml += `<div class="facility-preview-chip"><img src="${iconUrl}" style="width:14px; height:14px; object-fit:contain;"><span>${nama}</span></div>`; }); if(document.getElementById(targetContainer)) { document.getElementById(targetContainer).innerHTML = previewHtml; } }
-    function buildCardFacilityImages(fasilitasString) { if(!fasilitasString) return '<span style="color:#94a3b8; font-size:12px;">Standard</span>'; let list = fasilitasString.split(",").map(f => f.trim()); let imagesHtml = ""; list.forEach(namaFasilitas => { let match = globalFacilitiesDatabase.find(g => g.nama.toLowerCase() === namaFasilitas.toLowerCase()); let src = match && match.icon ? match.icon : "https://cdn-icons-png.flaticon.com/512/744/744465.png"; imagesHtml += `<img class="ticket-facility-img" src="${src}" title="${namaFasilitas}">`; }); return imagesHtml; }
+    async function fetchFacilitiesData() { try { let r = await fetch(GAS_API_URL + "?action=getFacilities");
+    globalFacilitiesDatabase = await r.json(); } catch (e) { } }
+    function openFacilitySelection(targetInputId) { activeFacilityTargetInput = targetInputId; renderFacilitiesCapsules();
+    document.getElementById('facilityModal').classList.add('open'); pushBackButtonHandler('facilityModal'); }
+    function closeFacilityModal(fromPopState = false) { document.getElementById('facilityModal').classList.remove('open'); if (!fromPopState) popBackButtonHandler();
+    }
+    function renderFacilitiesCapsules() { let html = "";
+    if (globalFacilitiesDatabase.length === 0) html = `<div style="width:100%; text-align:center;">Data tidak ditemukan.</div>`;
+    else { globalFacilitiesDatabase.forEach(item => { let isActiveClass = selectedFasilitasArray.includes(item.nama) ? 'active' : ''; let iconImg = item.icon ? item.icon : "https://cdn-icons-png.flaticon.com/512/744/744465.png"; html += `<div class="capsule-btn ${isActiveClass}" onclick="toggleFacilityItem('${item.nama}')"><img src="${iconImg}"><span>${item.nama}</span></div>`; });
+    } document.getElementById('facilityCapsuleContainer').innerHTML = html; }
+    function toggleFacilityItem(nama) { let index = selectedFasilitasArray.indexOf(nama);
+    if (index > -1) selectedFasilitasArray.splice(index, 1); else selectedFasilitasArray.push(nama); renderFacilitiesCapsules(); }
+    function saveSelectedFacilities() { if(activeFacilityTargetInput) { document.getElementById(activeFacilityTargetInput).value = selectedFasilitasArray.join(", ");
+    } closeFacilityModal(); renderFormFacilitiesPreview(); }
+    function renderFormFacilitiesPreview() { let previewHtml = "";
+    let targetContainer = activeFacilityTargetInput === 'addFasilitas' ? 'addFasilitasPreviewContainer' : 'editFasilitasPreviewContainer';
+    selectedFasilitasArray.forEach(nama => { let found = globalFacilitiesDatabase.find(f => f.nama === nama); let iconUrl = found && found.icon ? found.icon : "https://cdn-icons-png.flaticon.com/512/744/744465.png"; previewHtml += `<div class="facility-preview-chip"><img src="${iconUrl}" style="width:14px; height:14px; object-fit:contain;"><span>${nama}</span></div>`; });
+    if(document.getElementById(targetContainer)) { document.getElementById(targetContainer).innerHTML = previewHtml; } }
+    function buildCardFacilityImages(fasilitasString) { if(!fasilitasString) return '<span style="color:#94a3b8; font-size:12px;">Standard</span>';
+    let list = fasilitasString.split(",").map(f => f.trim()); let imagesHtml = "";
+    list.forEach(namaFasilitas => { let match = globalFacilitiesDatabase.find(g => g.nama.toLowerCase() === namaFasilitas.toLowerCase()); let src = match && match.icon ? match.icon : "https://cdn-icons-png.flaticon.com/512/744/744465.png"; imagesHtml += `<img class="ticket-facility-img" src="${src}" title="${namaFasilitas}">`; });
+    return imagesHtml; }
 
-    // ================= REGISTRASI & LOGIN =================
-    async function handleRegister() { const namaLengkap = document.getElementById('regNama').value.trim(); const username = document.getElementById('regUser').value.trim(); const email = document.getElementById('regEmail').value.trim(); const noHp = document.getElementById('regHp').value.trim(); const alamatLengkap = document.getElementById('regAlamat').value.trim(); const password = document.getElementById('regPass').value.trim(); if(!namaLengkap || !username || !email || !noHp || !alamatLengkap || !password) { showAlert("Gagal", "Semua kolom wajib diisi!", "fa-circle-exclamation", true); return; } if(!/^[A-Z](?=.*[a-zA-Z])(?=.*\d).{7,}$/.test(password)) { showAlert("Kata Sandi Lemah", "Minimal 8 karakter, diawali huruf besar, kombinasi huruf & angka.", "fa-shield-halved", true); return; } showLoading(true); try { let res = await fetchGAS({ action: "register", namaLengkap, username, email, noHp, alamatLengkap, password }); showLoading(false); if(res.status === "success") { showAlert("Sukses!", res.message, "fa-circle-check"); setTimeout(() => switchPage('pageLogin'), 1500); } else { showAlert("Gagal", res.message, "fa-circle-xmark", true); } } catch(e) { showLoading(false); showAlert("Koneksi Error", e.message, "fa-wifi", true); } }
+    async function handleRegister() { const namaLengkap = document.getElementById('regNama').value.trim();
+    const username = document.getElementById('regUser').value.trim(); const email = document.getElementById('regEmail').value.trim(); const noHp = document.getElementById('regHp').value.trim(); const alamatLengkap = document.getElementById('regAlamat').value.trim(); const password = document.getElementById('regPass').value.trim();
+    if(!namaLengkap || !username || !email || !noHp || !alamatLengkap || !password) { showAlert("Gagal", "Semua kolom wajib diisi!", "fa-circle-exclamation", true); return;
+    } if(!/^[A-Z](?=.*[a-zA-Z])(?=.*\d).{7,}$/.test(password)) { showAlert("Kata Sandi Lemah", "Minimal 8 karakter, diawali huruf besar, kombinasi huruf & angka.", "fa-shield-halved", true); return;
+    } showLoading(true); try { let res = await fetchGAS({ action: "register", namaLengkap, username, email, noHp, alamatLengkap, password }); showLoading(false);
+    if(res.status === "success") { showAlert("Sukses!", res.message, "fa-circle-check"); setTimeout(() => switchPage('pageLogin'), 1500); } else { showAlert("Gagal", res.message, "fa-circle-xmark", true);
+    } } catch(e) { showLoading(false); showAlert("Koneksi Error", e.message, "fa-wifi", true);
+    } }
     
     async function handleLogin() { 
-        const username = document.getElementById('loginUser').value.trim(); const password = document.getElementById('loginPass').value.trim(); 
-        if(!username || !password) { showAlert("Akses Ditolak", "Isi username dan password.", "fa-lock", true); return; } 
+        const username = document.getElementById('loginUser').value.trim();
+        const password = document.getElementById('loginPass').value.trim(); 
+        if(!username || !password) { showAlert("Akses Ditolak", "Isi username dan password.", "fa-lock", true); return;
+        } 
         showLoading(true);
         try { 
-            let res = await fetchGAS({ action: "login", username, password }); showLoading(false); 
+            let res = await fetchGAS({ action: "login", username, password });
+            showLoading(false); 
             if(res.status === "success") { 
-                SESSION_USER = res.user; globalPaketList = res.paket || []; globalRekeningList = res.rekening || []; serverTimeDelta = new Date(res.serverTime).getTime() - new Date().getTime();
+                SESSION_USER = res.user;
+                globalPaketList = res.paket || []; globalRekeningList = res.rekening || []; serverTimeDelta = new Date(res.serverTime).getTime() - new Date().getTime();
                 if(res.hasCompany) { 
                     SESSION_COMPANY = res.company;
                     localStorage.setItem('goBorneo_partner_session', JSON.stringify({ user: SESSION_USER, company: SESSION_COMPANY, paket: globalPaketList, rekening: globalRekeningList, serverTime: res.serverTime }));
                     populateDashboardData(); switchPage('pageMainApp'); loadLayananData(); startSubscriptionTimer(); startRealtimeExpirySync();
-                    if(isSubscriptionExpired() || SESSION_USER.hasPendingPayment) { setTimeout(() => { showSubscriptionModal(true); }, 2000); }
+                    if(isSubscriptionExpired() || SESSION_USER.hasPendingPayment) { setTimeout(() => { showSubscriptionModal(true); }, 2000);
+                    }
                 } else { 
                     localStorage.setItem('goBorneo_partner_session', JSON.stringify({ user: SESSION_USER, paket: globalPaketList, rekening: globalRekeningList, serverTime: res.serverTime }));
                     switchPage('pageOnboarding'); startSubscriptionTimer(); startRealtimeExpirySync();
-                    if(isSubscriptionExpired() || SESSION_USER.hasPendingPayment) { setTimeout(() => { showSubscriptionModal(true); }, 2000); }
+                    if(isSubscriptionExpired() || SESSION_USER.hasPendingPayment) { setTimeout(() => { showSubscriptionModal(true); }, 2000);
+                    }
                 } 
-            } else { showAlert("Login Gagal", res.message, "fa-triangle-exclamation", true); } 
-        } catch(e) { showLoading(false); showAlert("Error Script", e.message, "fa-server", true); } 
+            } else { showAlert("Login Gagal", res.message, "fa-triangle-exclamation", true);
+            } 
+        } catch(e) { showLoading(false); showAlert("Error Script", e.message, "fa-server", true);
+        } 
     }
     
-    async function handleCompanyRegister() { const n = document.getElementById('compNama').value.trim(); const d = document.getElementById('compDesc').value.trim(); const h = document.getElementById('compHp').value.trim(); const a = document.getElementById('compAlamat').value.trim(); if(!n || !d || !h || !a) { showAlert("Belum Lengkap", "Isi seluruh profil perusahaan.", "fa-building", true); return; } if(!base64CompLogo) { showAlert("Logo Wajib", "Upload logo perusahaan.", "fa-image", true); return; } showLoading(true); try { let res = await fetchGAS({ action: "registerCompany", username: SESSION_USER.username, namaPerusahaan: n, deskripsiPerusahaan: d, noHpPerusahaan: h, alamatPerusahaan: a, logo: base64CompLogo }); showLoading(false); if(res.status === "success") { SESSION_COMPANY = { namaPerusahaan: n, deskripsiPerusahaan: d, logo: base64CompLogo, noHpPerusahaan: h, alamatPerusahaan: a }; localStorage.setItem('goBorneo_partner_session', JSON.stringify({ user: SESSION_USER, company: SESSION_COMPANY, paket: globalPaketList, rekening: globalRekeningList, serverTime: new Date(new Date().getTime() + serverTimeDelta).toISOString() })); populateDashboardData(); switchPage('pageMainApp'); loadLayananData(); } else { showAlert("Gagal", res.message, "fa-circle-xmark", true); } } catch(e) { showLoading(false); showAlert("Koneksi Error", e.message, "fa-wifi", true); } }
+    async function handleCompanyRegister() { const n = document.getElementById('compNama').value.trim();
+    const d = document.getElementById('compDesc').value.trim(); const h = document.getElementById('compHp').value.trim(); const a = document.getElementById('compAlamat').value.trim();
+    if(!n || !d || !h || !a) { showAlert("Belum Lengkap", "Isi seluruh profil perusahaan.", "fa-building", true); return;
+    } if(!base64CompLogo) { showAlert("Logo Wajib", "Upload logo perusahaan.", "fa-image", true); return; } showLoading(true);
+    try { let res = await fetchGAS({ action: "registerCompany", username: SESSION_USER.username, namaPerusahaan: n, deskripsiPerusahaan: d, noHpPerusahaan: h, alamatPerusahaan: a, logo: base64CompLogo });
+    showLoading(false); if(res.status === "success") { SESSION_COMPANY = { namaPerusahaan: n, deskripsiPerusahaan: d, logo: base64CompLogo, noHpPerusahaan: h, alamatPerusahaan: a };
+    localStorage.setItem('goBorneo_partner_session', JSON.stringify({ user: SESSION_USER, company: SESSION_COMPANY, paket: globalPaketList, rekening: globalRekeningList, serverTime: new Date(new Date().getTime() + serverTimeDelta).toISOString() })); populateDashboardData(); switchPage('pageMainApp'); loadLayananData();
+    } else { showAlert("Gagal", res.message, "fa-circle-xmark", true); } } catch(e) { showLoading(false); showAlert("Koneksi Error", e.message, "fa-wifi", true);
+    } }
 
-    async function loadLayananData() { if(!SESSION_USER) return; const container = document.getElementById('layananCardContainer'); try { let result = await fetchGAS({ action: "getLayanan", username: SESSION_USER.username, email: SESSION_USER.email }); if(result.status === "success" && result.data.length > 0) { result.data.reverse(); globalLayananList = result.data; let htmlCards = `<h3 style="margin: 0 0 16px 0; font-size:15px; font-weight:700; color:#475569;">Armada & Jadwal Aktif</h3>`; let delay = 0; let todayObj = new Date(); let localOffset = todayObj.getTimezoneOffset() * 60000; let localISODate = new Date(todayObj.getTime() - localOffset).toISOString().split('T')[0]; globalLayananList.forEach((item, idx) => { let durasiStr = hitungDurasi(item.jamBerangkat, item.jamSampai); let imgTopSrc = item.foto ? item.foto : "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=600&q=80"; let imgIconsHtml = buildCardFacilityImages(item.fasilitas); let offDaysList = item.tanggalLibur ? item.tanggalLibur.split(',').map(d => d.trim()) : []; let isOffToday = offDaysList.includes(localISODate); let ribbonClass = isOffToday ? "non-aktif" : "aktif"; let ribbonText = isOffToday ? "Libur Hari Ini" : "Beroperasi"; htmlCards += `<div class="ticket-card" style="animation-delay: ${delay}s"><div class="ticket-img-top"><div class="status-ribbon ${ribbonClass}">${ribbonText}</div><img src="${imgTopSrc}" alt="Foto Armada"></div><div class="ticket-card-body"><div class="ticket-header"><div class="ticket-brand"><h3>${SESSION_COMPANY.namaPerusahaan}</h3><span>${item.merk} <div class="ticket-rating"><i class="fa-solid fa-star"></i> 4.8</div></span></div><div class="ticket-price-box"><div class="ticket-price">${formatRupiah(item.harga)}<span style="font-size: 12px; color: #80919D"> /Kursi</span></div><div class="ticket-seats-info-new"><i class="fa-solid fa-chair" style="color:#0284c7;"></i> ${item.kapasitas} Kursi Tersedia</div></div></div><div class="ticket-timeline-new"><div class="tl-time"><div>${item.jamBerangkat}</div><div class="tl-duration">${durasiStr}</div><div>${item.jamSampai}</div></div><div class="tl-center"><i class="fa-regular fa-circle-dot icon-origin"></i><div class="tl-line"></div><i class="fa-solid fa-location-dot icon-dest"></i></div><div class="tl-location"><div class="tl-loc-text">Titik Kumpul: <b>${item.asal}</b></div><div class="tl-loc-text">Tujuan Akhir: <b>${item.tujuan}</b></div></div></div><div style="border-top: 1px dashed #e2e8f0; margin: 12px 0;"></div><h4 style="font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px;">Fasilitas:</h4><div class="ticket-footer" style="background:transparent; padding:0;"><div class="facilities-wrapper"><div class="facilities-icons">${imgIconsHtml}</div><button class="settings-btn" onclick="openPengaturanDrawer(${idx})">Pengaturan</button></div></div></div></div>`; delay += 0.08; }); container.innerHTML = htmlCards; document.getElementById('stat-total-armada').innerText = globalLayananList.length; } else { document.getElementById('stat-total-armada').innerText = 0; container.innerHTML = `<div class="empty-state" style="text-align:center; padding: 40px 0; color:#94a3b8;"><i class="fa-solid fa-bus-slash" style="font-size:40px; margin-bottom:12px;"></i><p>Belum ada armada.</p></div>`; } } catch(e) { container.innerHTML = `<div style="text-align: center; margin-top: 40px; color: #ef4444;"><i class="fa-solid fa-triangle-exclamation"></i> Gagal memuat armada.</div>`; } }
+    async function loadLayananData() { if(!SESSION_USER) return; const container = document.getElementById('layananCardContainer');
+    try { let result = await fetchGAS({ action: "getLayanan", username: SESSION_USER.username, email: SESSION_USER.email });
+    if(result.status === "success" && result.data.length > 0) { result.data.reverse(); globalLayananList = result.data;
+    let htmlCards = `<h3 style="margin: 0 0 16px 0; font-size:15px; font-weight:700; color:#475569;">Armada & Jadwal Aktif</h3>`; let delay = 0;
+    let todayObj = new Date(); let localOffset = todayObj.getTimezoneOffset() * 60000; let localISODate = new Date(todayObj.getTime() - localOffset).toISOString().split('T')[0];
+    globalLayananList.forEach((item, idx) => { let durasiStr = hitungDurasi(item.jamBerangkat, item.jamSampai); let imgTopSrc = item.foto ? item.foto : "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=600&q=80"; let imgIconsHtml = buildCardFacilityImages(item.fasilitas); let offDaysList = item.tanggalLibur ? item.tanggalLibur.split(',').map(d => d.trim()) : []; let isOffToday = offDaysList.includes(localISODate); let ribbonClass = isOffToday ? "non-aktif" : "aktif"; let ribbonText = isOffToday ? "Libur Hari Ini" : "Beroperasi"; htmlCards += `<div class="ticket-card" style="animation-delay: ${delay}s"><div class="ticket-img-top"><div class="status-ribbon ${ribbonClass}">${ribbonText}</div><img src="${imgTopSrc}" alt="Foto Armada"></div><div class="ticket-card-body"><div class="ticket-header"><div class="ticket-brand"><h3>${SESSION_COMPANY.namaPerusahaan}</h3><span>${item.merk} <div class="ticket-rating"><i class="fa-solid fa-star"></i> 4.8</div></span></div><div class="ticket-price-box"><div class="ticket-price">${formatRupiah(item.harga)}<span style="font-size: 12px; color: #80919D"> /Kursi</span></div><div class="ticket-seats-info-new"><i class="fa-solid fa-chair" style="color:#0284c7;"></i> ${item.kapasitas} Kursi Tersedia</div></div></div><div class="ticket-timeline-new"><div class="tl-time"><div>${item.jamBerangkat}</div><div class="tl-duration">${durasiStr}</div><div>${item.jamSampai}</div></div><div class="tl-center"><i class="fa-regular fa-circle-dot icon-origin"></i><div class="tl-line"></div><i class="fa-solid fa-location-dot icon-dest"></i></div><div class="tl-location"><div class="tl-loc-text">Titik Kumpul: <b>${item.asal}</b></div><div class="tl-loc-text">Tujuan Akhir: <b>${item.tujuan}</b></div></div></div><div style="border-top: 1px dashed #e2e8f0; margin: 12px 0;"></div><h4 style="font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px;">Fasilitas:</h4><div class="ticket-footer" style="background:transparent; padding:0;"><div class="facilities-wrapper"><div class="facilities-icons">${imgIconsHtml}</div><button class="settings-btn" onclick="openPengaturanDrawer(${idx})">Pengaturan</button></div></div></div></div>`; delay += 0.08; }); container.innerHTML = htmlCards; document.getElementById('stat-total-armada').innerText = globalLayananList.length; } else { document.getElementById('stat-total-armada').innerText = 0; container.innerHTML = `<div class="empty-state" style="text-align:center; padding: 40px 0; color:#94a3b8;"><i class="fa-solid fa-bus-slash" style="font-size:40px; margin-bottom:12px;"></i><p>Belum ada armada.</p></div>`; } } catch(e) { container.innerHTML = `<div style="text-align: center; margin-top: 40px; color: #ef4444;"><i class="fa-solid fa-triangle-exclamation"></i> Gagal memuat armada.</div>`; } }
 
     async function loadPesananData() { if(!SESSION_COMPANY) return; const container = document.getElementById('pesananCardContainer'); container.innerHTML = `<div style="text-align:center; padding: 40px 0; color:#94a3b8;"><i class="fa-solid fa-spinner fa-spin fa-2x"></i><p style="margin-top:10px; font-weight:600;">Memuat tiket masuk...</p></div>`; try { let response = await fetch(GAS_API_URL + "?action=getPartnerOrders&perusahaan=" + encodeURIComponent(SESSION_COMPANY.namaPerusahaan)); let result = await response.json(); globalPesananList = result; renderPesananCards(result); if (orderChartInstance) { let activeType = document.querySelector('.chart-filter-btn.active').id.replace('btn-chart-',''); updateChartFilter(activeType); } } catch(e) { container.innerHTML = `<div style="text-align: center; margin-top: 40px; color: #ef4444;"><i class="fa-solid fa-triangle-exclamation"></i> Gagal memuat pesanan.</div>`; } }
     async function fetchPesananDataSilently() { if(!SESSION_COMPANY) return; try { let response = await fetch(GAS_API_URL + "?action=getPartnerOrders&perusahaan=" + encodeURIComponent(SESSION_COMPANY.namaPerusahaan)); let result = await response.json(); if(JSON.stringify(globalPesananList) !== JSON.stringify(result)) { globalPesananList = result; renderPesananCards(result); filterPesananMobile(); if (orderChartInstance) { let activeType = document.querySelector('.chart-filter-btn.active').id.replace('btn-chart-',''); updateChartFilter(activeType); } if(document.getElementById('pageAksesKursi').classList.contains('open')) { renderSeatLayout(); } } } catch(e) { console.error("Gagal sinkronisasi data pesanan real-time:", e); } }
 
-    function renderPesananCards(dataList) { const container = document.getElementById('pesananCardContainer'); let filteredList = dataList; if(currentPesananFilter === 'mitra') filteredList = dataList.filter(o => o.role === "Mitra" || o.isManualLocal); else if (currentPesananFilter === 'user') filteredList = dataList.filter(o => o.role !== "Mitra" && !o.isManualLocal); let filterText = "Semua Pesanan"; if(currentPesananFilter === 'mitra') filterText = "Pesanan Mitra"; if(currentPesananFilter === 'user') filterText = "Pesanan User"; let headerHtml = `<div class="order-header-wrapper" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; position: relative; z-index: 20;"><h3 class="order-header-title" style="margin: 0; font-size:15px; font-weight:700; color:#475569;">Manajemen Tiket Masuk</h3><div class="filter-dropdown" id="orderFilterMenu"><div class="filter-trigger" onclick="toggleOrderFilter()"><i class="fa-solid fa-filter"></i> <span>${filterText}</span> <i class="fa-solid fa-chevron-down" style="font-size:10px;"></i></div><div class="filter-menu"><div class="filter-option ${currentPesananFilter === 'all' ? 'active' : ''}" onclick="setPesananFilter('all')">Semua Pesanan <i class="fa-solid fa-check check"></i></div><div class="filter-option ${currentPesananFilter === 'user' ? 'active' : ''}" onclick="setPesananFilter('user')">Pesanan User <i class="fa-solid fa-check check"></i></div><div class="filter-option ${currentPesananFilter === 'mitra' ? 'active' : ''}" onclick="setPesananFilter('mitra')">Pesanan Mitra <i class="fa-solid fa-check check"></i></div></div></div></div>`; let htmlCards = headerHtml; if (filteredList.length > 0) { let delay = 0; filteredList.forEach(order => { htmlCards += generateTicketCardHTML(order, false, delay); delay += 0.08; }); } else { htmlCards += `<div class="empty-state" style="text-align:center; padding: 40px 0; color:#94a3b8;"><i class="fa-solid fa-ticket" style="font-size:40px; margin-bottom:12px;"></i><p>Belum ada tiket pesanan masuk.</p></div>`; } container.innerHTML = htmlCards; updateDashboardPesananStats(); }
-    function generateTicketCardHTML(order, isPopupDrawer = false, delay = 0) { let isPaid = order.statusBooking.toLowerCase() === "lunas"; let statusClass = isPaid ? "aktif" : "non-aktif"; let statusText = isPaid ? "LUNAS" : "BELUM BAYAR"; let tglBooking = formatTglIndo(order.tanggalBooking); let isManual = (order.role === "Mitra") || order.isManualLocal; let manualBadge = isManual ? `<div class="badge-manual"><i class="fa-solid fa-bolt"></i> Manual</div>` : ''; let suffix = isPopupDrawer ? "-popup" : ""; let actionBtn = isPaid ? '' : `<button id="btn-confirm-${order.idBooking}${suffix}" class="settings-btn" style="background:linear-gradient(135deg, #10b981, #059669); color:white; box-shadow:0 4px 10px rgba(16,185,129,0.3); z-index: 12;" onclick="event.stopPropagation(); openPaymentModal('${order.idBooking}')"><i class="fa-solid fa-hand-holding-dollar"></i> Konfirmasi</button>`; let cardOnClick = !isPopupDrawer ? `onclick="openTicketDetail('${order.idBooking}')" style="cursor:pointer; opacity: 0; animation: fadeIn 0.5s forwards; animation-delay: ${delay}s;"` : `style="box-shadow:none; border: 1px solid #e2e8f0; margin-bottom: 0;"`; return `<div class="ticket-card pesanan-card-item" id="ticketCard-${order.idBooking}${suffix}" ${cardOnClick}><div class="ticket-card-body" style="padding-top: 15px; position: relative;"><div class="ticket-header" style="margin-bottom:8px;"><div class="ticket-brand"><h3 style="color:#89a37b; font-size:16px;">${order.idBooking}</h3><span><i class="fa-solid fa-user" style="color:#cbd5e1;"></i> <b style="color:var(--text-main); margin-left:4px; text-transform:capitalize;">${order.namaPenumpang}</b> ${manualBadge}</span><span style="font-size:10px; margin-top:2px;"><i class="fa-solid fa-phone" style="color:#cbd5e1;"></i> <span style="margin-left:4px;">0${order.noHp}</span></span></div><div class="ticket-price-box"><div class="ticket-price">Rp. ${formatNumber(order.harga)}</div><div style="font-size: 11px; font-weight: 700; color: #64748b; margin: 4px 0;"><i class="fa-solid fa-bus"></i> ${order.merkKendaraan}</div><div class="ticket-seats-info-new" style="margin-top: 0;"><i class="fa-solid fa-chair" style="color:#0284c7;"></i> Kursi: <b>${order.nomorKursi}</b></div></div></div><div class="ticket-timeline-new" style="margin-top:10px; margin-bottom:8px;"><div class="tl-center" style="margin-left:0;"><i class="fa-regular fa-circle-dot icon-origin"></i><div class="tl-line"></div><i class="fa-solid fa-location-dot icon-dest"></i></div><div class="tl-location"><div class="tl-loc-text">Naik: <b>${order.asal}</b></div><div class="tl-loc-text">Turun: <b>${order.tujuan}</b></div></div></div><div style="margin-top:12px; display: flex; justify-content: flex-end;"><div class="modern-date-badge"><span style="color: black"> Tanggal Berangkat:</span><i class="fa-regular fa-calendar-check"></i> ${tglBooking}</div></div><div class="ticket-footer" style="background:transparent; padding:0; margin-top:20px; position: relative; height: 35px; display: flex; align-items: center; justify-content: flex-end;"><div id="badge-${order.idBooking}${suffix}" class="status-ribbon-bottom-left ${statusClass}">${statusText}</div>${actionBtn}</div></div></div>`; }
+    function renderPesananCards(dataList) { const container = document.getElementById('pesananCardContainer'); let filteredList = dataList; if(currentPesananFilter === 'mitra') filteredList = dataList.filter(o => o.role === "Mitra" ||
+    o.isManualLocal); else if (currentPesananFilter === 'user') filteredList = dataList.filter(o => o.role !== "Mitra" && !o.isManualLocal); let filterText = "Semua Pesanan";
+    if(currentPesananFilter === 'mitra') filterText = "Pesanan Mitra"; if(currentPesananFilter === 'user') filterText = "Pesanan User";
+    let headerHtml = `<div class="order-header-wrapper" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; position: relative; z-index: 20;"><h3 class="order-header-title" style="margin: 0; font-size:15px; font-weight:700; color:#475569;">Manajemen Tiket Masuk</h3><div class="filter-dropdown" id="orderFilterMenu"><div class="filter-trigger" onclick="toggleOrderFilter()"><i class="fa-solid fa-filter"></i> <span>${filterText}</span> <i class="fa-solid fa-chevron-down" style="font-size:10px;"></i></div><div class="filter-menu"><div class="filter-option ${currentPesananFilter === 'all' ? 'active' : ''}" onclick="setPesananFilter('all')">Semua Pesanan <i class="fa-solid fa-check check"></i></div><div class="filter-option ${currentPesananFilter === 'user' ? 'active' : ''}" onclick="setPesananFilter('user')">Pesanan User <i class="fa-solid fa-check check"></i></div><div class="filter-option ${currentPesananFilter === 'mitra' ? 'active' : ''}" onclick="setPesananFilter('mitra')">Pesanan Mitra <i class="fa-solid fa-check check"></i></div></div></div></div>`;
+    let htmlCards = headerHtml; if (filteredList.length > 0) { let delay = 0;
+    filteredList.forEach(order => { htmlCards += generateTicketCardHTML(order, false, delay); delay += 0.08; });
+    } else { htmlCards += `<div class="empty-state" style="text-align:center; padding: 40px 0; color:#94a3b8;"><i class="fa-solid fa-ticket" style="font-size:40px; margin-bottom:12px;"></i><p>Belum ada tiket pesanan masuk.</p></div>`;
+    } container.innerHTML = htmlCards; updateDashboardPesananStats(); }
+    function generateTicketCardHTML(order, isPopupDrawer = false, delay = 0) { let isPaid = order.statusBooking.toLowerCase() === "lunas";
+    let statusClass = isPaid ? "aktif" : "non-aktif"; let statusText = isPaid ? "LUNAS" : "BELUM BAYAR";
+    let tglBooking = formatTglIndo(order.tanggalBooking); let isManual = (order.role === "Mitra") || order.isManualLocal; let manualBadge = isManual ?
+    `<div class="badge-manual"><i class="fa-solid fa-bolt"></i> Manual</div>` : ''; let suffix = isPopupDrawer ? "-popup" : ""; let actionBtn = isPaid ?
+    '' : `<button id="btn-confirm-${order.idBooking}${suffix}" class="settings-btn" style="background:linear-gradient(135deg, #10b981, #059669); color:white; box-shadow:0 4px 10px rgba(16,185,129,0.3); z-index: 12;" onclick="event.stopPropagation(); openPaymentModal('${order.idBooking}')"><i class="fa-solid fa-hand-holding-dollar"></i> Konfirmasi</button>`;
+    let cardOnClick = !isPopupDrawer ? `onclick="openTicketDetail('${order.idBooking}')" style="cursor:pointer; opacity: 0; animation: fadeIn 0.5s forwards; animation-delay: ${delay}s;"` : `style="box-shadow:none; border: 1px solid #e2e8f0; margin-bottom: 0;"`;
+    return `<div class="ticket-card pesanan-card-item" id="ticketCard-${order.idBooking}${suffix}" ${cardOnClick}><div class="ticket-card-body" style="padding-top: 15px; position: relative;"><div class="ticket-header" style="margin-bottom:8px;"><div class="ticket-brand"><h3 style="color:#89a37b; font-size:16px;">${order.idBooking}</h3><span><i class="fa-solid fa-user" style="color:#cbd5e1;"></i> <b style="color:var(--text-main); margin-left:4px; text-transform:capitalize;">${order.namaPenumpang}</b> ${manualBadge}</span><span style="font-size:10px; margin-top:2px;"><i class="fa-solid fa-phone" style="color:#cbd5e1;"></i> <span style="margin-left:4px;">0${order.noHp}</span></span></div><div class="ticket-price-box"><div class="ticket-price">Rp. ${formatNumber(order.harga)}</div><div style="font-size: 11px; font-weight: 700; color: #64748b; margin: 4px 0;"><i class="fa-solid fa-bus"></i> ${order.merkKendaraan}</div><div class="ticket-seats-info-new" style="margin-top: 0;"><i class="fa-solid fa-chair" style="color:#0284c7;"></i> Kursi: <b>${order.nomorKursi}</b></div></div></div><div class="ticket-timeline-new" style="margin-top:10px; margin-bottom:8px;"><div class="tl-center" style="margin-left:0;"><i class="fa-regular fa-circle-dot icon-origin"></i><div class="tl-line"></div><i class="fa-solid fa-location-dot icon-dest"></i></div><div class="tl-location"><div class="tl-loc-text">Naik: <b>${order.asal}</b></div><div class="tl-loc-text">Turun: <b>${order.tujuan}</b></div></div></div><div style="margin-top:12px; display: flex; justify-content: flex-end;"><div class="modern-date-badge"><span style="color: black"> Tanggal Berangkat:</span><i class="fa-regular fa-calendar-check"></i> ${tglBooking}</div></div><div class="ticket-footer" style="background:transparent; padding:0; margin-top:20px; position: relative; height: 35px; display: flex; align-items: center; justify-content: flex-end;"><div id="badge-${order.idBooking}${suffix}" class="status-ribbon-bottom-left ${statusClass}">${statusText}</div>${actionBtn}</div></div></div>`; }
 
-    async function openAddService() { document.getElementById('pageAddService').classList.add('open'); pushBackButtonHandler('addService'); try { let response = await fetch(GAS_API_URL + "?action=getVehicleTypes"); let listJenis = await response.json(); let optionsHtml = listJenis.length > 0 ? listJenis.map(i => `<div class="custom-option" onclick="selectServiceType('${i.nama}', '${i.icon || "https://cdn-icons-png.flaticon.com/512/744/744465.png"}')"><img src="${i.icon || ""}"><span style="color:var(--text-main); font-weight:500;">${i.nama}</span></div>`).join("") : `<div class="custom-option">Tidak ada data.</div>`; document.getElementById('serviceTypeOptions').innerHTML = optionsHtml; } catch (e) { document.getElementById('serviceTypeOptions').innerHTML = `<div class="custom-option" style="color:#EF4444">Gagal memuat jenis.</div>`; } }
-    function selectServiceType(namaJenis, iconUrl) { selectedVehicleTypeName = namaJenis; let isEdit = document.getElementById('pageEditService').classList.contains('open'); let targetSpan = isEdit ? 'selectedEditServiceType' : 'selectedServiceType'; if(document.getElementById(targetSpan)){ document.getElementById(targetSpan).innerHTML = `<div style="display: flex; align-items: center; gap: 10px;"><img src="${iconUrl}" style="width:24px; height:24px; object-fit:contain; border-radius:4px;"><span style="font-weight:700; color:var(--text-main);">${namaJenis}</span></div>`; } if(document.getElementById('serviceTypeOptions')) document.getElementById('serviceTypeOptions').classList.remove('open'); if(document.getElementById('serviceEditTypeOptions')) document.getElementById('serviceEditTypeOptions').classList.remove('open'); if(document.getElementById('serviceTypeSelect')) document.getElementById('serviceTypeSelect').style.borderColor = "var(--primary)"; if(document.getElementById('serviceEditTypeSelect')) document.getElementById('serviceEditTypeSelect').style.borderColor = "var(--primary)"; }
-    function closeAddServiceAndReset(fromPopState = false) { document.getElementById('selectedServiceType').innerHTML = "<span>Pilih Tipe Kendaraan...</span>"; selectedVehicleTypeName = ""; selectedFasilitasArray = []; document.getElementById('addFasilitas').value = ""; document.getElementById('addFasilitasPreviewContainer').innerHTML = ""; ['addMerk','addKapasitas','addHarga','addAsal','addTujuan','addJamB','addJamS','addFotoFile'].forEach(id => document.getElementById(id).value = ""); document.getElementById('previewAddFoto').src = ""; document.getElementById('previewAddFoto').style.display = 'none'; base64ArmadaFoto = ""; document.getElementById('pageAddService').classList.remove('open'); if (!fromPopState) popBackButtonHandler(); }
-    async function submitNewService() { const d = { jenis: selectedVehicleTypeName, merk: document.getElementById('addMerk').value.trim(), fasilitas: document.getElementById('addFasilitas').value.trim(), kapasitas: document.getElementById('addKapasitas').value.trim(), harga: document.getElementById('addHarga').value.trim(), asal: document.getElementById('addAsal').value.trim(), tujuan: document.getElementById('addTujuan').value.trim(), jamBerangkat: document.getElementById('addJamB').value, jamSampai: document.getElementById('addJamS').value }; if(!d.jenis || !d.merk || !d.fasilitas || !d.kapasitas || !d.harga || !d.asal || !d.tujuan || !d.jamBerangkat || !d.jamSampai) { showAlert("Belum Lengkap", "Isi seluruh spesifikasi jadwal.", "fa-triangle-exclamation", true); return; } if(!base64ArmadaFoto) { showAlert("Foto Wajib", "Upload foto armada.", "fa-camera", true); return; } showLoading(true); const payload = { action: "addService", username: SESSION_USER.username, email: SESSION_USER.email, namaPerusahaan: SESSION_COMPANY.namaPerusahaan, foto: base64ArmadaFoto, ...d }; try { let result = await fetchGAS(payload); showLoading(false); if(result.status === "success") { showAlert("Berhasil", "Armada ditambahkan.", "fa-circle-check"); closeAddServiceAndReset(); loadLayananData(); } else { showAlert("Gagal", result.message, "fa-circle-xmark", true); } } catch(e) { showLoading(false); showAlert("Koneksi Error", e.message, "fa-wifi", true); } }
+    async function openAddService() { document.getElementById('pageAddService').classList.add('open'); pushBackButtonHandler('addService'); try { let response = await fetch(GAS_API_URL + "?action=getVehicleTypes"); let listJenis = await response.json(); let optionsHtml = listJenis.length > 0 ? listJenis.map(i => `<div class="custom-option" onclick="selectServiceType('${i.nama}', '${i.icon || "https://cdn-icons-png.flaticon.com/512/744/744465.png"}')"><img src="${i.icon || ""}"><span style="color:var(--text-main); font-weight:500;">${i.nama}</span></div>`).join("") : `<div class="custom-option">Tidak ada data.</div>`; document.getElementById('serviceTypeOptions').innerHTML = optionsHtml; } catch (e) { document.getElementById('serviceTypeOptions').innerHTML = `<div class="custom-option" style="color:#EF4444">Gagal memuat jenis.</div>`;
+    } }
+    function selectServiceType(namaJenis, iconUrl) { selectedVehicleTypeName = namaJenis; let isEdit = document.getElementById('pageEditService').classList.contains('open');
+    let targetSpan = isEdit ? 'selectedEditServiceType' : 'selectedServiceType'; if(document.getElementById(targetSpan)){ document.getElementById(targetSpan).innerHTML = `<div style="display: flex; align-items: center; gap: 10px;"><img src="${iconUrl}" style="width:24px; height:24px; object-fit:contain; border-radius:4px;"><span style="font-weight:700; color:var(--text-main);">${namaJenis}</span></div>`;
+    } if(document.getElementById('serviceTypeOptions')) document.getElementById('serviceTypeOptions').classList.remove('open'); if(document.getElementById('serviceEditTypeOptions')) document.getElementById('serviceEditTypeOptions').classList.remove('open'); if(document.getElementById('serviceTypeSelect')) document.getElementById('serviceTypeSelect').style.borderColor = "var(--primary)"; if(document.getElementById('serviceEditTypeSelect')) document.getElementById('serviceEditTypeSelect').style.borderColor = "var(--primary)";
+    }
+    function closeAddServiceAndReset(fromPopState = false) { document.getElementById('selectedServiceType').innerHTML = "<span>Pilih Tipe Kendaraan...</span>"; selectedVehicleTypeName = ""; selectedFasilitasArray = [];
+    document.getElementById('addFasilitas').value = ""; document.getElementById('addFasilitasPreviewContainer').innerHTML = ""; ['addMerk','addKapasitas','addHarga','addAsal','addTujuan','addJamB','addJamS','addFotoFile'].forEach(id => document.getElementById(id).value = ""); document.getElementById('previewAddFoto').src = ""; document.getElementById('previewAddFoto').style.display = 'none'; base64ArmadaFoto = "";
+    document.getElementById('pageAddService').classList.remove('open'); if (!fromPopState) popBackButtonHandler(); }
+    async function submitNewService() { const d = { jenis: selectedVehicleTypeName, merk: document.getElementById('addMerk').value.trim(), fasilitas: document.getElementById('addFasilitas').value.trim(), kapasitas: document.getElementById('addKapasitas').value.trim(), harga: document.getElementById('addHarga').value.trim(), asal: document.getElementById('addAsal').value.trim(), tujuan: document.getElementById('addTujuan').value.trim(), jamBerangkat: document.getElementById('addJamB').value, jamSampai: document.getElementById('addJamS').value };
+    if(!d.jenis || !d.merk || !d.fasilitas || !d.kapasitas || !d.harga || !d.asal || !d.tujuan || !d.jamBerangkat || !d.jamSampai) { showAlert("Belum Lengkap", "Isi seluruh spesifikasi jadwal.", "fa-triangle-exclamation", true);
+    return; } if(!base64ArmadaFoto) { showAlert("Foto Wajib", "Upload foto armada.", "fa-camera", true); return; } showLoading(true);
+    const payload = { action: "addService", username: SESSION_USER.username, email: SESSION_USER.email, namaPerusahaan: SESSION_COMPANY.namaPerusahaan, foto: base64ArmadaFoto, ...d };
+    try { let result = await fetchGAS(payload); showLoading(false); if(result.status === "success") { showAlert("Berhasil", "Armada ditambahkan.", "fa-circle-check"); closeAddServiceAndReset(); loadLayananData();
+    } else { showAlert("Gagal", result.message, "fa-circle-xmark", true); } } catch(e) { showLoading(false); showAlert("Koneksi Error", e.message, "fa-wifi", true);
+    } }
 
-    function openPengaturanDrawer(idx) { activeLayananIndex = idx; const item = globalLayananList[idx]; document.getElementById('pengaturanModalTitle').innerText = "Pengaturan " + item.merk; currentCalYear = new Date().getFullYear(); currentCalMonth = new Date().getMonth(); document.getElementById('pengaturanModal').classList.add('open'); renderCalendarWidget(); pushBackButtonHandler('pengaturanModal'); }
-    function closePengaturanModal(fromPopState = false) { document.getElementById('pengaturanModal').classList.remove('open'); if (!fromPopState) popBackButtonHandler(); }
-    function renderCalendarWidget() { const item = globalLayananList[activeLayananIndex]; let offDatesArray = item.tanggalLibur ? item.tanggalLibur.split(',').map(d => d.trim()).filter(Boolean) : []; const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"]; if(document.getElementById('calMonthYearTitle')) document.getElementById('calMonthYearTitle').innerText = `${monthNames[currentCalMonth]} ${currentCalYear}`; let firstDay = new Date(currentCalYear, currentCalMonth, 1).getDay(); let daysInMonth = new Date(currentCalYear, currentCalMonth + 1, 0).getDate(); let gridHtml = `<div style="font-size:10px; font-weight:700; color:#94a3b8;">Min</div><div style="font-size:10px; font-weight:700; color:#94a3b8;">Sen</div><div style="font-size:10px; font-weight:700; color:#94a3b8;">Sel</div><div style="font-size:10px; font-weight:700; color:#94a3b8;">Rab</div><div style="font-size:10px; font-weight:700; color:#94a3b8;">Kam</div><div style="font-size:10px; font-weight:700; color:#94a3b8;">Jum</div><div style="font-size:10px; font-weight:700; color:#94a3b8;">Sab</div>`; for (let i = 0; i < firstDay; i++) gridHtml += `<div></div>`; for (let day = 1; day <= daysInMonth; day++) { let mStr = (currentCalMonth + 1).toString().padStart(2, '0'); let dStr = day.toString().padStart(2, '0'); let fullDateStr = `${currentCalYear}-${mStr}-${dStr}`; let isOff = offDatesArray.includes(fullDateStr); let bgStyle = isOff ? "background:#fef2f2; color:#ef4444; border:1px solid #fca5a5;" : "background:#f0fdf4; color:#22c55e; border:1px solid #86efac;"; let statusText = isOff ? "off" : "on"; let statusColor = isOff ? "#ef4444" : "#22c55e"; gridHtml += `<div onclick="toggleMultipleChoiceDate('${fullDateStr}')" style="width:40px; height:46px; ${bgStyle} border-radius:10px; display:flex; flex-direction:column; align-items:center; justify-content:center; margin:auto; cursor:pointer; font-size:12px; font-weight:700; transition:all 0.1s ease;">${day}<div style="font-size:9px; font-weight:800; text-transform:uppercase; color:${statusColor}; margin-top:2px;">${statusText}</div></div>`; } if(document.getElementById('calendarGridWidget')) document.getElementById('calendarGridWidget').innerHTML = gridHtml; }
-    function toggleMultipleChoiceDate(dateStr) { const item = globalLayananList[activeLayananIndex]; let offDatesArray = item.tanggalLibur ? item.tanggalLibur.split(',').map(d => d.trim()).filter(Boolean) : []; let dateIdx = offDatesArray.indexOf(dateStr); if(dateIdx > -1) offDatesArray.splice(dateIdx, 1); else offDatesArray.push(dateStr); item.tanggalLibur = offDatesArray.join(','); renderCalendarWidget(); }
-    function changeCalendarMonth(dir) { currentCalMonth += dir; if (currentCalMonth > 11) { currentCalMonth = 0; currentCalYear++; } else if (currentCalMonth < 0) { currentCalMonth = 11; currentCalYear--; } renderCalendarWidget(); }
-    async function saveCalendarSettings() { if(activeLayananIndex === -1) return; const item = globalLayananList[activeLayananIndex]; showLoading(true); try { let res = await fetchGAS({ action: "updateCalendar", username: SESSION_USER.username, email: SESSION_USER.email, merk: item.merk, jamBerangkat: item.jamBerangkat, tanggalLibur: item.tanggalLibur }); showLoading(false); if(res.status === "success") { showAlert("Sukses", "Kalender diperbarui!", "fa-circle-check"); closePengaturanModal(); loadLayananData(); } else { showAlert("Gagal", res.message, "fa-circle-xmark", true); } } catch(e) { showLoading(false); showAlert("Koneksi Error", e.message, "fa-wifi", true); } }
-    async function executeDeleteService() { if(activeLayananIndex === -1) return; const item = globalLayananList[activeLayananIndex]; showLoading(true); try { let res = await fetchGAS({ action: "deleteService", username: SESSION_USER.username, email: SESSION_USER.email, merk: item.merk, jamBerangkat: item.jamBerangkat }); showLoading(false); if(res.status === "success") { showAlert("Terhapus", "Data dihapus.", "fa-trash"); closePengaturanModal(); loadLayananData(); } else { showAlert("Gagal", res.message, "fa-circle-xmark", true); } } catch(e) { showLoading(false); showAlert("Koneksi Error", e.message, "fa-wifi", true); } }
+    function openPengaturanDrawer(idx) { activeLayananIndex = idx; const item = globalLayananList[idx];
+    document.getElementById('pengaturanModalTitle').innerText = "Pengaturan " + item.merk; currentCalYear = new Date().getFullYear(); currentCalMonth = new Date().getMonth(); document.getElementById('pengaturanModal').classList.add('open'); renderCalendarWidget(); pushBackButtonHandler('pengaturanModal');
+    }
+    function closePengaturanModal(fromPopState = false) { document.getElementById('pengaturanModal').classList.remove('open'); if (!fromPopState) popBackButtonHandler();
+    }
+    function renderCalendarWidget() { const item = globalLayananList[activeLayananIndex]; let offDatesArray = item.tanggalLibur ?
+    item.tanggalLibur.split(',').map(d => d.trim()).filter(Boolean) : []; const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+    if(document.getElementById('calMonthYearTitle')) document.getElementById('calMonthYearTitle').innerText = `${monthNames[currentCalMonth]} ${currentCalYear}`; let firstDay = new Date(currentCalYear, currentCalMonth, 1).getDay();
+    let daysInMonth = new Date(currentCalYear, currentCalMonth + 1, 0).getDate(); let gridHtml = `<div style="font-size:10px; font-weight:700; color:#94a3b8;">Min</div><div style="font-size:10px; font-weight:700; color:#94a3b8;">Sen</div><div style="font-size:10px; font-weight:700; color:#94a3b8;">Sel</div><div style="font-size:10px; font-weight:700; color:#94a3b8;">Rab</div><div style="font-size:10px; font-weight:700; color:#94a3b8;">Kam</div><div style="font-size:10px; font-weight:700; color:#94a3b8;">Jum</div><div style="font-size:10px; font-weight:700; color:#94a3b8;">Sab</div>`;
+    for (let i = 0; i < firstDay; i++) gridHtml += `<div></div>`;
+    for (let day = 1; day <= daysInMonth; day++) { let mStr = (currentCalMonth + 1).toString().padStart(2, '0');
+    let dStr = day.toString().padStart(2, '0'); let fullDateStr = `${currentCalYear}-${mStr}-${dStr}`; let isOff = offDatesArray.includes(fullDateStr); let bgStyle = isOff ?
+    "background:#fef2f2; color:#ef4444; border:1px solid #fca5a5;" : "background:#f0fdf4; color:#22c55e; border:1px solid #86efac;"; let statusText = isOff ? "off" : "on";
+    let statusColor = isOff ? "#ef4444" : "#22c55e"; gridHtml += `<div onclick="toggleMultipleChoiceDate('${fullDateStr}')" style="width:40px; height:46px; ${bgStyle} border-radius:10px; display:flex; flex-direction:column; align-items:center; justify-content:center; margin:auto; cursor:pointer; font-size:12px; font-weight:700; transition:all 0.1s ease;">${day}<div style="font-size:9px; font-weight:800; text-transform:uppercase; color:${statusColor}; margin-top:2px;">${statusText}</div></div>`;
+    } if(document.getElementById('calendarGridWidget')) document.getElementById('calendarGridWidget').innerHTML = gridHtml; }
+    function toggleMultipleChoiceDate(dateStr) { const item = globalLayananList[activeLayananIndex];
+    let offDatesArray = item.tanggalLibur ? item.tanggalLibur.split(',').map(d => d.trim()).filter(Boolean) : []; let dateIdx = offDatesArray.indexOf(dateStr); if(dateIdx > -1) offDatesArray.splice(dateIdx, 1);
+    else offDatesArray.push(dateStr); item.tanggalLibur = offDatesArray.join(','); renderCalendarWidget(); }
+    function changeCalendarMonth(dir) { currentCalMonth += dir;
+    if (currentCalMonth > 11) { currentCalMonth = 0; currentCalYear++; } else if (currentCalMonth < 0) { currentCalMonth = 11; currentCalYear--;
+    } renderCalendarWidget(); }
+    async function saveCalendarSettings() { if(activeLayananIndex === -1) return; const item = globalLayananList[activeLayananIndex]; showLoading(true);
+    try { let res = await fetchGAS({ action: "updateCalendar", username: SESSION_USER.username, email: SESSION_USER.email, merk: item.merk, jamBerangkat: item.jamBerangkat, tanggalLibur: item.tanggalLibur });
+    showLoading(false); if(res.status === "success") { showAlert("Sukses", "Kalender diperbarui!", "fa-circle-check"); closePengaturanModal(); loadLayananData(); } else { showAlert("Gagal", res.message, "fa-circle-xmark", true);
+    } } catch(e) { showLoading(false); showAlert("Koneksi Error", e.message, "fa-wifi", true);
+    } }
+    async function executeDeleteService() { if(activeLayananIndex === -1) return; const item = globalLayananList[activeLayananIndex]; showLoading(true);
+    try { let res = await fetchGAS({ action: "deleteService", username: SESSION_USER.username, email: SESSION_USER.email, merk: item.merk, jamBerangkat: item.jamBerangkat }); showLoading(false);
+    if(res.status === "success") { showAlert("Terhapus", "Data dihapus.", "fa-trash"); closePengaturanModal(); loadLayananData(); } else { showAlert("Gagal", res.message, "fa-circle-xmark", true);
+    } } catch(e) { showLoading(false); showAlert("Koneksi Error", e.message, "fa-wifi", true); } }
 
-    async function openEditLayananForm() { closePengaturanModal(); try { const item = globalLayananList[activeLayananIndex]; oldMerkForEdit = item.merk; oldJamBForEdit = item.jamBerangkat; selectedVehicleTypeName = item.jenis; document.getElementById('editMerk').value = item.merk || ''; document.getElementById('editKapasitas').value = item.kapasitas || ''; document.getElementById('editHarga').value = item.harga || ''; document.getElementById('editAsal').value = item.asal || ''; document.getElementById('editTujuan').value = item.tujuan || ''; document.getElementById('editJamB').value = item.jamBerangkat || ''; document.getElementById('editJamS').value = item.jamSampai || ''; document.getElementById('editFasilitas').value = item.fasilitas || ''; selectedFasilitasArray = item.fasilitas ? item.fasilitas.split(',').map(f => f.trim()) : []; activeFacilityTargetInput = 'editFasilitas'; renderFormFacilitiesPreview(); let response = await fetch(GAS_API_URL + "?action=getVehicleTypes"); let listJenis = await response.json(); let optionsHtml = listJenis.length > 0 ? listJenis.map(i => `<div class="custom-option" onclick="selectServiceType('${i.nama}', '${i.icon || "https://cdn-icons-png.flaticon.com/512/744/744465.png"}')"><img src="${i.icon || ""}"><span style="color:var(--text-main); font-weight:500;">${i.nama}</span></div>`).join("") : `<div class="custom-option">Tidak ada data.</div>`; document.getElementById('serviceEditTypeOptions').innerHTML = optionsHtml; let matchJenis = listJenis.find(j => j.nama === item.jenis); let defIconUrl = matchJenis && matchJenis.icon ? matchJenis.icon : "https://cdn-icons-png.flaticon.com/512/744/744465.png"; if (document.getElementById('selectedEditServiceType')) { document.getElementById('selectedEditServiceType').innerHTML = `<div style="display: flex; align-items: center; gap: 10px;"><img src="${defIconUrl}" style="width:24px; height:24px; object-fit:contain; border-radius:4px;"><span style="font-weight:700; color:var(--text-main);">${item.jenis}</span></div>`; } if(item.foto) { document.getElementById('previewEditFoto').src = item.foto; document.getElementById('previewEditFoto').style.display = 'block'; } else { document.getElementById('previewEditFoto').src = ""; document.getElementById('previewEditFoto').style.display = 'none'; } base64ArmadaFoto = ""; document.getElementById('pageEditService').classList.add('open'); pushBackButtonHandler('editService'); } catch(e) { console.error("Gagal Render Edit Form: ", e); showAlert("Error", "Gagal memuat form edit.", "fa-triangle-exclamation", true); } }
-    function closeEditLayananForm(fromPopState = false) { document.getElementById('pageEditService').classList.remove('open'); if (!fromPopState) popBackButtonHandler(); }
-    async function submitEditService() { const d = { jenis: selectedVehicleTypeName, merk: document.getElementById('editMerk').value.trim(), fasilitas: document.getElementById('editFasilitas').value.trim(), kapasitas: document.getElementById('editKapasitas').value.trim(), harga: document.getElementById('editHarga').value.trim(), asal: document.getElementById('editAsal').value.trim(), tujuan: document.getElementById('editTujuan').value.trim(), jamBerangkat: document.getElementById('editJamB').value, jamSampai: document.getElementById('editJamS').value }; if(!d.jenis || !d.merk || !d.fasilitas || !d.kapasitas || !d.harga || !d.asal || !d.tujuan || !d.jamBerangkat || !d.jamSampai) { showAlert("Belum Lengkap", "Isi seluruh kolom edit.", "fa-triangle-exclamation", true); return; } showLoading(true); const payload = { action: "editService", username: SESSION_USER.username, email: SESSION_USER.email, oldMerk: oldMerkForEdit, oldJamBerangkat: oldJamBForEdit, foto: base64ArmadaFoto || "", ...d }; try { let result = await fetchGAS(payload); showLoading(false); if(result.status === "success") { showAlert("Berhasil", "Spesifikasi diperbarui.", "fa-circle-check"); base64ArmadaFoto = ""; closeEditLayananForm(); loadLayananData(); } else { showAlert("Gagal", result.message, "fa-circle-xmark", true); } } catch(e) { showLoading(false); showAlert("Koneksi Error", e.message, "fa-wifi", true); } }
+    async function openEditLayananForm() { closePengaturanModal();
+    try { const item = globalLayananList[activeLayananIndex]; oldMerkForEdit = item.merk; oldJamBForEdit = item.jamBerangkat; selectedVehicleTypeName = item.jenis; document.getElementById('editMerk').value = item.merk || '';
+    document.getElementById('editKapasitas').value = item.kapasitas || ''; document.getElementById('editHarga').value = item.harga || ''; document.getElementById('editAsal').value = item.asal || ''; document.getElementById('editTujuan').value = item.tujuan || '';
+    document.getElementById('editJamB').value = item.jamBerangkat || ''; document.getElementById('editJamS').value = item.jamSampai || ''; document.getElementById('editFasilitas').value = item.fasilitas || ''; selectedFasilitasArray = item.fasilitas ?
+    item.fasilitas.split(',').map(f => f.trim()) : []; activeFacilityTargetInput = 'editFasilitas'; renderFormFacilitiesPreview(); let response = await fetch(GAS_API_URL + "?action=getVehicleTypes");
+    let listJenis = await response.json(); let optionsHtml = listJenis.length > 0 ?
+    listJenis.map(i => `<div class="custom-option" onclick="selectServiceType('${i.nama}', '${i.icon || "https://cdn-icons-png.flaticon.com/512/744/744465.png"}')"><img src="${i.icon || ""}"><span style="color:var(--text-main); font-weight:500;">${i.nama}</span></div>`).join("") : `<div class="custom-option">Tidak ada data.</div>`;
+    document.getElementById('serviceEditTypeOptions').innerHTML = optionsHtml; let matchJenis = listJenis.find(j => j.nama === item.jenis); let defIconUrl = matchJenis && matchJenis.icon ?
+    matchJenis.icon : "https://cdn-icons-png.flaticon.com/512/744/744465.png"; if (document.getElementById('selectedEditServiceType')) { document.getElementById('selectedEditServiceType').innerHTML = `<div style="display: flex; align-items: center; gap: 10px;"><img src="${defIconUrl}" style="width:24px; height:24px; object-fit:contain; border-radius:4px;"><span style="font-weight:700; color:var(--text-main);">${item.jenis}</span></div>`;
+    } if(item.foto) { document.getElementById('previewEditFoto').src = item.foto; document.getElementById('previewEditFoto').style.display = 'block'; } else { document.getElementById('previewEditFoto').src = ""; document.getElementById('previewEditFoto').style.display = 'none';
+    } base64ArmadaFoto = ""; document.getElementById('pageEditService').classList.add('open'); pushBackButtonHandler('editService'); } catch(e) { console.error("Gagal Render Edit Form: ", e);
+    showAlert("Error", "Gagal memuat form edit.", "fa-triangle-exclamation", true); } }
+    function closeEditLayananForm(fromPopState = false) { document.getElementById('pageEditService').classList.remove('open');
+    if (!fromPopState) popBackButtonHandler(); }
+    async function submitEditService() { const d = { jenis: selectedVehicleTypeName, merk: document.getElementById('editMerk').value.trim(), fasilitas: document.getElementById('editFasilitas').value.trim(), kapasitas: document.getElementById('editKapasitas').value.trim(), harga: document.getElementById('editHarga').value.trim(), asal: document.getElementById('editAsal').value.trim(), tujuan: document.getElementById('editTujuan').value.trim(), jamBerangkat: document.getElementById('editJamB').value, jamSampai: document.getElementById('editJamS').value };
+    if(!d.jenis || !d.merk || !d.fasilitas || !d.kapasitas || !d.harga || !d.asal || !d.tujuan || !d.jamBerangkat || !d.jamSampai) { showAlert("Belum Lengkap", "Isi seluruh kolom edit.", "fa-triangle-exclamation", true);
+    return; } showLoading(true); const payload = { action: "editService", username: SESSION_USER.username, email: SESSION_USER.email, oldMerk: oldMerkForEdit, oldJamBerangkat: oldJamBForEdit, foto: base64ArmadaFoto ||
+    "", ...d }; try { let result = await fetchGAS(payload); showLoading(false); if(result.status === "success") { showAlert("Berhasil", "Spesifikasi diperbarui.", "fa-circle-check");
+    base64ArmadaFoto = ""; closeEditLayananForm(); loadLayananData(); } else { showAlert("Gagal", result.message, "fa-circle-xmark", true); } } catch(e) { showLoading(false);
+    showAlert("Koneksi Error", e.message, "fa-wifi", true); } }
 
-    function openEditPribadi() { if(!SESSION_USER) return; document.getElementById('epNama').value = SESSION_USER.namaLengkap || ''; document.getElementById('epHp').value = SESSION_USER.noHp || ''; document.getElementById('epAlamat').value = SESSION_USER.alamatLengkap || ''; document.getElementById('modalEditPribadi').classList.add('open'); pushBackButtonHandler('editPribadi'); }
-    function closeEditPribadi(fromPopState = false) { document.getElementById('modalEditPribadi').classList.remove('open'); if (!fromPopState) popBackButtonHandler(); }
-    async function submitEditPribadi() { const nama = document.getElementById('epNama').value.trim(); const hp = document.getElementById('epHp').value.trim(); const alamat = document.getElementById('epAlamat').value.trim(); if(!nama || !hp || !alamat) return showAlert("Perhatian", "Semua kolom wajib diisi", "fa-triangle-exclamation", true); showLoading(true); try { let res = await fetchGAS({ action: "editProfile", username: SESSION_USER.username, namaLengkap: nama, noHp: hp, alamatLengkap: alamat }); showLoading(false); if(res.status === "success") { SESSION_USER.namaLengkap = nama; SESSION_USER.noHp = hp; SESSION_USER.alamatLengkap = alamat; localStorage.setItem('goBorneo_partner_session', JSON.stringify({ user: SESSION_USER, company: SESSION_COMPANY, paket: globalPaketList, rekening: globalRekeningList, serverTime: new Date(getServerAdjustedTime()).toISOString() })); populateDashboardData(); closeEditPribadi(); showAlert("Sukses", "Profil Pribadi Diperbarui", "fa-check"); } else { showAlert("Gagal", res.message, "fa-xmark", true); } } catch(e) { showLoading(false); showAlert("Error", e.message, "fa-wifi", true); } }
+    function openEditPribadi() { if(!SESSION_USER) return; document.getElementById('epNama').value = SESSION_USER.namaLengkap || '';
+    document.getElementById('epHp').value = SESSION_USER.noHp || ''; document.getElementById('epAlamat').value = SESSION_USER.alamatLengkap || ''; document.getElementById('modalEditPribadi').classList.add('open'); pushBackButtonHandler('editPribadi');
+    }
+    function closeEditPribadi(fromPopState = false) { document.getElementById('modalEditPribadi').classList.remove('open'); if (!fromPopState) popBackButtonHandler();
+    }
+    async function submitEditPribadi() { const nama = document.getElementById('epNama').value.trim(); const hp = document.getElementById('epHp').value.trim(); const alamat = document.getElementById('epAlamat').value.trim();
+    if(!nama || !hp || !alamat) return showAlert("Perhatian", "Semua kolom wajib diisi", "fa-triangle-exclamation", true); showLoading(true);
+    try { let res = await fetchGAS({ action: "editProfile", username: SESSION_USER.username, namaLengkap: nama, noHp: hp, alamatLengkap: alamat }); showLoading(false);
+    if(res.status === "success") { SESSION_USER.namaLengkap = nama; SESSION_USER.noHp = hp; SESSION_USER.alamatLengkap = alamat;
+    localStorage.setItem('goBorneo_partner_session', JSON.stringify({ user: SESSION_USER, company: SESSION_COMPANY, paket: globalPaketList, rekening: globalRekeningList, serverTime: new Date(getServerAdjustedTime()).toISOString() })); populateDashboardData(); closeEditPribadi();
+    showAlert("Sukses", "Profil Pribadi Diperbarui", "fa-check"); } else { showAlert("Gagal", res.message, "fa-xmark", true); } } catch(e) { showLoading(false);
+    showAlert("Error", e.message, "fa-wifi", true); } }
 
-    function openEditPerusahaan() { if(!SESSION_COMPANY) return; document.getElementById('ecNama').value = SESSION_COMPANY.namaPerusahaan || ''; document.getElementById('ecHp').value = SESSION_COMPANY.noHpPerusahaan || ''; document.getElementById('ecDesc').value = SESSION_COMPANY.deskripsiPerusahaan || ''; document.getElementById('ecAlamat').value = SESSION_COMPANY.alamatPerusahaan || ''; let currentLogo = SESSION_COMPANY.logo || ""; if(currentLogo) { document.getElementById('previewEditCompLogo').src = currentLogo; document.getElementById('previewEditCompLogo').style.display = 'block'; } else { document.getElementById('previewEditCompLogo').style.display = 'none'; } base64EditCompLogo = ""; document.getElementById('modalEditPerusahaan').classList.add('open'); pushBackButtonHandler('editPerusahaan'); }
-    function closeEditPerusahaan(fromPopState = false) { document.getElementById('modalEditPerusahaan').classList.remove('open'); if (!fromPopState) popBackButtonHandler(); }
-    async function submitEditPerusahaan() { const nama = document.getElementById('ecNama').value.trim(); const hp = document.getElementById('ecHp').value.trim(); const desc = document.getElementById('ecDesc').value.trim(); const alamat = document.getElementById('ecAlamat').value.trim(); if(!nama || !hp || !desc || !alamat) return showAlert("Perhatian", "Semua kolom wajib diisi", "fa-triangle-exclamation", true); showLoading(true); try { let payloadData = { action: "editCompany", username: SESSION_USER.username, namaPerusahaan: nama, noHpPerusahaan: hp, deskripsiPerusahaan: desc, alamatPerusahaan: alamat, logo: base64EditCompLogo || "" }; let res = await fetchGAS(payloadData); showLoading(false); if(res.status === "success") { SESSION_COMPANY.namaPerusahaan = nama; SESSION_COMPANY.noHpPerusahaan = hp; SESSION_COMPANY.deskripsiPerusahaan = desc; SESSION_COMPANY.alamatPerusahaan = alamat; if(base64EditCompLogo) SESSION_COMPANY.logo = base64EditCompLogo; localStorage.setItem('goBorneo_partner_session', JSON.stringify({ user: SESSION_USER, company: SESSION_COMPANY, paket: globalPaketList, rekening: globalRekeningList, serverTime: new Date(getServerAdjustedTime()).toISOString() })); populateDashboardData(); closeEditPerusahaan(); showAlert("Sukses", "Profil Perusahaan Diperbarui", "fa-check"); } else { showAlert("Gagal", res.message, "fa-xmark", true); } } catch(e) { showLoading(false); showAlert("Error", e.message, "fa-wifi", true); } }
+    function openEditPerusahaan() { if(!SESSION_COMPANY) return; document.getElementById('ecNama').value = SESSION_COMPANY.namaPerusahaan || '';
+    document.getElementById('ecHp').value = SESSION_COMPANY.noHpPerusahaan || ''; document.getElementById('ecDesc').value = SESSION_COMPANY.deskripsiPerusahaan || ''; document.getElementById('ecAlamat').value = SESSION_COMPANY.alamatPerusahaan || ''; let currentLogo = SESSION_COMPANY.logo ||
+    ""; if(currentLogo) { document.getElementById('previewEditCompLogo').src = currentLogo; document.getElementById('previewEditCompLogo').style.display = 'block'; } else { document.getElementById('previewEditCompLogo').style.display = 'none'; } base64EditCompLogo = ""; document.getElementById('modalEditPerusahaan').classList.add('open');
+    pushBackButtonHandler('editPerusahaan'); }
+    function closeEditPerusahaan(fromPopState = false) { document.getElementById('modalEditPerusahaan').classList.remove('open'); if (!fromPopState) popBackButtonHandler();
+    }
+    async function submitEditPerusahaan() { const nama = document.getElementById('ecNama').value.trim(); const hp = document.getElementById('ecHp').value.trim(); const desc = document.getElementById('ecDesc').value.trim();
+    const alamat = document.getElementById('ecAlamat').value.trim(); if(!nama || !hp || !desc || !alamat) return showAlert("Perhatian", "Semua kolom wajib diisi", "fa-triangle-exclamation", true); showLoading(true);
+    try { let payloadData = { action: "editCompany", username: SESSION_USER.username, namaPerusahaan: nama, noHpPerusahaan: hp, deskripsiPerusahaan: desc, alamatPerusahaan: alamat, logo: base64EditCompLogo ||
+    "" }; let res = await fetchGAS(payloadData); showLoading(false); if(res.status === "success") { SESSION_COMPANY.namaPerusahaan = nama; SESSION_COMPANY.noHpPerusahaan = hp;
+    SESSION_COMPANY.deskripsiPerusahaan = desc; SESSION_COMPANY.alamatPerusahaan = alamat; if(base64EditCompLogo) SESSION_COMPANY.logo = base64EditCompLogo;
+    localStorage.setItem('goBorneo_partner_session', JSON.stringify({ user: SESSION_USER, company: SESSION_COMPANY, paket: globalPaketList, rekening: globalRekeningList, serverTime: new Date(getServerAdjustedTime()).toISOString() })); populateDashboardData(); closeEditPerusahaan();
+    showAlert("Sukses", "Profil Perusahaan Diperbarui", "fa-check"); } else { showAlert("Gagal", res.message, "fa-xmark", true); } } catch(e) { showLoading(false);
+    showAlert("Error", e.message, "fa-wifi", true); } }
 
     function executeLogout() {
         closeAlert();
@@ -1323,7 +1502,8 @@
         if(subscriptionCheckInterval) { clearInterval(subscriptionCheckInterval); subscriptionCheckInterval = null; }
         if(realtimeSyncInterval) { clearInterval(realtimeSyncInterval); realtimeSyncInterval = null; }
         
-        document.getElementById('globalHeaderTimer').style.display = 'none'; document.getElementById('mobileHeaderTimer').style.display = 'none';
+        document.getElementById('globalHeaderTimer').style.display = 'none';
+        document.getElementById('mobileHeaderTimer').style.display = 'none';
         
         localStorage.removeItem('goBorneo_partner_session'); SESSION_USER = null; SESSION_COMPANY = null;
         globalPaketList = []; globalRekeningList = [];
