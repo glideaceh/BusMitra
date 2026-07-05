@@ -1225,7 +1225,7 @@
         } else {
             globalRekeningList.forEach(rek => {
                 htmlRek += `<div class="rek-card-modern"><img src="${rek.logo || 'https://placehold.co/100x100?text=Bank'}" class="rek-logo" alt="Bank Logo">
-                            <div class="rek-info"><h4>Bank ${rek.bank}</h4><p class="norek">${rek.norek}</p><p class="name">a/n ${rek.atasNama}</p></div></div>`;
+                            <div class="rek-info"><h4>Bank ${rek.bank}</h4><p class="name"> ${rek.atasNama}</p><p class="norek">a/n ${rek.norek}</p></div></div>`;
             });
         }
         document.getElementById('topUpRekeningContainer').innerHTML = htmlRek;
