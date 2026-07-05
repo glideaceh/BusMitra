@@ -829,11 +829,11 @@
         if (document.getElementById('mutasiSaldoModal')) return;
         let modalHTML = `
         <div class="right-sidebar" id="mutasiSaldoModal" style="position: fixed; top: 0; right: -500px; width: 100%; max-width: 420px; height: 100vh; background: #f8fafc; z-index: 100000; transition: right 0.3s ease; box-shadow: -5px 0 20px rgba(0,0,0,0.15); display: flex; flex-direction: column;">
-            <div class="drawer-header" style="padding: 20px; background: #fff; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
+            <div class="drawer-header" style="padding: 20px; background: #fff; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; margin-bottom:4px; align-items: center;">
                 <h3 style="margin: 0; font-size: 16px; font-weight: 800; color: #0f172a;"><i class="fa-solid fa-file-invoice-dollar" style="color:#10b981; margin-right:8px;"></i> Riwayat Mutasi Saldo</h3>
                 <button class="close-btn" onclick="closeMutasiSaldo()" style="background: none; border: none; font-size: 20px; color: #64748b; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div class="drawer-body" id="mutasiSaldoContainer" style="padding: 15px; flex: 1; overflow-y: auto;">
+            <div class="drawer-body" id="mutasiSaldoContainer" style="padding: 2px 15px; flex: 1; overflow-y: auto;">
             </div>
         </div>
         `;
@@ -849,7 +849,7 @@
                 <h3 style="margin: 0; font-size: 16px; font-weight: 800; color: #0f172a;"><i class="fa-solid fa-image" style="color:#0284c7; margin-right:8px;"></i> Bukti Pembayaran</h3>
                 <button class="close-btn" onclick="closeRiwayatImageModal()" style="background: none; border: none; font-size: 20px; color: #64748b; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div class="drawer-body" style="padding: 15px; flex: 1; overflow-y: auto; display: flex; align-items: center; justify-content: center;">
+            <div class="drawer-body" style="padding:15px; flex: 1; overflow-y: auto; display: flex; align-items: center; justify-content: center;">
                 <img id="riwayatSidebarImg" src="" style="width: 100%; height: auto; max-height: 85vh; object-fit: contain; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
             </div>
         </div>
