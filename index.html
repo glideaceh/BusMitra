@@ -560,65 +560,80 @@
         </div>
     </div>
 
-  <script>
+<script>
     let backButtonHandlerStack = []; let isHandlingPopState = false;
     function pushBackButtonHandler(closeFunctionId) { history.pushState({ modalOpen: closeFunctionId }, "", window.location.href); backButtonHandlerStack.push(closeFunctionId); }
     function popBackButtonHandler() { if (isHandlingPopState) return;
-        if (backButtonHandlerStack.length > 0) { backButtonHandlerStack.pop(); isHandlingPopState = true; history.back(); setTimeout(() => { isHandlingPopState = false; }, 100); } 
+        if (backButtonHandlerStack.length > 0) { backButtonHandlerStack.pop(); isHandlingPopState = true; history.back(); setTimeout(() => { isHandlingPopState = false; }, 100);
+        } 
     }
     window.addEventListener('popstate', function(e) { if (isHandlingPopState) return; if (backButtonHandlerStack.length > 0) { isHandlingPopState = true; let closeFnId = backButtonHandlerStack.pop(); executeCloseFunctionById(closeFnId, true); setTimeout(() => { isHandlingPopState = false; }, 100); } });
     function executeCloseFunctionById(id, fromPopState = false) {
         switch(id) {
-            case 'aksesKursi': closeAksesKursi(fromPopState); break;
+            case 'aksesKursi': closeAksesKursi(fromPopState);
+                break;
             case 'addService': closeAddServiceAndReset(fromPopState); break;
             case 'editService': closeEditLayananForm(fromPopState); break;
             case 'pengaturanModal': closePengaturanModal(fromPopState); break;
             case 'seatCalendar': closeSeatCalendar(fromPopState); break;
-            case 'editPribadi': closeEditPribadi(fromPopState); break;
+            case 'editPribadi': closeEditPribadi(fromPopState);
+                break;
             case 'editPerusahaan': closeEditPerusahaan(fromPopState); break;
             case 'regionModal': closeRegionModal(fromPopState); break;
             case 'scanner': closeScanner(fromPopState); break;
             case 'timePicker': closeTimeModal(fromPopState); break;
-            case 'facilityModal': closeFacilityModal(fromPopState); break;
+            case 'facilityModal': closeFacilityModal(fromPopState);
+                break;
             case 'cropperModal': cancelCrop(fromPopState); break;
             case 'scannedTicket': closeScannedTicketDrawer(fromPopState); break;
             case 'confirmModal': closeConfirmModal(fromPopState); break;
             case 'paymentModal': closePaymentModal(fromPopState); break;
-            case 'manualBookingPaymentModal': closeManualPaymentModal(fromPopState); break;
+            case 'manualBookingPaymentModal': closeManualPaymentModal(fromPopState);
+                break;
             case 'manualTicketResultModal': closeManualTicketModal(fromPopState); break;
             case 'desktopSidebar': toggleDesktopSidebar(fromPopState); break;
             case 'layananSearch': closeLayananSearch(fromPopState); break;
             case 'paymentDrawer': closePaymentDrawer(fromPopState); break;
-            case 'riwayatImageModal': closeRiwayatImageModal(fromPopState); break;
+            case 'riwayatImageModal': closeRiwayatImageModal(fromPopState);
+                break;
             case 'topUpDrawer': closeTopUpDrawer(fromPopState); break;
             case 'mutasiSaldoModal': closeMutasiSaldo(fromPopState); break;
+            case 'notifSidebar': closeNotifSidebar(fromPopState); break;
         }
     }
 
     const GAS_API_URL = "https://script.google.com/macros/s/AKfycbz9oI7WVGzV2nrgAyW965T_2XKw7uxHYkU13ouJVlb8iRzmnVXEPGhDvqtNjxOnKQsYLg/exec";
     let SESSION_USER = null;
-    let SESSION_COMPANY = null; let globalRekeningList = [];
+    let SESSION_COMPANY = null;
+    let globalRekeningList = [];
     let indonesianRegionsDatabase = []; let globalFacilitiesDatabase = [];
-    let globalLayananList = []; let globalPesananList = []; let globalRiwayatList = [];
+    let globalLayananList = []; let globalPesananList = [];
+    let globalRiwayatList = [];
     let activeRegionInputTargetId = ""; let activeTimeInputTargetId = "";
-    let activeFacilityTargetInput = ""; let selectedVehicleTypeName = ""; let selectedFasilitasArray = [];
+    let activeFacilityTargetInput = ""; let selectedVehicleTypeName = "";
+    let selectedFasilitasArray = [];
     let cropperInstance = null; let currentTargetImageId = "";
-    let base64CompLogo = ""; let base64EditCompLogo = ""; let base64ArmadaFoto = "";
+    let base64CompLogo = ""; let base64EditCompLogo = "";
+    let base64ArmadaFoto = "";
     let activeLayananIndex = -1;
     let currentCalYear = new Date().getFullYear(); let currentCalMonth = new Date().getMonth();
     let oldMerkForEdit = ""; let oldJamBForEdit = "";
     let html5QrCode = null; let orderChartInstance = null;
-    let customConfirmCallback = null; let currentPaymentOrderId = "";
+    let customConfirmCallback = null;
+    let currentPaymentOrderId = "";
     let currentPesananFilter = 'all';
-    let pesananPollingInterval = null; let seatPollingInterval = null; let subscriptionCheckInterval = null; let realtimeSyncInterval = null;
+    let pesananPollingInterval = null; let seatPollingInterval = null; let subscriptionCheckInterval = null;
+    let realtimeSyncInterval = null;
     let globalPaketList = [];
     let subMultiplier = 1; let serverTimeDelta = 0; let selectedPaketIndex = -1;
     let _tempD = new Date();
     let currentSeatDate = new Date(_tempD.getTime() - (_tempD.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
-    let selectedManualSeats = []; let currentSeatCalYear = new Date().getFullYear();
+    let selectedManualSeats = [];
+    let currentSeatCalYear = new Date().getFullYear();
     let currentSeatCalMonth = new Date().getMonth(); let lastGeneratedTicket = null;
     
-    let globalSkemaList = []; let selectedSkemaValue = "";
+    let globalSkemaList = [];
+    let selectedSkemaValue = "";
     let selectedTopUpAmount = 0;
 
     function isSameDate(date1Str, date2Str) {
@@ -628,18 +643,175 @@
             let d2 = new Date(date2Str);
             if (isNaN(d1.getTime()) || isNaN(d2.getTime())) return date1Str.includes(date2Str) || date2Str.includes(date1Str);
             return d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate();
-        } catch(e) { return false; }
+        } catch(e) { return false;
+        }
     }
 
     async function fetchGAS(payload) {
         let r = await fetch(GAS_API_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, redirect: "follow", body: JSON.stringify(payload) });
         let responseText = await r.text();
-        try { return JSON.parse(responseText); } catch (error) { throw new Error("Server gagal mengembalikan format JSON yang valid."); }
+        try { return JSON.parse(responseText); } catch (error) { throw new Error("Server gagal mengembalikan format JSON yang valid.");
+        }
     }
 
     function isKomisiScheme() {
         return SESSION_COMPANY && SESSION_COMPANY.skemaPembayaran && SESSION_COMPANY.skemaPembayaran.toLowerCase().trim() === "komisi pertransaksi";
     }
+
+    // ================== INIT UI NOTIFIKASI ==================
+    function initNotifUI() {
+        let actionGroup = document.getElementById('headerActionGroup');
+        let existingBellContainer = null;
+        
+        // Cari bell asli dari template yang posisinya di sebelah pencarian
+        if (actionGroup) {
+            let bells = actionGroup.querySelectorAll('.fa-bell');
+            if (bells.length > 0) {
+                existingBellContainer = bells[0].parentElement;
+            }
+        }
+
+        // Terapkan fungsi dan pastikan styling bell yang sudah ada
+        if (existingBellContainer) {
+            existingBellContainer.setAttribute('onclick', 'openNotifSidebar()');
+            existingBellContainer.style.position = 'relative';
+            existingBellContainer.style.cursor = 'pointer';
+            existingBellContainer.id = 'bellNotifBtn';
+
+            // Tambahkan CSS Animasi Shake untuk Notifikasi jika belum ada
+            if (!document.getElementById('notifStyleExtras')) {
+                let style = document.createElement('style');
+                style.id = 'notifStyleExtras';
+                style.innerHTML = `
+                @keyframes shakeBell {
+                    0% { transform: rotate(0); }
+                    20% { transform: rotate(15deg); }
+                    40% { transform: rotate(-15deg); }
+                    60% { transform: rotate(10deg); }
+                    80% { transform: rotate(-10deg); }
+                    100% { transform: rotate(0); }
+                }
+                .shake-anim i {
+                    animation: shakeBell 0.5s ease-in-out;
+                }
+                .has-unread i {
+                    color: #ef4444 !important;
+                }
+                `;
+                document.head.appendChild(style);
+            }
+        }
+        
+        if (!document.getElementById('notifSidebarModal')) {
+            let modalHTML = `
+            <div class="right-sidebar" id="notifSidebarModal" style="position: fixed; top: 0; right: -500px; width: 100%; max-width: 380px; height: 100vh; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 100000; transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: -5px 0 20px rgba(0,0,0,0.1); display: flex; flex-direction: column; border-left: 1px solid rgba(255, 255, 255, 0.5);">
+                <div class="drawer-header" style="padding: 20px; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center;">
+                    <h3 style="margin: 0; font-size: 16px; font-weight: 800; color: #0f172a;"><i class="fa-solid fa-bell" style="color:#0284c7; margin-right:8px;"></i> Notifikasi Pesanan</h3>
+                    <button class="close-btn" onclick="closeNotifSidebar()" style="background: none; border: none; font-size: 20px; color: #64748b; cursor: pointer; transition: 0.2s;"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="drawer-body" id="notifSidebarContainer" style="padding: 15px; flex: 1; overflow-y: auto;">
+                </div>
+            </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+        }
+    }
+    
+    function openNotifSidebar() { document.getElementById('notifSidebarModal').style.right = '0'; pushBackButtonHandler('notifSidebar'); renderNotifications(); }
+    function closeNotifSidebar(fromPopState = false) { document.getElementById('notifSidebarModal').style.right = '-500px';
+    if (!fromPopState) popBackButtonHandler(); }
+    
+    function renderNotifications() {
+        let html = "";
+        let notifs = globalPesananList.filter(o => o.role !== "Mitra" && !o.isManualLocal);
+
+        // Update Notification Badge
+        let unreadCount = notifs.filter(o => o.notifStatus !== "terbuka").length;
+        let bellBtn = document.getElementById('bellNotifBtn');
+        if (bellBtn) {
+            // Update Icon Color secara Real-time
+            if (unreadCount > 0) {
+                bellBtn.classList.add('has-unread');
+            } else {
+                bellBtn.classList.remove('has-unread');
+            }
+
+            let badge = document.getElementById('bellNotifBadge');
+            if (unreadCount > 0) {
+                if (!badge) {
+                    badge = document.createElement('div');
+                    badge.id = 'bellNotifBadge';
+                    badge.style.cssText = 'position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; font-size: 9px; font-weight: bold; padding: 2px 5px; border-radius: 10px; border: 2px solid white; z-index: 10; pointer-events: none;';
+                    bellBtn.appendChild(badge);
+                }
+                badge.innerText = unreadCount > 99 ? '99+' : unreadCount;
+                badge.style.display = 'block';
+            } else if (badge) {
+                badge.style.display = 'none';
+            }
+        }
+
+        if (notifs.length === 0) {
+            html = `<div style="text-align:center; padding: 40px 0; color:#94a3b8;"><i class="fa-regular fa-bell-slash" style="font-size:30px; margin-bottom:10px;"></i><p>Belum ada notifikasi.</p></div>`;
+        } else {
+            notifs.forEach(o => {
+                let isBaru = o.notifStatus !== "terbuka";
+
+                let tglOrder = o.tanggalBooking ? formatTglIndo(o.tanggalBooking) : "-";
+                let rawWaktu = o.waktuPemesananDb || o.waktuPemesanan;
+ 
+                let wktOrder = "-";
+                if(rawWaktu) {
+                    try { wktOrder = new Date(rawWaktu).toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'}); } 
+                    catch(e) { wktOrder = rawWaktu.toString().split(' ')[4] || "-"; }
+                }
+
+                let badgeHtml = isBaru ? `<span style="background:linear-gradient(135deg, #ef4444, #dc2626); color:#fff; font-size:9px; padding:2px 8px; border-radius:12px; font-weight:800; margin-left:8px; box-shadow: 0 2px 5px rgba(239,68,68,0.3);">Baru</span>` : "";
+                
+                // Menerapkan logic pudar ketika card telah dibuka
+                let cursorStyle = isBaru ? 'pointer' : 'default';
+                let opacityStyle = isBaru ? '1' : '0.6';
+                let bgStyle = isBaru ? 'rgba(255,255,255,0.9)' : 'rgba(241, 245, 249, 0.7)';
+                let onClickFn = isBaru ? `onclick="handleNotifClick('${o.idBooking}')"` : ``;
+                html += `
+                <div class="notif-card" ${onClickFn} style="background:${bgStyle}; opacity:${opacityStyle}; backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border:1px solid rgba(226,232,240,0.8); border-radius:12px; padding:15px; margin-bottom:12px; cursor:${cursorStyle}; box-shadow: 0 4px 10px rgba(0,0,0,0.03); transition: 0.2s;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                        <h4 style="margin:0; font-size:13px; font-weight:800; color:#0f172a; display:flex; align-items:center;">Pesanan Masuk ${badgeHtml}</h4>
+                        <span style="font-size:10px; font-weight:700; color:#64748b;">${wktOrder} WIB</span>
+                    </div>
+                    <p style="margin:0; font-size:12px; color:#475569; line-height:1.6;">
+                        Anda mendapat pesanan kursi <b style="color:#0284c7;">${o.nomorKursi}</b>, dari <b style="text-transform:capitalize;">${o.namaPenumpang}</b>.<br>
+                        <span style="font-size:11px; font-weight:600; color:#94a3b8; display:inline-block; margin-top:6px;"><i class="fa-regular fa-calendar" style="margin-right:4px;"></i> Berangkat: ${tglOrder}</span>
+                    </p>
+                </div>`;
+            });
+        }
+        document.getElementById('notifSidebarContainer').innerHTML = html;
+    }
+
+    async function handleNotifClick(idBooking) {
+        let order = globalPesananList.find(o => o.idBooking === idBooking);
+        if (!order) return;
+        
+        // Optimistic UI Update
+        order.notifStatus = "terbuka";
+        renderNotifications();
+        
+        // Tutup sidebar notif
+        closeNotifSidebar();
+
+        // Buka detail tiket di pop-up / drawer seperti saat scan QR Code
+        setTimeout(() => {
+            document.getElementById('scannedTicketContent').innerHTML = `<div style="padding: 10px 20px 20px 20px;">${generateTicketCardHTML(order, true, 0)}</div>`;
+            openScannedTicketDrawer();
+        }, 300);
+
+        try { await fetchGAS({ action: "markNotifRead", idBooking: idBooking });
+        } 
+        catch(e) { console.error("Gagal update read status", e);
+        }
+    }
+    // =========================================================
 
     function initMutasiSaldoUI() {
         if (document.getElementById('mutasiSaldoModal')) return;
@@ -690,18 +862,22 @@
             if(parsed.serverTime) serverTimeDelta = new Date(parsed.serverTime).getTime() - new Date().getTime();
             
             if (SESSION_COMPANY) {
+                initNotifUI();
                 populateDashboardData();
                 switchPage('pageMainApp'); switchSubView('layanan'); loadLayananData();
                 startSubscriptionTimer(); startRealtimeExpirySync();
-                if(!isKomisiScheme() && isSubscriptionExpired()) { setTimeout(() => { showSubscriptionModal(true); }, 2000); }
-            } else { switchPage('pageOnboarding'); }
+                if(!pesananPollingInterval) pesananPollingInterval = setInterval(fetchPesananDataSilently, 5000);
+                if(!isKomisiScheme() && isSubscriptionExpired()) { setTimeout(() => { showSubscriptionModal(true); }, 2000);
+                }
+            } else { switchPage('pageOnboarding');
+            }
         }
     };
-
     function switchPage(pageId) {
         document.querySelectorAll('.page').forEach(p => { p.style.display = 'none'; p.classList.remove('active-page'); });
         let target = document.getElementById(pageId);
-        if(target) { if(target.classList.contains('auth-page')) { target.style.display = 'flex'; } else { target.style.display = 'block'; } }
+        if(target) { if(target.classList.contains('auth-page')) { target.style.display = 'flex'; } else { target.style.display = 'block';
+        } }
         window.scrollTo(0,0);
     }
 
@@ -729,37 +905,40 @@
             mainHeader.style.display = 'flex';
             document.getElementById('subLayanan').style.display = 'block';
             if(document.querySelectorAll('.nav-item')[0]) document.querySelectorAll('.nav-item')[0].classList.add('active');
-            if(window.innerWidth > 768) { document.getElementById('globalHeaderTimer').style.display = 'flex'; }
-            loadLayananData(); if(pesananPollingInterval) { clearInterval(pesananPollingInterval); pesananPollingInterval = null; }
+            if(window.innerWidth > 768) { document.getElementById('globalHeaderTimer').style.display = 'flex';
+            }
+            loadLayananData();
         } else if(tab === 'pesanan') {
             mainHeader.style.display = 'none';
             document.getElementById('subPesanan').style.display = 'block';
             if(document.querySelectorAll('.nav-item')[1]) document.querySelectorAll('.nav-item')[1].classList.add('active');
-            loadPesananData(); if(!pesananPollingInterval) { pesananPollingInterval = setInterval(fetchPesananDataSilently, 5000); }
+            loadPesananData(); 
         } else if(tab === 'riwayat') {
             mainHeader.style.display = 'none';
             document.getElementById('subRiwayat').style.display = 'block';
             if(document.querySelectorAll('.nav-item')[2]) document.querySelectorAll('.nav-item')[2].classList.add('active');
-            loadRiwayatData(); if(pesananPollingInterval) { clearInterval(pesananPollingInterval); pesananPollingInterval = null; }
+            loadRiwayatData(); 
         } else if(tab === 'profil') {
             mainHeader.style.display = 'flex';
             document.getElementById('headerBrandGroup').style.display = 'none'; 
             document.getElementById('headerActionGroup').style.display = 'none'; document.getElementById('headerProfileTitle').style.display = 'block';
             
-            if(window.innerWidth > 768) { document.getElementById('globalHeaderTimer').style.display = 'flex'; } 
-            else { document.getElementById('mobileHeaderTimer').style.display = 'flex'; }
+            if(window.innerWidth > 768) { document.getElementById('globalHeaderTimer').style.display = 'flex';
+            } 
+            else { document.getElementById('mobileHeaderTimer').style.display = 'flex';
+            }
             
             let profSec = document.getElementById('subProfil');
             profSec.style.display = 'block'; profSec.classList.remove('fade-in-smooth'); void profSec.offsetWidth; profSec.classList.add('fade-in-smooth');
             if(document.querySelectorAll('.nav-item')[3]) document.querySelectorAll('.nav-item')[3].classList.add('active');
             setTimeout(() => { if(!orderChartInstance) initStatisticsChart(); else orderChartInstance.resize(); }, 150);
-            if(pesananPollingInterval) { clearInterval(pesananPollingInterval); pesananPollingInterval = null; }
         }
         updateHeaderSchemeUI();
         window.scrollTo(0,0);
     }
 
-    function getServerAdjustedTime() { return new Date().getTime() + serverTimeDelta; }
+    function getServerAdjustedTime() { return new Date().getTime() + serverTimeDelta;
+    }
 
     function isSubscriptionExpired() {
         if(!SESSION_USER || !SESSION_USER.expiredAt) return true;
@@ -784,7 +963,8 @@
                 if(SESSION_USER.isTrial) {
                     if(labelDesk) labelDesk.innerText = "Trial Habis:"; if(labelMob) labelMob.innerText = "Trial Habis:";
                 } else {
-                    if(labelDesk) labelDesk.innerText = "Masa Aktif:"; if(labelMob) labelMob.innerText = "Masa Aktif:";
+                    if(labelDesk) labelDesk.innerText = "Masa Aktif:";
+                    if(labelMob) labelMob.innerText = "Masa Aktif:";
                 }
                 dtDesk.innerText = "00:00:00";
                 dtMob.innerText = "00:00:00";
@@ -797,12 +977,15 @@
                 let minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
                 let seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
                 
-                let timeStr = days > 0 ? days + " Hari " : "";
+                let timeStr = days > 0 ?
+                days + " Hari " : "";
                 timeStr += hours.toString().padStart(2, '0') + ":" + minutes.toString().padStart(2, '0') + ":" + seconds.toString().padStart(2, '0');
                 dtDesk.innerText = timeStr; dtMob.innerText = timeStr;
                 
-                if (timeLeft < 86400000) { dtDesk.className = "sub-countdown near-expire"; dtMob.className = "sub-countdown near-expire"; } 
-                else { dtDesk.className = "sub-countdown"; dtMob.className = "sub-countdown"; }
+                if (timeLeft < 86400000) { dtDesk.className = "sub-countdown near-expire"; dtMob.className = "sub-countdown near-expire";
+                } 
+                else { dtDesk.className = "sub-countdown";
+                dtMob.className = "sub-countdown"; }
 
                 if (SESSION_USER.isTrial) {
                     if(labelDesk) labelDesk.innerText = "Trial Aktif:";
@@ -826,14 +1009,20 @@
                 if(res.status === "success") {
                     if (res.skemaPembayaran) SESSION_COMPANY.skemaPembayaran = res.skemaPembayaran;
  
+                    if (res.komisiRate !== undefined) SESSION_COMPANY.komisiRate = res.komisiRate;
+
                     if (res.saldo !== undefined) {
                         let oldSaldo = SESSION_COMPANY.saldo || 0;
+                     
                         SESSION_COMPANY.saldo = res.saldo;
                      
                         if (isKomisiScheme()) {
+                          
                             if (SESSION_COMPANY.saldo > oldSaldo) {
+                 
                                 showAlert("Top Up Selesai", "Top up saldo telah dikonfirmasi dan ditambahkan.", "fa-wallet");
                             } else if (SESSION_COMPANY.saldo < oldSaldo) {
+ 
                                 let diff = oldSaldo - SESSION_COMPANY.saldo;
                                 showAlert("Pemotongan Saldo", `Transaksi masuk! Saldo terpotong otomatis Rp ${formatNumber(diff)} untuk komisi.`, "fa-file-invoice-dollar", false);
                             }
@@ -847,8 +1036,7 @@
 
                     let oldPending = SESSION_USER.hasPendingPayment;
                     let oldTrial = SESSION_USER.isTrial;
-                    let oldExpiry = new Date(SESSION_USER.expiredAt).getTime();
-                    let newExpiry = new Date(res.expiredAt).getTime();
+                    let oldExpiry = new Date(SESSION_USER.expiredAt).getTime(); let newExpiry = new Date(res.expiredAt).getTime();
 
                     SESSION_USER.hasPendingPayment = res.hasPendingPayment; SESSION_USER.isTrial = res.isTrial;
                     if(res.serverTime) { serverTimeDelta = new Date(res.serverTime).getTime() - new Date().getTime(); }
@@ -858,43 +1046,44 @@
                         localStorage.setItem('goBorneo_partner_session', JSON.stringify({ 
                             user: SESSION_USER, company: SESSION_COMPANY, paket: globalPaketList, rekening: globalRekeningList, serverTime: new Date(getServerAdjustedTime()).toISOString() 
                         }));
-                        if(oldTrial === true && res.isTrial === false) {
-                            document.querySelectorAll('.btn-renew').forEach(btn => btn.innerText = "Perpanjang");
+                        if(oldTrial === true && res.isTrial === false) { document.querySelectorAll('.btn-renew').forEach(btn => btn.innerText = "Perpanjang");
                         }
 
                         if(document.getElementById('subscriptionOverlay').classList.contains('show')) {
                             if(!isSubscriptionExpired() && !SESSION_USER.hasPendingPayment) {
                                 closeSubscriptionModal();
                                 showAlert("Sukses", "Pembayaran Terkonfirmasi. Masa Aktif Diperbarui", "fa-check");
-                            } else {
-                                showSubscriptionModal(isSubscriptionExpired());
+                            } else { showSubscriptionModal(isSubscriptionExpired());
                             }
                         } else if(!isSubscriptionExpired() && oldPending === true && res.hasPendingPayment === false) {
                              showAlert("Sukses", "Pembayaran Anda telah disetujui Admin", "fa-check");
                         }
-                    } else { SESSION_USER.expiredAt = res.expiredAt; }
+                    } else { SESSION_USER.expiredAt = res.expiredAt;
+                    }
                 }
             } catch(e) {}
         }, 10000);
     }
 
     function showSubscriptionModal(isForced = false) {
-        if (!SESSION_COMPANY || isKomisiScheme() || document.getElementById('pageOnboarding').style.display === 'flex' || document.getElementById('pageOnboarding').style.display === 'block') { return; }
-        if(pesananPollingInterval) { clearInterval(pesananPollingInterval); pesananPollingInterval = null; }
-        if(seatPollingInterval) { clearInterval(seatPollingInterval); seatPollingInterval = null; }
+        if (!SESSION_COMPANY || isKomisiScheme() || document.getElementById('pageOnboarding').style.display === 'flex' || document.getElementById('pageOnboarding').style.display === 'block') { return;
+        }
+        
+        if(seatPollingInterval) { clearInterval(seatPollingInterval);
+        seatPollingInterval = null;
+        }
         
         let titleEl = document.getElementById('subModalTitle');
         let descEl = document.getElementById('subModalDesc');
         let iconEl = document.getElementById('subModalIcon'); let isExp = isSubscriptionExpired();
-        
         if (SESSION_USER.hasPendingPayment) {
             document.getElementById('subPaymentForm').style.display = 'none'; document.getElementById('subPendingView').style.display = 'block';
             if(isForced && isExp) { document.getElementById('btnKeluarPending').style.display = 'block'; }
-            else { document.getElementById('btnKeluarPending').style.display = 'none'; }
+            else { document.getElementById('btnKeluarPending').style.display = 'none';
+            }
         } else {
             document.getElementById('subPaymentForm').style.display = 'block';
             document.getElementById('subPendingView').style.display = 'none';
-            
             if (isExp) {
                 iconEl.className = "fa-solid fa-lock warn-icon";
                 if (SESSION_USER.isTrial) {
@@ -919,11 +1108,14 @@
             let optsHtml = '';
             if(globalPaketList && globalPaketList.length > 0) {
                 globalPaketList.forEach((paket, idx) => { optsHtml += `<div class="custom-option" onclick="selectPaketValue(${idx}, '${paket.nama}')">${paket.nama}</div>`; });
-            } else { optsHtml = `<div class="custom-option">Tidak ada paket tersedia</div>`; }
+            } else { optsHtml = `<div class="custom-option">Tidak ada paket tersedia</div>`;
+            }
             
             document.getElementById('paketSelectOptions').innerHTML = optsHtml;
-            if(selectedPaketIndex === -1 && globalPaketList.length > 0) { selectPaketValue(0, globalPaketList[0].nama); } 
-            else { subMultiplier = 1; calculateSubPrice(); }
+            if(selectedPaketIndex === -1 && globalPaketList.length > 0) { selectPaketValue(0, globalPaketList[0].nama);
+            } 
+            else { subMultiplier = 1; calculateSubPrice();
+            }
 
             if (isForced && isExp) {
                 document.getElementById('btnKeluarSub').style.display = 'block';
@@ -945,13 +1137,16 @@
         document.getElementById('paketSelectOptions').classList.remove('open'); calculateSubPrice();
     }
 
-    function closeSubscriptionModal() { document.getElementById('subscriptionOverlay').classList.remove('show'); document.body.style.overflow = ''; }
+    function closeSubscriptionModal() { document.getElementById('subscriptionOverlay').classList.remove('show'); document.body.style.overflow = '';
+    }
 
-    function updateSubQty(dir) { subMultiplier += dir; if(subMultiplier < 1) subMultiplier = 1; if(subMultiplier > 12) subMultiplier = 12; calculateSubPrice(); }
+    function updateSubQty(dir) { subMultiplier += dir; if(subMultiplier < 1) subMultiplier = 1;
+    if(subMultiplier > 12) subMultiplier = 12; calculateSubPrice(); }
 
     function calculateSubPrice() {
         document.getElementById('subQtyValue').innerText = subMultiplier + 'x';
-        if(selectedPaketIndex === -1 || !globalPaketList[selectedPaketIndex]) { document.getElementById('subTotalPrice').innerText = "Rp 0"; return; }
+        if(selectedPaketIndex === -1 || !globalPaketList[selectedPaketIndex]) { document.getElementById('subTotalPrice').innerText = "Rp 0"; return;
+        }
         let selectedPaket = globalPaketList[selectedPaketIndex];
         document.getElementById('subTotalPrice').innerText = formatRupiah(selectedPaket.harga * subMultiplier);
     }
@@ -965,7 +1160,8 @@
     }
 
     function openPaymentProcess() {
-        if(selectedPaketIndex === -1 || !globalPaketList[selectedPaketIndex]) { return showAlert("Peringatan", "Pilih paket terlebih dahulu", "fa-circle-exclamation", true); }
+        if(selectedPaketIndex === -1 || !globalPaketList[selectedPaketIndex]) { return showAlert("Peringatan", "Pilih paket terlebih dahulu", "fa-circle-exclamation", true);
+        }
         
         let htmlRek = "";
         if(globalRekeningList.length === 0) htmlRek = "<p style='color:red;'>Data Rekening Belum Tersedia.</p>";
@@ -992,7 +1188,8 @@
         document.getElementById('paymentDrawer').classList.add('open'); pushBackButtonHandler('paymentDrawer');
     }
 
-    function closePaymentDrawer(fromPopState = false) { document.getElementById('paymentDrawer').classList.remove('open'); if (!fromPopState) popBackButtonHandler(); }
+    function closePaymentDrawer(fromPopState = false) { document.getElementById('paymentDrawer').classList.remove('open'); if (!fromPopState) popBackButtonHandler();
+    }
 
     function previewStrukImage(event) {
         const file = event.target.files[0]; if(!file) return;
@@ -1028,7 +1225,8 @@
             } catch(err) {
                showLoading(false);
                showAlert("Error Koneksi", err.message, "fa-wifi", true);
-            } finally { btn.innerHTML = oriTxt; btn.disabled = false; }
+            } finally { btn.innerHTML = oriTxt; btn.disabled = false;
+            }
         };
         reader.readAsDataURL(fileInput.files[0]);
     }
@@ -1042,7 +1240,8 @@
         document.getElementById('topUpStrukFile').value = '';
 
         let htmlRek = "";
-        if (globalRekeningList.length === 0) { htmlRek = "<p style='color:red; font-size:13px;'>Data Rekening Belum Tersedia.</p>"; } else {
+        if (globalRekeningList.length === 0) { htmlRek = "<p style='color:red; font-size:13px;'>Data Rekening Belum Tersedia.</p>";
+        } else {
             globalRekeningList.forEach(rek => {
                 htmlRek += `<div class="rek-card-modern"><img src="${rek.logo || 'https://placehold.co/100x100?text=Bank'}" class="rek-logo" alt="Bank Logo">
                             <div class="rek-info"><h4>Bank ${rek.bank}</h4><p class="norek">${rek.norek}</p><p class="name">a/n ${rek.atasNama}</p></div></div>`;
@@ -1083,9 +1282,11 @@
     }
 
     async function submitRealTopUp() {
-        if (!selectedTopUpAmount || selectedTopUpAmount <= 0) { return showAlert("Peringatan", "Masukkan nominal top up yang valid.", "fa-circle-exclamation", true); }
+        if (!selectedTopUpAmount || selectedTopUpAmount <= 0) { return showAlert("Peringatan", "Masukkan nominal top up yang valid.", "fa-circle-exclamation", true);
+        }
         let fileInput = document.getElementById('topUpStrukFile');
-        if (!fileInput.files[0]) { return showAlert("Wajib", "Unggah foto bukti struk transfer.", "fa-image", true); }
+        if (!fileInput.files[0]) { return showAlert("Wajib", "Unggah foto bukti struk transfer.", "fa-image", true);
+        }
 
         let btn = document.getElementById('btnSubmitRealTopUp'); let oriTxt = btn.innerHTML;
         btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Mengirim Top Up...`; btn.disabled = true;
@@ -1097,10 +1298,14 @@
             try {
                 let payload = { action: "submitTopUp", username: SESSION_USER.username, email: SESSION_USER.email, namaPerusahaan: SESSION_COMPANY.namaPerusahaan, nominal: selectedTopUpAmount, base64: base64 };
                 let res = await fetchGAS(payload); showLoading(false);
-                if (res.status === "success") { closeTopUpDrawer(); showAlert("Top Up Berhasil", res.message, "fa-circle-check"); } 
-                else { showAlert("Gagal", res.message, "fa-circle-xmark", true); }
-            } catch (err) { showLoading(false); showAlert("Error Koneksi", err.message, "fa-wifi", true); } 
-            finally { btn.innerHTML = oriTxt; btn.disabled = false; }
+                if (res.status === "success") { closeTopUpDrawer(); showAlert("Top Up Berhasil", res.message, "fa-circle-check");
+                } 
+                else { showAlert("Gagal", res.message, "fa-circle-xmark", true);
+                }
+            } catch (err) { showLoading(false);
+            showAlert("Error Koneksi", err.message, "fa-wifi", true); } 
+            finally { btn.innerHTML = oriTxt;
+            btn.disabled = false; }
         };
         reader.readAsDataURL(fileInput.files[0]);
     }
@@ -1113,28 +1318,36 @@
             if (isKomisiScheme()) {
                 let result = await fetchGAS({action: "getTopUpHistory", username: SESSION_USER.username, namaPerusahaan: SESSION_COMPANY.namaPerusahaan});
                 if (result.status === "success") { renderTopUpCards(result.data); } 
-                else { container.innerHTML = `<div class="empty-state" style="text-align:center; padding: 40px 0; color:#94a3b8;"><i class="fa-solid fa-clock-rotate-left" style="font-size:40px; margin-bottom:12px;"></i><p>Belum ada riwayat top up.</p></div>`; }
+                else { container.innerHTML = `<div class="empty-state" style="text-align:center; padding: 40px 0; color:#94a3b8;"><i class="fa-solid fa-clock-rotate-left" style="font-size:40px; margin-bottom:12px;"></i><p>Belum ada riwayat top up.</p></div>`;
+                }
             } else {
                 let result = await fetchGAS({action: "getPaymentHistory", username: SESSION_USER.username});
                 if (result.status === "success") { globalRiwayatList = result.data; renderRiwayatCards(globalRiwayatList); } 
-                else { container.innerHTML = `<div class="empty-state" style="text-align:center; padding: 40px 0; color:#94a3b8;"><i class="fa-solid fa-clock-rotate-left" style="font-size:40px; margin-bottom:12px;"></i><p>Belum ada riwayat transaksi.</p></div>`; }
+                else { container.innerHTML = `<div class="empty-state" style="text-align:center; padding: 40px 0; color:#94a3b8;"><i class="fa-solid fa-clock-rotate-left" style="font-size:40px; margin-bottom:12px;"></i><p>Belum ada riwayat transaksi.</p></div>`;
+                }
             }
-        } catch(e) { container.innerHTML = `<div style="text-align: center; margin-top: 40px; color: #ef4444;"><i class="fa-solid fa-triangle-exclamation"></i> Gagal memuat riwayat.</div>`; }
+        } catch(e) { container.innerHTML = `<div style="text-align: center; margin-top: 40px; color: #ef4444;"><i class="fa-solid fa-triangle-exclamation"></i> Gagal memuat riwayat.</div>`;
+        }
     }
 
     function renderRiwayatCards(dataList) {
         const container = document.getElementById('riwayatCardContainer');
-        if(dataList.length === 0) { container.innerHTML = `<div class="empty-state" style="text-align:center; padding: 40px 0; color:#94a3b8;"><i class="fa-solid fa-clock-rotate-left" style="font-size:40px; margin-bottom:12px;"></i><p>Belum ada riwayat transaksi.</p></div>`; return; }
+        if(dataList.length === 0) { container.innerHTML = `<div class="empty-state" style="text-align:center; padding: 40px 0; color:#94a3b8;"><i class="fa-solid fa-clock-rotate-left" style="font-size:40px; margin-bottom:12px;"></i><p>Belum ada riwayat transaksi.</p></div>`;
+        return; }
         let htmlCards = '';
         dataList.forEach((item, idx) => {
             let badgeClass = item.status.toLowerCase() === 'selesai' ? 'selesai' : (item.status.toLowerCase() === 'ditolak' ? 'ditolak' : 'pending');
-            let d = new Date(item.tanggal); let tglStr = isNaN(d.getTime()) ? item.tanggal : formatTglIndo(item.tanggal);
+            let d = new Date(item.tanggal);
+            let tglStr = isNaN(d.getTime()) ? item.tanggal : formatTglIndo(item.tanggal);
+            let jamStr = !isNaN(d.getTime()) ? d.toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'}) + " WIB" : "";
+            
             htmlCards += `
             <div class="riwayat-card" style="animation-delay: ${idx * 0.05}s;" onclick="openRiwayatImageModal('${item.struk}')">
                 <div style="flex:1;">
                     <p style="margin:0 0 5px 0; font-size:14px; font-weight:800; color:var(--text-main);">Pembelian paket layanan selama ${item.bulan} bulan</p>
                     <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <span style="font-size:12px; color:var(--text-muted);"><i class="fa-regular fa-calendar"></i> ${tglStr}</span>
+                        <span style="font-size:12px; color:var(--text-muted);"><i class="fa-regular fa-calendar"></i> ${tglStr} ${jamStr ?
+                        '&bull; <i class="fa-regular fa-clock"></i> ' + jamStr : ''}</span>
                     </div>
                 </div>
                 <div style="margin-left: 15px; text-align:right; display:flex; flex-direction:column; align-items:flex-end;">
@@ -1148,17 +1361,22 @@
 
     function renderTopUpCards(dataList) {
         const container = document.getElementById('riwayatCardContainer');
-        if(dataList.length === 0) { container.innerHTML = `<div class="empty-state" style="text-align:center; padding: 40px 0; color:#94a3b8;"><i class="fa-solid fa-clock-rotate-left" style="font-size:40px; margin-bottom:12px;"></i><p>Belum ada riwayat top up.</p></div>`; return; }
+        if(dataList.length === 0) { container.innerHTML = `<div class="empty-state" style="text-align:center; padding: 40px 0; color:#94a3b8;"><i class="fa-solid fa-clock-rotate-left" style="font-size:40px; margin-bottom:12px;"></i><p>Belum ada riwayat top up.</p></div>`;
+        return; }
         let htmlCards = '';
         dataList.forEach((item, idx) => {
             let badgeClass = item.status.toLowerCase() === 'selesai' ? 'selesai' : (item.status.toLowerCase() === 'ditolak' ? 'ditolak' : 'pending');
-            let d = new Date(item.tanggal); let tglStr = isNaN(d.getTime()) ? item.tanggal : formatTglIndo(item.tanggal);
+            let d = new Date(item.tanggal); 
+            let tglStr = isNaN(d.getTime()) ? item.tanggal : formatTglIndo(item.tanggal);
+            let jamStr = !isNaN(d.getTime()) ? d.toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'}) + " WIB" : "";
+         
             htmlCards += `
             <div class="riwayat-card" style="animation-delay: ${idx * 0.05}s;" onclick="openRiwayatImageModal('${item.struk}')">
                 <div style="flex:1;">
                     <p style="margin:0 0 5px 0; font-size:14px; font-weight:800; color:var(--text-main);">Top Up Saldo</p>
                     <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <span style="font-size:12px; color:var(--text-muted);"><i class="fa-regular fa-calendar"></i> ${tglStr}</span>
+                        <span style="font-size:12px; color:var(--text-muted);"><i class="fa-regular fa-calendar"></i> ${tglStr} ${jamStr ?
+                        '&bull; <i class="fa-regular fa-clock"></i> ' + jamStr : ''}</span>
                     </div>
                 </div>
                 <div style="margin-left: 15px; text-align:right; display:flex; flex-direction:column; align-items:flex-end;">
@@ -1178,12 +1396,43 @@
 
     function openRiwayatImageModal(imgUrl) {
         if(!imgUrl) { return showAlert("Info", "Struk gambar tidak tersedia.", "fa-circle-exclamation", true); }
+        
         let directUrl = imgUrl;
         if (imgUrl.includes('drive.google.com')) {
-            let idMatch = imgUrl.match(/id=([^&]+)/) || imgUrl.match(/file\/d\/([^\/]+)/); 
+            let idMatch = imgUrl.match(/id=([^&]+)/) || imgUrl.match(/file\/d\/([^\/]+)/);
             if (idMatch) { directUrl = "https://drive.google.com/thumbnail?id=" + idMatch[1] + "&sz=w1000"; }
         }
-        document.getElementById('riwayatImgPreview').src = directUrl; document.getElementById('riwayatImageModal').classList.add('open');
+
+        let modal = document.getElementById('riwayatImageModal');
+        if (modal) {
+            // Memastikan modal gambar struk berada paling depan 
+            modal.style.zIndex = "9999999";
+        }
+
+        let imgPreview = document.getElementById('riwayatImgPreview');
+        if (imgPreview) {
+            imgPreview.src = directUrl;
+            // Menambahkan flexbox agar gambar pas di tengah dan responsif baik web/mobile
+            let container = imgPreview.parentElement;
+            if (container) {
+                container.style.display = 'flex';
+                container.style.alignItems = 'center';
+                container.style.justifyContent = 'center';
+                container.style.overflow = 'hidden';
+                container.style.padding = '0';
+                container.style.width = '100%';
+                container.style.height = '100%';
+                
+                imgPreview.style.width = '100%';
+                imgPreview.style.height = '100%';
+                imgPreview.style.maxHeight = '85vh';
+                imgPreview.style.objectFit = 'contain';
+                imgPreview.style.display = 'block';
+                imgPreview.style.margin = 'auto';
+            }
+        }
+
+        modal.classList.add('open');
         pushBackButtonHandler('riwayatImageModal');
     }
     
@@ -1195,8 +1444,7 @@
     function openMutasiSaldo() {
         document.getElementById('mutasiSaldoModal').style.right = '0';
         document.getElementById('mutasiSaldoModal').classList.add('open');
-        pushBackButtonHandler('mutasiSaldoModal');
-        loadMutasiSaldo();
+        pushBackButtonHandler('mutasiSaldoModal'); loadMutasiSaldo();
     }
     
     function closeMutasiSaldo(fromPopState = false) {
@@ -1213,7 +1461,10 @@
             if (res.status === "success" && res.data.length > 0) {
                 let html = '';
                 res.data.forEach((item, idx) => {
-                    let tglStr = formatTglIndo(item.tanggal);
+                    let d = new Date(item.tanggal);
+                    let tglStr = isNaN(d.getTime()) ? item.tanggal : formatTglIndo(item.tanggal);
+                    let jamStr = !isNaN(d.getTime()) ? d.toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'}) + " WIB" : "";
+                    
                     html += `
                     <div class="riwayat-card" style="animation-delay: ${idx * 0.05}s; cursor: default; margin-bottom: 12px; border: 1px solid #fee2e2;">
                         <div style="flex:1;">
@@ -1221,7 +1472,7 @@
                                 Pemotongan saldo untuk transaksi <span style="color:#0284c7;">${item.idBooking}</span>
                             </p>
                             <div style="display:flex; justify-content:space-between; align-items:center;">
-                                <span style="font-size:11px; color:var(--text-muted);"><i class="fa-regular fa-calendar"></i> ${tglStr}</span>
+                                <span style="font-size:11px; color:var(--text-muted);"><i class="fa-regular fa-calendar"></i> ${tglStr} ${jamStr ? '&bull; <i class="fa-regular fa-clock"></i> ' + jamStr : ''}</span>
                             </div>
                         </div>
                         <div style="margin-left: 10px; text-align:right; display:flex; flex-direction:column; align-items:flex-end; justify-content: center;">
@@ -1243,10 +1494,12 @@
         document.getElementById('pageAksesKursi').classList.add('open'); pushBackButtonHandler('aksesKursi');
         document.getElementById('seatGridContainer').style.display = 'none'; document.getElementById('seatLoading').style.display = 'block';
         fetchPesananDataSilently().then(() => { document.getElementById('seatLoading').style.display = 'none'; document.getElementById('seatGridContainer').style.display = 'grid'; renderSeatLayout(); });
-        if(!seatPollingInterval) { seatPollingInterval = setInterval(() => { fetchPesananDataSilently(); }, 3000); }
+        if(!seatPollingInterval) { seatPollingInterval = setInterval(() => { fetchPesananDataSilently();
+        }, 3000); }
     }
     function closeAksesKursi(fromPopState = false) { document.getElementById('pageAksesKursi').classList.remove('open');
-        if(seatPollingInterval) { clearInterval(seatPollingInterval); seatPollingInterval = null; } 
+        if(seatPollingInterval) { clearInterval(seatPollingInterval);
+        seatPollingInterval = null; } 
         if (!fromPopState) popBackButtonHandler();
     }
     function renderSeatLayout() {
@@ -1263,11 +1516,13 @@
         } }
         let container = document.getElementById('seatGridContainer'); if(container) container.innerHTML = gridHtml;
     }
-    function toggleSeatSelection(seatNo) { let index = selectedManualSeats.indexOf(seatNo); if(index > -1) selectedManualSeats.splice(index, 1); else selectedManualSeats.push(seatNo); renderSeatLayout(); }
+    function toggleSeatSelection(seatNo) { let index = selectedManualSeats.indexOf(seatNo); if(index > -1) selectedManualSeats.splice(index, 1); else selectedManualSeats.push(seatNo); renderSeatLayout();
+    }
 
     function openSeatCalendar() { let parsed = new Date(currentSeatDate); if(!isNaN(parsed.getTime())) { currentSeatCalYear = parsed.getFullYear(); currentSeatCalMonth = parsed.getMonth();
         } renderSeatCalendar(); document.getElementById('seatCalendarModal').classList.add('open'); pushBackButtonHandler('seatCalendar'); }
-    function closeSeatCalendar(fromPopState = false) { document.getElementById('seatCalendarModal').classList.remove('open'); if (!fromPopState) popBackButtonHandler(); }
+    function closeSeatCalendar(fromPopState = false) { document.getElementById('seatCalendarModal').classList.remove('open'); if (!fromPopState) popBackButtonHandler();
+    }
     
     function renderSeatCalendar() { 
         const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
@@ -1280,18 +1535,28 @@
         gridHtml += `<div onclick="selectSeatDate('${fullDateStr}')" style="width:38px; height:38px; border-radius:12px; display:flex; align-items:center; justify-content:center; margin:auto; cursor:pointer; font-size:13px; font-weight:700; transition:0.2s; ${style}">${day}</div>`; } document.getElementById('seatCalendarGrid').innerHTML = gridHtml;
     }
     function changeSeatCalendarMonth(dir) { currentSeatCalMonth += dir; if (currentSeatCalMonth > 11) { currentSeatCalMonth = 0; currentSeatCalYear++;
-        } else if (currentSeatCalMonth < 0) { currentSeatCalMonth = 11; currentSeatCalYear--; } renderSeatCalendar(); }
-    function selectSeatDate(dateStr) { currentSeatDate = dateStr; selectedManualSeats = []; document.getElementById('displaySeatDate').innerText = formatTglIndo(dateStr); renderSeatLayout(); closeSeatCalendar(); }
+        } else if (currentSeatCalMonth < 0) { currentSeatCalMonth = 11; currentSeatCalYear--; } renderSeatCalendar();
+    }
+    function selectSeatDate(dateStr) { currentSeatDate = dateStr; selectedManualSeats = []; document.getElementById('displaySeatDate').innerText = formatTglIndo(dateStr); renderSeatLayout(); closeSeatCalendar();
+    }
     
     function promptManualBookingPayment() { 
-        if(isKomisiScheme() && SESSION_COMPANY.saldo <= 0) { 
-            return showAlert("Peringatan", "Mohon maaf saldo anda tidak cukup untuk melakukan pemesanan. Silahkan lakukan top up kembali.", "fa-triangle-exclamation", true); 
+        if(isKomisiScheme()) {
+            let activeBus = globalLayananList[activeLayananIndex];
+            let totalHarga = activeBus.harga * selectedManualSeats.length;
+            let kRate = SESSION_COMPANY.komisiRate || 0;
+            let requiredKomisi = (kRate / 100) * totalHarga;
+            if (SESSION_COMPANY.saldo < requiredKomisi) {
+                return showAlert("Peringatan", "Maaf, saldo anda tidak mencukupi untuk membayar komisi aplikasi. Anda tidak dapat melakukan pemesanan manual. Silahkan top up saldo terlebih dahulu.", "fa-triangle-exclamation", true);
+            }
         }
-        if(selectedManualSeats.length === 0) { return showAlert("Perhatian", "Pilih minimal 1 kursi.", "fa-triangle-exclamation", true); } 
-        document.getElementById('manualInputNamaPenumpang').value = ""; document.getElementById('manualInputNoHp').value = ""; document.getElementById('manualBookingPaymentModal').classList.add('show'); pushBackButtonHandler('manualBookingPaymentModal'); 
+        if(selectedManualSeats.length === 0) { return showAlert("Perhatian", "Pilih minimal 1 kursi.", "fa-triangle-exclamation", true);
+        } 
+        document.getElementById('manualInputNamaPenumpang').value = ""; document.getElementById('manualInputNoHp').value = ""; document.getElementById('manualBookingPaymentModal').classList.add('show'); pushBackButtonHandler('manualBookingPaymentModal');
     }
     function closeManualPaymentModal(fromPopState = false) { document.getElementById('manualBookingPaymentModal').classList.remove('show');
-        if(!fromPopState) popBackButtonHandler(); }
+        if(!fromPopState) popBackButtonHandler();
+    }
     
     async function executeManualBooking() { 
         const activeBus = globalLayananList[activeLayananIndex];
@@ -1306,9 +1571,10 @@
             if(res.status === "success" || res.status === 200 || !res.error) { 
                 await fetchPesananDataSilently();
                 let generatedId = res.idBooking; let newOrder; 
-                if(generatedId) { newOrder = globalPesananList.find(o => o.idBooking === generatedId); } 
+                if(generatedId) { newOrder = globalPesananList.find(o => o.idBooking === generatedId);
+                } 
                 if(!newOrder) { let seatsStr = selectedManualSeats.join(", ");
-                    newOrder = globalPesananList.find(o => o.merkKendaraan === payload.merkKendaraan && o.nomorKursi === seatsStr && o.namaPenumpang === payload.namaPenumpang);
+                newOrder = globalPesananList.find(o => o.merkKendaraan === payload.merkKendaraan && o.nomorKursi === seatsStr && o.namaPenumpang === payload.namaPenumpang);
                 } 
                 
                 showLoading(false);
@@ -1330,7 +1596,8 @@
                     lastGeneratedTicket = newOrder;
                     showManualTicketResult(newOrder);
                 } else { 
-                    newOrder = { idBooking: generatedId || "MENUNGGU_SINKRONISASI", userId: "MANUAL", role: "Mitra", merkKendaraan: payload.merkKendaraan, tanggalBooking: payload.tanggalBooking, nomorKursi: payload.nomorKursi, namaPenumpang: payload.namaPenumpang, namaPerusahaan: payload.namaPerusahaan, noHp: payload.noHp, harga: payload.harga, asal: payload.asal, tujuan: payload.tujuan, statusBooking: payload.statusBooking, isManualLocal: true };
+                    newOrder = { idBooking: generatedId ||
+                    "MENUNGGU_SINKRONISASI", userId: "MANUAL", role: "Mitra", merkKendaraan: payload.merkKendaraan, tanggalBooking: payload.tanggalBooking, nomorKursi: payload.nomorKursi, namaPenumpang: payload.namaPenumpang, namaPerusahaan: payload.namaPerusahaan, noHp: payload.noHp, harga: payload.harga, asal: payload.asal, tujuan: payload.tujuan, statusBooking: payload.statusBooking, isManualLocal: true };
                     globalPesananList.push(newOrder); selectedManualSeats = []; renderSeatLayout(); closeManualPaymentModal(); 
                     showAlert("Sukses", "Pesanan diproses, memuat sinkronisasi.", "fa-check");
                     if(komisi > 0) {
@@ -1346,7 +1613,7 @@
                 } 
             } else { 
                 showLoading(false);
-                showAlert("Gagal", res.message, "fa-xmark", true); 
+                showAlert("Peringatan", res.message, "fa-triangle-exclamation", true); 
             } 
         } catch(e) { 
             showLoading(false);
@@ -1354,8 +1621,21 @@
         } 
     }
 
-    function openTicketDetail(idBooking) { let targetedOrder = globalPesananList.find(o => o.idBooking === idBooking);
-        if(targetedOrder) { lastGeneratedTicket = targetedOrder; showManualTicketResult(targetedOrder); } }
+    function openTicketDetail(idBooking) { 
+        let targetedOrder = globalPesananList.find(o => o.idBooking === idBooking);
+        if(targetedOrder) { 
+            if (isKomisiScheme() && targetedOrder.statusBooking.toLowerCase() !== "lunas") {
+                let kRate = SESSION_COMPANY.komisiRate ||
+                0;
+                let requiredKomisi = (kRate / 100) * targetedOrder.harga;
+                if (SESSION_COMPANY.saldo < requiredKomisi) {
+                    return showAlert("Peringatan", "Maaf, saldo anda tidak mencukupi untuk membayar komisi aplikasi. Anda tidak dapat melihat detail tiket. Silahkan top up saldo terlebih dahulu.", "fa-triangle-exclamation", true);
+                }
+            }
+            lastGeneratedTicket = targetedOrder;
+            showManualTicketResult(targetedOrder); 
+        } 
+    }
     
     function generateBoardingPassHTML(order) { let tgl = formatTglIndo(order.tanggalBooking);
         return `<div class="boarding-pass-container" id="printableTicketCard"><div class="bp-main"><div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #0284c7; padding-bottom:10px; margin-bottom:15px;"><h2 style="margin:0; color:#0284c7; font-weight:800; font-size:20px;">E-TICKET</h2><span style="font-weight:700; font-size:14px; color:#475569;">${SESSION_COMPANY.namaPerusahaan}</span></div><div style="display:flex; justify-content:space-between; margin-bottom:15px;"><div><p style="margin:0; font-size:10px; color:#64748b; font-weight:700; text-transform:uppercase;">Nama Penumpang</p><p style="margin:0; font-size:16px; font-weight:800; text-transform:capitalize;">${order.namaPenumpang}</p></div><div style="text-align:right;"><p style="margin:0; font-size:10px; color:#64748b; font-weight:700; text-transform:uppercase;">ID Booking</p><p style="margin:0; font-size:14px; font-weight:800;">${order.idBooking}</p></div></div><div style="display:flex; justify-content:space-between; align-items:center; background:#ffffff; border: 1px solid #e2e8f0; padding:10px; border-radius:8px; margin-bottom:15px;"><div style="text-align:center;"><p style="margin:0; font-size:16px; font-weight:800; color:#0284c7;">${order.asal}</p></div><i class="fa-solid fa-arrow-right" style="color:#94a3b8;"></i><div style="text-align:center;"><p style="margin:0; font-size:16px; font-weight:800; color:#0284c7;">${order.tujuan}</p></div></div><div style="display:flex; justify-content:space-between;"><div><p style="margin:0; font-size:10px; color:#64748b; font-weight:700; text-transform:uppercase;">Tanggal Berangkat</p><p style="margin:0; font-size:13px; font-weight:700;">${tgl}</p></div><div><p style="margin:0; font-size:10px; color:#64748b; font-weight:700; text-transform:uppercase;">Armada</p><p style="margin:0; font-size:13px; font-weight:700;">${order.merkKendaraan}</p></div><div style="text-align:right;"><p style="margin:0; font-size:10px; color:#64748b; font-weight:700; text-transform:uppercase;">Status / Harga</p><p style="margin:0; font-size:13px; font-weight:800; color:${order.statusBooking.toLowerCase()==='lunas'?'#16a34a':'#dc2626'};">${order.statusBooking.toUpperCase()} / Rp ${formatNumber(order.harga)}</p></div></div></div><div class="bp-stub"><p style="margin:0 0 5px 0; font-size:10px; color:#64748b; font-weight:700; text-transform:uppercase;">Kursi</p><p style="margin:0 0 15px 0; font-size:24px; font-weight:900; color:#0f172a;">${order.nomorKursi}</p><div id="ticketQrCode"></div><p style="margin:8px 0 0 0; font-size:9px; color:#94a3b8; font-weight:600; text-align:center;">Scan untuk<br>verifikasi tiket</p></div></div>`; }
@@ -1372,7 +1652,8 @@
         } } catch (e) { console.error("Gagal Render", e); } finally { btnWa.innerHTML = originalText; btnWa.disabled = false;
         } }
     
-    function closeManualTicketModal(fromPopState = false) { document.getElementById('manualTicketResultModal').classList.remove('open'); if(!fromPopState) popBackButtonHandler(); }
+    function closeManualTicketModal(fromPopState = false) { document.getElementById('manualTicketResultModal').classList.remove('open'); if(!fromPopState) popBackButtonHandler();
+    }
     function printManualTicket() { window.print(); }
     function shareWhatsAppManualTicket() { if(!lastGeneratedTicket) return;
         if(!lastGeneratedTicket.imgUrl) { showAlert('Mohon Tunggu', 'Link gambar diproses.', 'fa-clock', true); return; } bukaWhatsAppDenganLink(lastGeneratedTicket, lastGeneratedTicket.imgUrl);
@@ -1386,16 +1667,66 @@
         let iconEl = document.getElementById('confirmIcon'); iconEl.className = `confirm-icon fa-solid ${iconClass}`; iconEl.style.color = isDanger ? "#ef4444" : "#f59e0b"; let btnYes = document.getElementById('confirmYesBtn');
         btnYes.innerText = isDanger ? "Hapus" : "Keluar Akun"; btnYes.className = isDanger ? "confirm-btn btn-danger-confirm" : "confirm-btn btn-logout-confirm"; customConfirmCallback = callback;
         document.getElementById('customConfirmModal').classList.add('show'); pushBackButtonHandler('confirmModal'); }
-    function closeConfirmModal(fromPopState = false) { document.getElementById('customConfirmModal').classList.remove('show'); customConfirmCallback = null; if (!fromPopState) popBackButtonHandler(); }
-    function executeConfirmAction() { if(customConfirmCallback) customConfirmCallback(); closeConfirmModal(); }
+    function closeConfirmModal(fromPopState = false) { document.getElementById('customConfirmModal').classList.remove('show'); customConfirmCallback = null; if (!fromPopState) popBackButtonHandler();
+    }
+    function executeConfirmAction() { if(customConfirmCallback) customConfirmCallback(); closeConfirmModal();
+    }
     function handleDeleteClick() { if(activeLayananIndex === -1) return; const item = globalLayananList[activeLayananIndex];
         showConfirmModal("Konfirmasi Hapus", `Apakah Anda yakin ingin menghapus armada ${item.merk}?`, "fa-trash", true, executeDeleteService);
     }
     function handleLogoutClick() { showConfirmModal("Keluar Akun", "Sesi Anda akan diakhiri. Apakah yakin keluar?", "fa-arrow-right-from-bracket", false, executeLogout);
     }
 
-    function openPaymentModal(idBooking) { currentPaymentOrderId = idBooking; document.getElementById('paymentConfirmModal').classList.add('show'); pushBackButtonHandler('paymentModal'); }
-    function closePaymentModal(fromPopState = false) { document.getElementById('paymentConfirmModal').classList.remove('show'); currentPaymentOrderId = ""; if (!fromPopState) popBackButtonHandler(); }
+    function openPaymentModal(idBooking) { 
+        let order = globalPesananList.find(o => o.idBooking === idBooking);
+        if (isKomisiScheme() && order && order.statusBooking.toLowerCase() !== "lunas") {
+            let kRate = SESSION_COMPANY.komisiRate ||
+            0;
+            let requiredKomisi = (kRate / 100) * order.harga;
+            if (SESSION_COMPANY.saldo < requiredKomisi) {
+                return showAlert("Peringatan", "Maaf, saldo anda tidak mencukupi untuk membayar komisi aplikasi. Anda tidak dapat melakukan konfirmasi pembayaran. Silahkan top up saldo terlebih dahulu.", "fa-triangle-exclamation", true);
+            }
+        }
+        currentPaymentOrderId = idBooking;
+        // Tampilkan foto struk dari parameter strukPayment
+        let modalEl = document.getElementById('paymentConfirmModal');
+        if (modalEl) {
+            let strukBox = document.getElementById('dynamicStrukBox');
+            if (!strukBox) {
+                strukBox = document.createElement('div');
+                strukBox.id = 'dynamicStrukBox';
+                strukBox.style.margin = '15px 0';
+                strukBox.style.textAlign = 'center';
+                // Insert ke dalam DOM sebelum tombol
+                let pText = modalEl.querySelector('p');
+                if (pText && pText.parentNode) {
+                    pText.parentNode.insertBefore(strukBox, pText.nextSibling);
+                } else {
+                    modalEl.appendChild(strukBox);
+                }
+            }
+
+            if (order && order.strukPayment) {
+                let imgUrl = order.strukPayment;
+                // Parse jika link Google Drive
+                if (imgUrl.includes('drive.google.com')) {
+                    let idMatch = imgUrl.match(/id=([^&]+)/) ||
+                    imgUrl.match(/file\/d\/([^\/]+)/);
+                    if (idMatch) { imgUrl = "https://drive.google.com/thumbnail?id=" + idMatch[1] + "&sz=w1000";
+                    }
+                }
+                strukBox.innerHTML = `<p style="font-size:12px; font-weight:700; color:var(--text-muted); margin-bottom:8px;">Bukti Pembayaran (Dari User):</p>
+                <img src="${imgUrl}" alt="Struk" style="width:100%; max-height:40vh; border-radius:8px; object-fit:contain; border:1px solid #e2e8f0; cursor:pointer; display:block; margin:0 auto;" onclick="openRiwayatImageModal('${order.strukPayment}')" />`;
+            } else {
+                strukBox.innerHTML = `<div style="padding:15px; background:#f8fafc; border-radius:8px; font-size:12px; color:#94a3b8; border:1px dashed #cbd5e1;">Belum ada lampiran bukti bayar / User belum mengunggah struk.</div>`;
+            }
+        }
+
+        document.getElementById('paymentConfirmModal').classList.add('show');
+        pushBackButtonHandler('paymentModal');
+    }
+    function closePaymentModal(fromPopState = false) { document.getElementById('paymentConfirmModal').classList.remove('show'); currentPaymentOrderId = ""; if (!fromPopState) popBackButtonHandler();
+    }
     function handleSudahBayarClick() { let btn = document.getElementById('btnSudahBayar'); let originalText = btn.innerText;
         btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Memproses...`; btn.disabled = true; btn.style.opacity = '0.7';
         setTimeout(() => { btn.innerHTML = originalText; btn.disabled = false; btn.style.opacity = '1'; executePaymentConfirm(); }, 3000);
@@ -1427,7 +1758,6 @@
             let res = await fetchGAS({ action: "confirmPayment", idBooking: idToConfirm, namaPerusahaan: SESSION_COMPANY.namaPerusahaan, statusBooking: "Lunas" });
             if(res.status !== "success") { throw new Error(res.message); } 
             showAlert("Berhasil", "Pesanan tiket dibayarkan.", "fa-check");
-            
             if (res.komisiDeducted > 0) {
                 SESSION_COMPANY.saldo -= res.komisiDeducted;
                 setTimeout(() => {
@@ -1440,6 +1770,7 @@
                 let btnConfirm = document.getElementById(`btn-confirm-${idToConfirm}${suffix}`); 
                 let badgeEl = document.getElementById(`badge-${idToConfirm}${suffix}`); 
                 if(btnConfirm) btnConfirm.style.display = 'inline-block'; 
+              
                 if(badgeEl) { badgeEl.className = 'status-ribbon-bottom-left non-aktif'; 
                 badgeEl.innerText = 'BELUM BAYAR'; } 
             });
@@ -1451,7 +1782,7 @@
                     updateChartFilter(activeType);
                 } 
             } 
-            showAlert("Gagal", e.message || "Gagal sinkronisasi.", "fa-triangle-exclamation", true);
+            showAlert("Peringatan", e.message || "Gagal sinkronisasi.", "fa-triangle-exclamation", true);
         } 
     }
 
@@ -1459,10 +1790,13 @@
         try { const date = new Date(tglStr); if (isNaN(date.getTime())) return tglStr;
         const options = { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' }; return date.toLocaleDateString('id-ID', options);
         } catch(e) { return tglStr; } }
-    function formatNumber(angka) { if(!angka) return "0"; return new Intl.NumberFormat('id-ID').format(angka); }
-    function formatRupiah(angka) { return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka).replace("Rp", "Rp."); }
+    function formatNumber(angka) { if(!angka) return "0"; return new Intl.NumberFormat('id-ID').format(angka);
+    }
+    function formatRupiah(angka) { return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka).replace("Rp", "Rp.");
+    }
     function hitungDurasi(jB, jS) { let [h1, m1] = jB.split(':').map(Number); let [h2, m2] = jS.split(':').map(Number);
-        let dH = h2 - h1; let dM = m2 - m1; if (dM < 0) { dM += 60; dH -= 1; } if (dH < 0) dH += 24; let res = []; if (dH > 0) res.push(`${dH}j`);
+        let dH = h2 - h1; let dM = m2 - m1; if (dM < 0) { dM += 60;
+        dH -= 1; } if (dH < 0) dH += 24; let res = []; if (dH > 0) res.push(`${dH}j`);
         if (dM > 0) res.push(`${dM}m`); return res.join(' ') || "0m";
     }
 
@@ -1479,36 +1813,51 @@
         
     function initStatisticsChart() { if (typeof Chart === 'undefined') return;
         const ctx = document.getElementById('orderAnalyticsChart'); if(!ctx) return; let gradientFill = ctx.getContext('2d').createLinearGradient(0, 0, 0, 180); gradientFill.addColorStop(0, 'rgba(2, 132, 199, 0.35)');
-        gradientFill.addColorStop(1, 'rgba(2, 132, 199, 0.01)'); orderChartInstance = new Chart(ctx, { type: 'line', data: { labels: [], datasets: [{ label: 'Pesanan Lunas', data: [], borderColor: '#0284c7', borderWidth: 2.5, backgroundColor: gradientFill, fill: true, tension: 0.35, pointBackgroundColor: '#0284c7', pointHoverRadius: 6 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: 'rgba(0, 0, 0, 0.04)' }, ticks: { font: { size: 10, family: 'Inter' }, color: '#64748b', precision: 0 } }, x: { grid: { display: false }, ticks: { font: { size: 10, family: 'Inter' }, color: '#64748b' } } } } }); updateChartFilter('hari'); }
-    function updateChartFilter(type) { document.querySelectorAll('.chart-filter-btn').forEach(btn => btn.classList.remove('active')); document.getElementById(`btn-chart-${type}`).classList.add('active'); if(!orderChartInstance) return;
-        let chartData = calculateRealChartData(type); orderChartInstance.data.labels = chartData.labels; orderChartInstance.data.datasets[0].data = chartData.data; orderChartInstance.update();
+        gradientFill.addColorStop(1, 'rgba(2, 132, 199, 0.01)'); orderChartInstance = new Chart(ctx, { type: 'line', data: { labels: [], datasets: [{ label: 'Pesanan Lunas', data: [], borderColor: '#0284c7', borderWidth: 2.5, backgroundColor: gradientFill, fill: true, tension: 0.35, pointBackgroundColor: '#0284c7', pointHoverRadius: 6 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: 'rgba(0, 0, 0, 0.04)' }, ticks: { font: { size: 10, family: 'Inter' }, color: '#64748b', precision: 0 } }, x: { grid: { display: false }, ticks: { font: { size: 10, family: 'Inter' }, color: '#64748b' } } 
+    } } }); updateChartFilter('hari');
+    }
+    function updateChartFilter(type) { document.querySelectorAll('.chart-filter-btn').forEach(btn => btn.classList.remove('active')); document.getElementById(`btn-chart-${type}`).classList.add('active');
+        if(!orderChartInstance) return;
+        let chartData = calculateRealChartData(type); orderChartInstance.data.labels = chartData.labels;
+        orderChartInstance.data.datasets[0].data = chartData.data; orderChartInstance.update();
     }
 
     function populateDashboardData() { if(!SESSION_USER || !SESSION_COMPANY) return; document.getElementById('layananCompName').innerText = SESSION_COMPANY.namaPerusahaan;
-        let logoSrc = SESSION_COMPANY.logo ? SESSION_COMPANY.logo : "https://placehold.co/100x100?text=No+Logo"; document.getElementById('layananLogo').src = logoSrc; document.getElementById('profileLogoImg').src = logoSrc; document.getElementById('profileCompTitle').innerText = SESSION_COMPANY.namaPerusahaan; document.getElementById('profileUserTitle').innerText = `@${SESSION_USER.username}`;
-        document.getElementById('pCompDesc').innerText = SESSION_COMPANY.deskripsiPerusahaan;
-        document.getElementById('stat-total-armada').innerText = globalLayananList ? globalLayananList.length : 0; updateHeaderSchemeUI();
+    let logoSrc = SESSION_COMPANY.logo ?
+    SESSION_COMPANY.logo : "https://placehold.co/100x100?text=No+Logo"; document.getElementById('layananLogo').src = logoSrc; document.getElementById('profileLogoImg').src = logoSrc; document.getElementById('profileCompTitle').innerText = SESSION_COMPANY.namaPerusahaan; document.getElementById('profileUserTitle').innerText = `@${SESSION_USER.username}`;
+    document.getElementById('pCompDesc').innerText = SESSION_COMPANY.deskripsiPerusahaan;
+    document.getElementById('stat-total-armada').innerText = globalLayananList ? globalLayananList.length : 0; updateHeaderSchemeUI();
         
         let existingBtn = document.getElementById('btnMutasiSaldo');
         if (isKomisiScheme()) {
             if (!existingBtn) {
                 let btnHtml = `
-                <div id="btnMutasiSaldo" class="menu-item mutasi-menu-item" onclick="openMutasiSaldo()" style="margin-top: 0px; display: flex; align-items: center; padding: 15px; background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); cursor: pointer; border: 1px solid #e2e8f0;">
-                    <div style="width: 40px; height: 40px; border-radius: 12px; background: #fff; color: #000; border: 1px solid #f1f1f1; display: flex; align-items: center; justify-content: center; font-size: 18px; margin-right: 15px;">
+                <div id="btnMutasiSaldo" class="menu-item mutasi-menu-item" onclick="openMutasiSaldo()" style="margin-top: 0px; margin-bottom: 15px; display: flex; align-items: center; padding: 15px; background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); cursor: pointer; border: 1px solid #e2e8f0;">
+                    
+                <div class="mutasi-icon-box" style="width: 40px; height: 40px; border-radius: 10px; background: #f0fdf4; color: #10b981; display: flex; align-items: center; justify-content: center; font-size: 18px; margin-right: 15px;">
                         <i class="fa-solid fa-file-invoice-dollar"></i>
                     </div>
+                 
                     <div style="flex: 1;">
-                        <h4 style="margin: 0; font-size: 14px; font-weight: 700; color: var(--text-main);">Mutasi Saldo</h4>
+           
+                     <h4 style="margin: 0; font-size: 14px; font-weight: 700; color: var(--text-main);">Mutasi Saldo</h4>
                         <p style="margin: 2px 0 0 0; font-size: 12px; color: var(--text-muted);">Riwayat pemotongan komisi</p>
                     </div>
                     <i class="fa-solid fa-chevron-right" style="color: #cbd5e1;"></i>
                 </div>
-                <style>          
-                    .mutasi-menu-item { transition: all 0.3s ease; }
-                    .mutasi-menu-item:hover .fa-file-invoice-dollar { color: #10b981 !important; }        
-                    .mutasi-menu-item:hover { border-color: #10b981 !important; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15) !important; transform: translateY(-2px);  }
+                <style>
+   
+                    .mutasi-menu-item { transition: all 0.3s ease;
+                    }
+                    .mutasi-menu-item .mutasi-icon-box { transition: all 0.3s ease;
+                    }
+         
+                    .mutasi-menu-item:hover { border-color: #10b981 !important;
+                box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15) !important; transform: translateY(-2px);
+                    }
+                    .mutasi-menu-item:hover .mutasi-icon-box { background: #10b981 !important;
+                color: #fff !important; }
                 </style>`;
-                
                 let editPerusahaanBtn = document.querySelector('[onclick="openEditPerusahaan()"]');
                 if (editPerusahaanBtn) {
                     editPerusahaanBtn.insertAdjacentHTML('afterend', btnHtml);
@@ -1523,50 +1872,65 @@
         }
     }
     
-    function updateDashboardPesananStats() { let belumBayar = 0; let lunas = 0; globalPesananList.forEach(o => { if (o.statusBooking.toLowerCase() === 'lunas') lunas++; else belumBayar++; }); if(document.getElementById('stat-pesanan-aktif')) document.getElementById('stat-pesanan-aktif').innerText = belumBayar;
+    function updateDashboardPesananStats() { let belumBayar = 0;
+        let lunas = 0; globalPesananList.forEach(o => { if (o.statusBooking.toLowerCase() === 'lunas') lunas++; else belumBayar++; }); if(document.getElementById('stat-pesanan-aktif')) document.getElementById('stat-pesanan-aktif').innerText = belumBayar;
         if(document.getElementById('stat-pesanan-selesai')) document.getElementById('stat-pesanan-selesai').innerText = lunas; }
 
     function toggleDesktopSidebar(fromPopState = false) { let sidebar = document.getElementById('desktopSidebar');
         let overlay = document.getElementById('desktopSidebarOverlay'); let wasOpen = sidebar && sidebar.classList.contains('open'); if(sidebar) sidebar.classList.toggle('open'); if(overlay) overlay.classList.toggle('open'); let isOpenNow = sidebar && sidebar.classList.contains('open');
-        if (isOpenNow) { pushBackButtonHandler('desktopSidebar'); } else if (wasOpen && !fromPopState) { popBackButtonHandler(); } }
-    function toggleClearBtn(input) { let btn = input.nextElementSibling; if(btn && btn.classList.contains('clear-btn')) { btn.style.display = input.value.length > 0 ? 'block' : 'none'; } }
+        if (isOpenNow) { pushBackButtonHandler('desktopSidebar'); } else if (wasOpen && !fromPopState) { popBackButtonHandler();
+        } }
+    function toggleClearBtn(input) { let btn = input.nextElementSibling;
+        if(btn && btn.classList.contains('clear-btn')) { btn.style.display = input.value.length > 0 ? 'block' : 'none';
+        } }
     function clearSearch(inputId) { let input = document.getElementById(inputId); if(input) { input.value = ''; toggleClearBtn(input);
-        if(inputId === 'regionSearchInput') filterRegions(); if(inputId === 'layananSearchInputWeb') filterLayananWeb(); if(inputId === 'pesananSearchInput') filterPesananMobile(); if(inputId === 'layananSearchInput') filterLayananMobile(); if(inputId === 'riwayatSearchInput') filterRiwayat(); } }
-    function openLayananSearch() { document.getElementById('layananSearchOverlay').classList.add('show'); document.getElementById('layananSearchInput').focus(); pushBackButtonHandler('layananSearch'); }
-    function closeLayananSearch(fromPopState = false) { document.getElementById('layananSearchOverlay').classList.remove('show'); clearSearch('layananSearchInput'); if (!fromPopState) popBackButtonHandler(); }
-    function filterLayananMobile() { let val = document.getElementById('layananSearchInput').value.toLowerCase(); doSearchLayananDOM(val); }
+        if(inputId === 'regionSearchInput') filterRegions(); if(inputId === 'layananSearchInputWeb') filterLayananWeb(); if(inputId === 'pesananSearchInput') filterPesananMobile(); if(inputId === 'layananSearchInput') filterLayananMobile(); if(inputId === 'riwayatSearchInput') filterRiwayat();
+        } }
+    function openLayananSearch() { document.getElementById('layananSearchOverlay').classList.add('show'); document.getElementById('layananSearchInput').focus(); pushBackButtonHandler('layananSearch');
+    }
+    function closeLayananSearch(fromPopState = false) { document.getElementById('layananSearchOverlay').classList.remove('show'); clearSearch('layananSearchInput'); if (!fromPopState) popBackButtonHandler();
+    }
+    function filterLayananMobile() { let val = document.getElementById('layananSearchInput').value.toLowerCase(); doSearchLayananDOM(val);
+    }
     function toggleWebSearch(forceClose = false) { let box = document.getElementById('webSearchExpand'); if(forceClose) { box.classList.remove('expanded'); clearSearch('layananSearchInputWeb'); return; } box.classList.toggle('expanded');
         if(box.classList.contains('expanded')) { document.getElementById('layananSearchInputWeb').focus(); } else { clearSearch('layananSearchInputWeb'); } }
-    function filterLayananWeb() { let val = document.getElementById('layananSearchInputWeb').value.toLowerCase(); doSearchLayananDOM(val); }
+    function filterLayananWeb() { let val = document.getElementById('layananSearchInputWeb').value.toLowerCase(); doSearchLayananDOM(val);
+    }
     function doSearchLayananDOM(val) { let cards = document.getElementById('layananCardContainer').querySelectorAll('.ticket-card');
-        cards.forEach(card => { let text = card.innerText.toLowerCase(); card.style.display = text.includes(val) ? '' : 'none'; }); }
+        cards.forEach(card => { let text = card.innerText.toLowerCase(); card.style.display = text.includes(val) ? '' : 'none'; });
+    }
     function filterPesananMobile() { let val = document.getElementById('pesananSearchInput').value.toLowerCase(); let cards = document.querySelectorAll('.pesanan-card-item');
-        cards.forEach(card => { let text = card.innerText.toLowerCase(); card.style.display = text.includes(val) ? '' : 'none'; }); }
+        cards.forEach(card => { let text = card.innerText.toLowerCase(); card.style.display = text.includes(val) ? '' : 'none'; });
+    }
     function toggleOrderFilter() { document.getElementById('orderFilterMenu').classList.toggle('open'); }
     document.addEventListener('click', function(e) { let filterDropdown = document.getElementById('orderFilterMenu'); if(filterDropdown && filterDropdown.classList.contains('open')) { if(!e.target.closest('.filter-dropdown')) { filterDropdown.classList.remove('open'); } } });
     function setPesananFilter(type) { currentPesananFilter = type; document.getElementById('orderFilterMenu').classList.remove('open'); renderPesananCards(globalPesananList); }
 
     function openScanner() { 
         if(isKomisiScheme() && SESSION_COMPANY.saldo <= 0) { 
-            return showAlert("Peringatan", "Mohon maaf saldo anda tidak cukup untuk melakukan scan tiket. Silahkan lakukan top up kembali.", "fa-triangle-exclamation", true); 
+            return showAlert("Peringatan", "Maaf, saldo anda tidak mencukupi untuk membayar komisi aplikasi. Anda tidak dapat menggunakan fitur scan tiket. Silahkan top up saldo terlebih dahulu.", "fa-triangle-exclamation", true);
         }
         document.getElementById('scannerModal').classList.add('open'); html5QrCode = new Html5Qrcode("reader");
         html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 220, height: 220 } }, onScanSuccess, onScanFailure).catch(err => { console.error(err); showAlert("Akses Kamera", "Gagal membuka.", "fa-camera", true); });
         pushBackButtonHandler('scanner'); }
     function closeScanner(fromPopState = false) { document.getElementById('scannerModal').classList.remove('open');
-        if(html5QrCode) { html5QrCode.stop().then(() => { html5QrCode.clear(); html5QrCode = null; }).catch(err => console.log(err)); } if (!fromPopState) popBackButtonHandler(); }
+        if(html5QrCode) { html5QrCode.stop().then(() => { html5QrCode.clear(); html5QrCode = null; }).catch(err => console.log(err)); } if (!fromPopState) popBackButtonHandler();
+    }
     function openScannedTicketDrawer() { document.getElementById('scannedTicketDrawer').classList.add('open'); pushBackButtonHandler('scannedTicket'); }
     function closeScannedTicketDrawer(fromPopState = false) { document.getElementById('scannedTicketDrawer').classList.remove('open');
         if (!fromPopState) popBackButtonHandler(); }
     function onScanSuccess(decodedText, decodedResult) { closeScanner();
         let targetedOrder = globalPesananList.find(o => o.idBooking === decodedText || o.idBooking.includes(decodedText));
         if (targetedOrder) { document.getElementById('scannedTicketContent').innerHTML = `<div style="padding: 10px 20px 20px 20px;">${generateTicketCardHTML(targetedOrder, true, 0)}</div>`; openScannedTicketDrawer(); showAlert('Berhasil', 'Scan Tiket ditemukan.', 'fa-qrcode');
-        } else { showAlert('Tidak Ditemukan', 'Tiket tidak ada.', 'fa-circle-xmark', true); } }
+        } else { showAlert('Tidak Ditemukan', 'Tiket tidak ada.', 'fa-circle-xmark', true);
+        } }
     function onScanFailure(error) { }
 
     function togglePassword(icon, inputId) { let input = document.getElementById(inputId);
-        if (input.type === "password") { input.type = "text"; icon.classList.remove("fa-eye-slash"); icon.classList.add("fa-eye"); } else { input.type = "password"; icon.classList.remove("fa-eye"); icon.classList.add("fa-eye-slash"); } }
-    function showLoading(show) { document.getElementById('globalLoader').style.display = show ? "flex" : "none"; }
+        if (input.type === "password") { input.type = "text"; icon.classList.remove("fa-eye-slash"); icon.classList.add("fa-eye"); } else { input.type = "password"; icon.classList.remove("fa-eye"); icon.classList.add("fa-eye-slash");
+        } }
+    function showLoading(show) { document.getElementById('globalLoader').style.display = show ? "flex" : "none";
+    }
     
     function showAlert(title, message, iconClass = "fa-check", isError = false) { 
         let toast = document.getElementById('alertToast');
@@ -1577,11 +1941,13 @@
         toast.classList.remove('show'); void toast.offsetWidth; toast.classList.add('show');
         setTimeout(closeAlert, 4000);
     }
-    function closeAlert() { let toast = document.getElementById('alertToast'); toast.classList.remove('show'); }
+    function closeAlert() { let toast = document.getElementById('alertToast'); toast.classList.remove('show');
+    }
 
     function handleImageSelection(event, targetPreviewId, aspectRatio) { const file = event.target.files[0]; if(!file) return; currentTargetImageId = targetPreviewId;
         const reader = new FileReader(); reader.onload = (e) => { document.getElementById('cropperImage').src = e.target.result; document.getElementById('cropperModal').classList.add('open'); if(cropperInstance) cropperInstance.destroy();
-        cropperInstance = new Cropper(document.getElementById('cropperImage'), { aspectRatio: aspectRatio, viewMode: 2, autoCropArea: 1, responsive: true }); pushBackButtonHandler('cropperModal'); }; reader.readAsDataURL(file); }
+        cropperInstance = new Cropper(document.getElementById('cropperImage'), { aspectRatio: aspectRatio, viewMode: 2, autoCropArea: 1, responsive: true }); pushBackButtonHandler('cropperModal'); }; reader.readAsDataURL(file);
+    }
     function cancelCrop(fromPopState = false) { document.getElementById('cropperModal').classList.remove('open'); if(cropperInstance) cropperInstance.destroy(); document.getElementById('compLogoFile').value = ""; document.getElementById('addFotoFile').value = "";
         document.getElementById('editFotoFile').value = ""; document.getElementById('editCompLogoInput').value = ""; if (!fromPopState) popBackButtonHandler(); }
     function applyCrop() { if(!cropperInstance) return;
@@ -1596,12 +1962,15 @@
     function openRegionSelection(targetInputId) { activeRegionInputTargetId = targetInputId;
         document.getElementById('regionModalTitle').innerText = targetInputId === "addAsal" || targetInputId === "editAsal" ? "Pilih Kota Asal" : "Pilih Kota Tujuan"; clearSearch('regionSearchInput'); renderRegionList(indonesianRegionsDatabase); document.getElementById('regionModal').classList.add('open');
         pushBackButtonHandler('regionModal'); }
-    function closeRegionModal(fromPopState = false) { document.getElementById('regionModal').classList.remove('open'); if (!fromPopState) popBackButtonHandler(); }
+    function closeRegionModal(fromPopState = false) { document.getElementById('regionModal').classList.remove('open'); if (!fromPopState) popBackButtonHandler();
+    }
     function renderRegionList(items) { let listHtml = items.length === 0 ?
         `<li style="text-align:center; padding:20px; color:var(--text-muted);">Wilayah tidak ditemukan</li>` : ""; items.slice(0, 150).forEach(cityName => { listHtml += `<li class="modal-list-item" onclick="selectRegionValue('${cityName}')"><i class="fa-solid fa-location-dot"></i> <span>${cityName}</span></li>`; });
         document.getElementById('regionListContainer').innerHTML = listHtml; }
-    function filterRegions() { renderRegionList(indonesianRegionsDatabase.filter(name => name.toLowerCase().includes(document.getElementById('regionSearchInput').value.toLowerCase().trim()))); }
-    function selectRegionValue(val) { document.getElementById(activeRegionInputTargetId).value = val; closeRegionModal(); }
+    function filterRegions() { renderRegionList(indonesianRegionsDatabase.filter(name => name.toLowerCase().includes(document.getElementById('regionSearchInput').value.toLowerCase().trim())));
+    }
+    function selectRegionValue(val) { document.getElementById(activeRegionInputTargetId).value = val; closeRegionModal();
+    }
     
     function initTimePickerOptions() { let hourHtml = "", minHtml = "";
         for(let i=0; i<24; i++) { let pad = i.toString().padStart(2, '0'); hourHtml += `<div class="time-opt-item" data-val="${pad}" onclick="selectTimeItem('hour', this)">${pad}</div>`;
@@ -1613,14 +1982,19 @@
     function closeTimeModal(fromPopState = false) { document.getElementById('timePickerModal').classList.remove('open');
         if (!fromPopState) popBackButtonHandler(); }
     function selectTimeItem(type, element) { let parent = type === 'hour' ?
-        document.getElementById('hourScrollBox') : document.getElementById('minuteScrollBox'); parent.querySelectorAll('.time-opt-item').forEach(item => item.classList.remove('selected')); element.classList.add('selected'); element.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
-    function handleTimeScroll(type) { clearTimeout(window[`scrollTimeTimeout_${type}`]); window[`scrollTimeTimeout_${type}`] = setTimeout(() => { let parent = type === 'hour' ? document.getElementById('hourScrollBox') : document.getElementById('minuteScrollBox'); let parentCenter = parent.getBoundingClientRect().top + (parent.clientHeight / 2); let closestElem = null; let closestDist = Infinity; parent.querySelectorAll('.time-opt-item').forEach(item => { let box = item.getBoundingClientRect(); let itemCenter = box.top + (box.height / 2); let dist = Math.abs(parentCenter - itemCenter); if(dist < closestDist) { closestDist = dist; closestElem = item; } }); if(closestElem && !closestElem.classList.contains('selected')) { parent.querySelectorAll('.time-opt-item').forEach(i => i.classList.remove('selected')); closestElem.classList.add('selected'); } }, 150); }
-    function saveSelectedTime() { let h = document.getElementById('hourScrollBox').querySelector('.selected').getAttribute('data-val'); let m = document.getElementById('minuteScrollBox').querySelector('.selected').getAttribute('data-val'); document.getElementById(activeTimeInputTargetId).value = `${h}:${m}`; closeTimeModal(); }
+        document.getElementById('hourScrollBox') : document.getElementById('minuteScrollBox'); parent.querySelectorAll('.time-opt-item').forEach(item => item.classList.remove('selected')); element.classList.add('selected'); element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    function handleTimeScroll(type) { clearTimeout(window[`scrollTimeTimeout_${type}`]); window[`scrollTimeTimeout_${type}`] = setTimeout(() => { let parent = type === 'hour' ? document.getElementById('hourScrollBox') : document.getElementById('minuteScrollBox'); let parentCenter = parent.getBoundingClientRect().top + (parent.clientHeight / 2); let closestElem = null; let closestDist = Infinity; parent.querySelectorAll('.time-opt-item').forEach(item => { let box = item.getBoundingClientRect(); let itemCenter = box.top + (box.height / 2); let dist = Math.abs(parentCenter - itemCenter); if(dist < closestDist) { closestDist = dist; closestElem = item; } }); if(closestElem && !closestElem.classList.contains('selected')) { parent.querySelectorAll('.time-opt-item').forEach(i => i.classList.remove('selected')); closestElem.classList.add('selected'); } }, 150);
+    }
+    function saveSelectedTime() { let h = document.getElementById('hourScrollBox').querySelector('.selected').getAttribute('data-val'); let m = document.getElementById('minuteScrollBox').querySelector('.selected').getAttribute('data-val'); document.getElementById(activeTimeInputTargetId).value = `${h}:${m}`; closeTimeModal();
+    }
 
-    async function fetchFacilitiesData() { try { let r = await fetch(GAS_API_URL + "?action=getFacilities"); globalFacilitiesDatabase = await r.json(); } catch (e) { } }
+    async function fetchFacilitiesData() { try { let r = await fetch(GAS_API_URL + "?action=getFacilities");
+        globalFacilitiesDatabase = await r.json(); } catch (e) { } }
     function openFacilitySelection(targetInputId) { activeFacilityTargetInput = targetInputId; renderFacilitiesCapsules();
         document.getElementById('facilityModal').classList.add('open'); pushBackButtonHandler('facilityModal'); }
-    function closeFacilityModal(fromPopState = false) { document.getElementById('facilityModal').classList.remove('open'); if (!fromPopState) popBackButtonHandler(); }
+    function closeFacilityModal(fromPopState = false) { document.getElementById('facilityModal').classList.remove('open'); if (!fromPopState) popBackButtonHandler();
+    }
     function renderFacilitiesCapsules() { let html = "";
         if (globalFacilitiesDatabase.length === 0) html = `<div style="width:100%; text-align:center;">Data tidak ditemukan.</div>`;
         else { globalFacilitiesDatabase.forEach(item => { let isActiveClass = selectedFasilitasArray.includes(item.nama) ? 'active' : ''; let iconImg = item.icon ? item.icon : "https://cdn-icons-png.flaticon.com/512/744/744465.png"; html += `<div class="capsule-btn ${isActiveClass}" onclick="toggleFacilityItem('${item.nama}')"><img src="${iconImg}"><span>${item.nama}</span></div>`; });
@@ -1642,22 +2016,26 @@
         try {
             let r = await fetch(GAS_API_URL + "?action=getSkema");
             let list = await r.json();
-            if (list && list.length > 0) { globalSkemaList = list; renderSkemaOptions(); }
-        } catch (e) { console.error("Gagal load skema", e); }
+            if (list && list.length > 0) { globalSkemaList = list; renderSkemaOptions();
+            }
+        } catch (e) { console.error("Gagal load skema", e);
+        }
     }
 
     function renderSkemaOptions() {
         let html = "";
         if (globalSkemaList && globalSkemaList.length > 0) {
             globalSkemaList.forEach((item) => { html += `<div class="custom-option" style="padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: 0.2s;" onclick="selectSkemaValue('${item.nama}')">${item.nama}</div>`; });
-        } else { html = `<div class="custom-option" style="padding: 12px 16px;">Tidak ada data skema</div>`; }
+        } else { html = `<div class="custom-option" style="padding: 12px 16px;">Tidak ada data skema</div>`;
+        }
         let el = document.getElementById('skemaSelectOptions'); if (el) el.innerHTML = html;
     }
 
     function selectSkemaValue(nama) {
         selectedSkemaValue = nama;
         let elText = document.getElementById('selectedSkemaText');
-        if (elText) { elText.innerText = nama; elText.style.color = "#ffffff"; elText.style.fontWeight = "700"; }
+        if (elText) { elText.innerText = nama; elText.style.color = "#ffffff"; elText.style.fontWeight = "700";
+        }
         let elOpts = document.getElementById('skemaSelectOptions'); if (elOpts) elOpts.classList.remove('open');
     }
 
@@ -1667,12 +2045,14 @@
         } if(!/^[A-Z](?=.*[a-zA-Z])(?=.*\d).{7,}$/.test(password)) { showAlert("Kata Sandi Lemah", "Minimal 8 karakter, diawali huruf besar, kombinasi huruf & angka.", "fa-shield-halved", true); return;
         } showLoading(true); try { let res = await fetchGAS({ action: "register", namaLengkap, username, email, noHp, alamatLengkap, password }); showLoading(false);
         if(res.status === "success") { showAlert("Sukses!", res.message, "fa-circle-check"); setTimeout(() => switchPage('pageLogin'), 1500); } else { showAlert("Gagal", res.message, "fa-circle-xmark", true);
-        } } catch(e) { showLoading(false); showAlert("Koneksi Error", e.message, "fa-wifi", true); } }
+        } } catch(e) { showLoading(false); showAlert("Koneksi Error", e.message, "fa-wifi", true);
+        } }
     
    async function handleLogin() { 
         const username = document.getElementById('loginUser').value.trim();
         const password = document.getElementById('loginPass').value.trim(); 
-        if(!username || !password) { showAlert("Akses Ditolak", "Isi username dan password.", "fa-lock", true); return; } 
+        if(!username || !password) { showAlert("Akses Ditolak", "Isi username dan password.", "fa-lock", true); return;
+        } 
         showLoading(true);
         try { 
             let res = await fetchGAS({ action: "login", username, password });
@@ -1683,22 +2063,30 @@
                 if(res.hasCompany) { 
                     SESSION_COMPANY = res.company;
                     localStorage.setItem('goBorneo_partner_session', JSON.stringify({ user: SESSION_USER, company: SESSION_COMPANY, paket: globalPaketList, rekening: globalRekeningList, serverTime: res.serverTime }));
+                    initNotifUI();
                     populateDashboardData(); switchPage('pageMainApp'); switchSubView('layanan'); loadLayananData(); startSubscriptionTimer(); startRealtimeExpirySync();
-                    if(isSubscriptionExpired() || SESSION_USER.hasPendingPayment) { setTimeout(() => { showSubscriptionModal(true); }, 2000); }
+                    if(!pesananPollingInterval) { pesananPollingInterval = setInterval(fetchPesananDataSilently, 5000); }
+                    if(isSubscriptionExpired() || SESSION_USER.hasPendingPayment) { setTimeout(() => { showSubscriptionModal(true); }, 2000);
+                    }
                 } else { 
                     localStorage.setItem('goBorneo_partner_session', JSON.stringify({ user: SESSION_USER, paket: globalPaketList, rekening: globalRekeningList, serverTime: res.serverTime }));
                     switchPage('pageOnboarding');
                 } 
-            } else { showAlert("Login Gagal", res.message, "fa-triangle-exclamation", true); } 
-        } catch(e) { showLoading(false); showAlert("Error Script", e.message, "fa-server", true); } 
+            } else { showAlert("Login Gagal", res.message, "fa-triangle-exclamation", true);
+            } 
+        } catch(e) { showLoading(false); showAlert("Error Script", e.message, "fa-server", true);
+        } 
     }
     
     async function handleCompanyRegister() { 
         const n = document.getElementById('compNama').value.trim();
         const d = document.getElementById('compDesc').value.trim(); const h = document.getElementById('compHp').value.trim(); const a = document.getElementById('compAlamat').value.trim();
-        if(!n || !d || !h || !a) { showAlert("Belum Lengkap", "Isi seluruh profil perusahaan.", "fa-building", true); return; } 
-        if(!base64CompLogo) { showAlert("Logo Wajib", "Upload logo perusahaan.", "fa-image", true); return; } 
-        if(!selectedSkemaValue) { showAlert("Pilih Skema", "Pilih skema pembayaran terlebih dahulu.", "fa-handshake", true); return; }
+        if(!n || !d || !h || !a) { showAlert("Belum Lengkap", "Isi seluruh profil perusahaan.", "fa-building", true); return;
+        } 
+        if(!base64CompLogo) { showAlert("Logo Wajib", "Upload logo perusahaan.", "fa-image", true); return;
+        } 
+        if(!selectedSkemaValue) { showAlert("Pilih Skema", "Pilih skema pembayaran terlebih dahulu.", "fa-handshake", true);
+        return; }
         
         showLoading(true);
         try { 
@@ -1706,30 +2094,44 @@
             showLoading(false); 
             
             if(res.status === "success") { 
-                SESSION_COMPANY = { namaPerusahaan: n, deskripsiPerusahaan: d, logo: base64CompLogo, noHpPerusahaan: h, alamatPerusahaan: a, skemaPembayaran: selectedSkemaValue, saldo: 0 };
+                SESSION_COMPANY = { namaPerusahaan: n, deskripsiPerusahaan: d, logo: base64CompLogo, noHpPerusahaan: h, alamatPerusahaan: a, skemaPembayaran: selectedSkemaValue, saldo: 0, komisiRate: 0 };
                 if (res.expiredAt) {
                     SESSION_USER.expiredAt = res.expiredAt;
                     SESSION_USER.isTrial = true;
                 }
 
                 localStorage.setItem('goBorneo_partner_session', JSON.stringify({ user: SESSION_USER, company: SESSION_COMPANY, paket: globalPaketList, rekening: globalRekeningList, serverTime: new Date(new Date().getTime() + serverTimeDelta).toISOString() }));
+                initNotifUI();
                 populateDashboardData(); switchPage('pageMainApp'); switchSubView('layanan'); loadLayananData(); startSubscriptionTimer(); startRealtimeExpirySync(); 
-                
+                if(!pesananPollingInterval) { pesananPollingInterval = setInterval(fetchPesananDataSilently, 5000);
+                }
+
                 if (res.isTrialBaru) {
                     showAlert("Pemberitahuan", `Selamat datang dalam mode uji coba selama ${res.trialDays} Hari. Silahkan berlangganan jika masa uji coba telah habis.`, "fa-info-circle");
                 }
-            } else { showAlert("Gagal", res.message, "fa-circle-xmark", true); } 
-        } catch(e) { showLoading(false); showAlert("Koneksi Error", e.message, "fa-wifi", true); } 
+            } else { showAlert("Gagal", res.message, "fa-circle-xmark", true);
+            } 
+        } catch(e) { showLoading(false); showAlert("Koneksi Error", e.message, "fa-wifi", true);
+        } 
     }
 
     async function loadLayananData() { if(!SESSION_USER) return;
-        const container = document.getElementById('layananCardContainer'); try { let result = await fetchGAS({ action: "getLayanan", username: SESSION_USER.username, email: SESSION_USER.email });
+        const container = document.getElementById('layananCardContainer');
+        try { let result = await fetchGAS({ action: "getLayanan", username: SESSION_USER.username, email: SESSION_USER.email });
         if(result.status === "success" && result.data.length > 0) { result.data.reverse(); globalLayananList = result.data;
         let htmlCards = `<h3 style="margin: 0 0 16px 0; font-size:15px; font-weight:700; color:#475569;">Armada & Jadwal Aktif</h3>`; let delay = 0;
         let todayObj = new Date(); let localOffset = todayObj.getTimezoneOffset() * 60000; let localISODate = new Date(todayObj.getTime() - localOffset).toISOString().split('T')[0];
-        globalLayananList.forEach((item, idx) => { let durasiStr = hitungDurasi(item.jamBerangkat, item.jamSampai); let imgTopSrc = item.foto ? item.foto : "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=600&q=80"; let imgIconsHtml = buildCardFacilityImages(item.fasilitas); let offDaysList = item.tanggalLibur ? item.tanggalLibur.split(',').map(d => d.trim()) : []; let isOffToday = offDaysList.includes(localISODate); let ribbonClass = isOffToday ? "non-aktif" : "aktif"; let ribbonText = isOffToday ? "Libur Hari Ini" : "Beroperasi"; htmlCards += `<div class="ticket-card" style="animation-delay: ${delay}s"><div class="ticket-img-top"><div class="status-ribbon ${ribbonClass}">${ribbonText}</div><img src="${imgTopSrc}" alt="Foto Armada"></div><div class="ticket-card-body"><div class="ticket-header"><div class="ticket-brand"><h3>${SESSION_COMPANY.namaPerusahaan}</h3><span>${item.merk} <div class="ticket-rating"><i class="fa-solid fa-star"></i> 4.8</div></span></div><div class="ticket-price-box"><div class="ticket-price">${formatRupiah(item.harga)}<span style="font-size: 12px; color: #80919D"> /Kursi</span></div><div class="ticket-seats-info-new"><i class="fa-solid fa-chair" style="color:#0284c7;"></i> ${item.kapasitas} Kursi Tersedia</div></div></div><div class="ticket-timeline-new"><div class="tl-time"><div>${item.jamBerangkat}</div><div class="tl-duration">${durasiStr}</div><div>${item.jamSampai}</div></div><div class="tl-center"><i class="fa-regular fa-circle-dot icon-origin"></i><div class="tl-line"></div><i class="fa-solid fa-location-dot icon-dest"></i></div><div class="tl-location"><div class="tl-loc-text">Titik Kumpul: <b>${item.asal}</b></div><div class="tl-loc-text">Tujuan Akhir: <b>${item.tujuan}</b></div></div></div><div style="border-top: 1px dashed #e2e8f0; margin: 12px 0;"></div><h4 style="font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px;">Fasilitas:</h4><div class="ticket-footer" style="background:transparent; padding:0;"><div class="facilities-wrapper"><div class="facilities-icons">${imgIconsHtml}</div><button class="settings-btn" onclick="openPengaturanDrawer(${idx})">Pengaturan</button></div></div></div></div>`; delay += 0.08; }); container.innerHTML = htmlCards; document.getElementById('stat-total-armada').innerText = globalLayananList.length; } else { document.getElementById('stat-total-armada').innerText = 0; container.innerHTML = `<div class="empty-state" style="text-align:center; padding: 40px 0; color:#94a3b8;"><i class="fa-solid fa-bus-slash" style="font-size:40px; margin-bottom:12px;"></i><p>Belum ada armada.</p></div>`; } } catch(e) { container.innerHTML = `<div style="text-align: center; margin-top: 40px; color: #ef4444;"><i class="fa-solid fa-triangle-exclamation"></i> Gagal memuat armada.</div>`; } }
+        globalLayananList.forEach((item, idx) => { let durasiStr = hitungDurasi(item.jamBerangkat, item.jamSampai); let imgTopSrc = item.foto ? item.foto : "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=600&q=80"; let imgIconsHtml = buildCardFacilityImages(item.fasilitas); let offDaysList = item.tanggalLibur ? item.tanggalLibur.split(',').map(d => d.trim()) : []; let isOffToday = offDaysList.includes(localISODate); let ribbonClass = isOffToday ? "non-aktif" : "aktif"; let ribbonText = isOffToday ? "Libur Hari Ini" : "Beroperasi"; htmlCards += `<div class="ticket-card" style="animation-delay: ${delay}s"><div class="ticket-img-top"><div class="status-ribbon ${ribbonClass}">${ribbonText}</div><img src="${imgTopSrc}" alt="Foto Armada"></div><div class="ticket-card-body"><div class="ticket-header"><div class="ticket-brand"><h3>${SESSION_COMPANY.namaPerusahaan}</h3><span>${item.merk} <div class="ticket-rating"><i class="fa-solid fa-star"></i> 4.8</div></span></div><div class="ticket-price-box"><div class="ticket-price">${formatRupiah(item.harga)}<span style="font-size: 12px;
+        color: #80919D"> /Kursi</span></div><div class="ticket-seats-info-new"><i class="fa-solid fa-chair" style="color:#0284c7;"></i> ${item.kapasitas} Kursi Tersedia</div></div></div><div class="ticket-timeline-new"><div class="tl-time"><div>${item.jamBerangkat}</div><div class="tl-duration">${durasiStr}</div><div>${item.jamSampai}</div></div><div class="tl-center"><i class="fa-regular fa-circle-dot icon-origin"></i><div class="tl-line"></div><i class="fa-solid fa-location-dot icon-dest"></i></div><div class="tl-location"><div class="tl-loc-text">Titik Kumpul: <b>${item.asal}</b></div><div class="tl-loc-text">Tujuan Akhir: <b>${item.tujuan}</b></div></div></div><div style="border-top: 1px dashed #e2e8f0;
+        margin: 12px 0;"></div><h4 style="font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px;">Fasilitas:</h4><div class="ticket-footer" style="background:transparent;
+        padding:0;"><div class="facilities-wrapper"><div class="facilities-icons">${imgIconsHtml}</div><button class="settings-btn" onclick="openPengaturanDrawer(${idx})">Pengaturan</button></div></div></div></div>`; delay += 0.08; }); container.innerHTML = htmlCards; document.getElementById('stat-total-armada').innerText = globalLayananList.length; } else { document.getElementById('stat-total-armada').innerText = 0; container.innerHTML = `<div class="empty-state" style="text-align:center;
+        padding: 40px 0; color:#94a3b8;"><i class="fa-solid fa-bus-slash" style="font-size:40px; margin-bottom:12px;"></i><p>Belum ada armada.</p></div>`; } } catch(e) { container.innerHTML = `<div style="text-align: center;
+        margin-top: 40px; color: #ef4444;"><i class="fa-solid fa-triangle-exclamation"></i> Gagal memuat armada.</div>`; } }
 
-    async function loadPesananData() { if(!SESSION_COMPANY) return; const container = document.getElementById('pesananCardContainer'); container.innerHTML = `<div style="text-align:center; padding: 40px 0; color:#94a3b8;"><i class="fa-solid fa-spinner fa-spin fa-2x"></i><p style="margin-top:10px; font-weight:600;">Memuat tiket masuk...</p></div>`; try { let response = await fetch(GAS_API_URL + "?action=getPartnerOrders&perusahaan=" + encodeURIComponent(SESSION_COMPANY.namaPerusahaan)); let result = await response.json(); globalPesananList = result; renderPesananCards(result); if (orderChartInstance) { let activeType = document.querySelector('.chart-filter-btn.active').id.replace('btn-chart-',''); updateChartFilter(activeType); } } catch(e) { container.innerHTML = `<div style="text-align: center; margin-top: 40px; color: #ef4444;"><i class="fa-solid fa-triangle-exclamation"></i> Gagal memuat pesanan.</div>`; } }
+    async function loadPesananData() { if(!SESSION_COMPANY) return; const container = document.getElementById('pesananCardContainer'); container.innerHTML = `<div style="text-align:center;
+        padding: 40px 0; color:#94a3b8;"><i class="fa-solid fa-spinner fa-spin fa-2x"></i><p style="margin-top:10px; font-weight:600;">Memuat tiket masuk...</p></div>`; try { let response = await fetch(GAS_API_URL + "?action=getPartnerOrders&perusahaan=" + encodeURIComponent(SESSION_COMPANY.namaPerusahaan)); let result = await response.json(); globalPesananList = result; renderPesananCards(result); renderNotifications(); if (orderChartInstance) { let activeType = document.querySelector('.chart-filter-btn.active').id.replace('btn-chart-',''); updateChartFilter(activeType); } } catch(e) { container.innerHTML = `<div style="text-align: center;
+        margin-top: 40px; color: #ef4444;"><i class="fa-solid fa-triangle-exclamation"></i> Gagal memuat pesanan.</div>`; } }
+    
     async function fetchPesananDataSilently() { 
         if(!SESSION_COMPANY) return; 
         try { 
@@ -1740,24 +2142,36 @@
                 let newOrders = result.filter(r => !globalPesananList.some(g => g.idBooking === r.idBooking));
                 if (newOrders.length > 0) {
                     showAlert("Pesanan Baru Masuk", `Terdapat ${newOrders.length} pesanan baru dari User.`, "fa-bell");
+              
+                    let bellBtn = document.getElementById('bellNotifBtn');
+                    if (bellBtn) {
+                        bellBtn.classList.remove('shake-anim');
+                        void bellBtn.offsetWidth;
+                        bellBtn.classList.add('shake-anim');
+                    }
                 }
             }
 
             if(JSON.stringify(globalPesananList) !== JSON.stringify(result)) { 
-                globalPesananList = result; 
-                renderPesananCards(result); filterPesananMobile(); 
+                globalPesananList = result;
+                renderPesananCards(result);
+                renderNotifications();
+                filterPesananMobile();
                 if (orderChartInstance) { 
-                    let activeType = document.querySelector('.chart-filter-btn.active').id.replace('btn-chart-',''); 
+                    let activeType = document.querySelector('.chart-filter-btn.active').id.replace('btn-chart-','');
                     updateChartFilter(activeType); 
                 } 
                 if(document.getElementById('pageAksesKursi').classList.contains('open')) { 
-                    renderSeatLayout(); 
+                    renderSeatLayout();
                 } 
             } 
-        } catch(e) { console.error("Gagal sinkronisasi data pesanan real-time:", e); } 
+        } catch(e) { console.error("Gagal sinkronisasi data pesanan real-time:", e);
+        } 
     }
 
-    function renderPesananCards(dataList) { const container = document.getElementById('pesananCardContainer'); let filteredList = dataList; if(currentPesananFilter === 'mitra') filteredList = dataList.filter(o => o.role === "Mitra" || o.isManualLocal); else if (currentPesananFilter === 'user') filteredList = dataList.filter(o => o.role !== "Mitra" && !o.isManualLocal); let filterText = "Semua Pesanan";
+    function renderPesananCards(dataList) { const container = document.getElementById('pesananCardContainer'); let filteredList = dataList;
+        if(currentPesananFilter === 'mitra') filteredList = dataList.filter(o => o.role === "Mitra" || o.isManualLocal);
+        else if (currentPesananFilter === 'user') filteredList = dataList.filter(o => o.role !== "Mitra" && !o.isManualLocal); let filterText = "Semua Pesanan";
         if(currentPesananFilter === 'mitra') filterText = "Pesanan Mitra"; if(currentPesananFilter === 'user') filterText = "Pesanan User";
         let headerHtml = `<div class="order-header-wrapper" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; position: relative; z-index: 20;"><h3 class="order-header-title" style="margin: 0; font-size:15px; font-weight:700; color:#475569;">Manajemen Tiket Masuk</h3><div class="filter-dropdown" id="orderFilterMenu"><div class="filter-trigger" onclick="toggleOrderFilter()"><i class="fa-solid fa-filter"></i> <span>${filterText}</span> <i class="fa-solid fa-chevron-down" style="font-size:10px;"></i></div><div class="filter-menu"><div class="filter-option ${currentPesananFilter === 'all' ? 'active' : ''}" onclick="setPesananFilter('all')">Semua Pesanan <i class="fa-solid fa-check check"></i></div><div class="filter-option ${currentPesananFilter === 'user' ? 'active' : ''}" onclick="setPesananFilter('user')">Pesanan User <i class="fa-solid fa-check check"></i></div><div class="filter-option ${currentPesananFilter === 'mitra' ? 'active' : ''}" onclick="setPesananFilter('mitra')">Pesanan Mitra <i class="fa-solid fa-check check"></i></div></div></div></div>`;
         let htmlCards = headerHtml; if (filteredList.length > 0) { let delay = 0;
@@ -1770,29 +2184,45 @@
         `<div class="badge-manual"><i class="fa-solid fa-bolt"></i> Manual</div>` : ''; let suffix = isPopupDrawer ? "-popup" : ""; let actionBtn = isPaid ?
         '' : `<button id="btn-confirm-${order.idBooking}${suffix}" class="settings-btn" style="background:linear-gradient(135deg, #10b981, #059669); color:white; box-shadow:0 4px 10px rgba(16,185,129,0.3); z-index: 12;" onclick="event.stopPropagation(); openPaymentModal('${order.idBooking}')"><i class="fa-solid fa-hand-holding-dollar"></i> Konfirmasi</button>`;
         let cardOnClick = !isPopupDrawer ? `onclick="openTicketDetail('${order.idBooking}')" style="cursor:pointer; opacity: 0; animation: fadeIn 0.5s forwards; animation-delay: ${delay}s;"` : `style="box-shadow:none; border: 1px solid #e2e8f0; margin-bottom: 0;"`;
-        return `<div class="ticket-card pesanan-card-item" id="ticketCard-${order.idBooking}${suffix}" ${cardOnClick}><div class="ticket-card-body" style="padding-top: 15px; position: relative;"><div class="ticket-header" style="margin-bottom:8px;"><div class="ticket-brand"><h3 style="color:#89a37b; font-size:16px;">${order.idBooking}</h3><span><i class="fa-solid fa-user" style="color:#cbd5e1;"></i> <b style="color:var(--text-main); margin-left:4px; text-transform:capitalize;">${order.namaPenumpang}</b> ${manualBadge}</span><span style="font-size:10px; margin-top:2px;"><i class="fa-solid fa-phone" style="color:#cbd5e1;"></i> <span style="margin-left:4px;">0${order.noHp}</span></span></div><div class="ticket-price-box"><div class="ticket-price">Rp. ${formatNumber(order.harga)}</div><div style="font-size: 11px; font-weight: 700; color: #64748b; margin: 4px 0;"><i class="fa-solid fa-bus"></i> ${order.merkKendaraan}</div><div class="ticket-seats-info-new" style="margin-top: 0;"><i class="fa-solid fa-chair" style="color:#0284c7;"></i> Kursi: <b>${order.nomorKursi}</b></div></div></div><div class="ticket-timeline-new" style="margin-top:10px; margin-bottom:8px;"><div class="tl-center" style="margin-left:0;"><i class="fa-regular fa-circle-dot icon-origin"></i><div class="tl-line"></div><i class="fa-solid fa-location-dot icon-dest"></i></div><div class="tl-location"><div class="tl-loc-text">Naik: <b>${order.asal}</b></div><div class="tl-loc-text">Turun: <b>${order.tujuan}</b></div></div></div><div style="margin-top:12px; display: flex; justify-content: flex-end;"><div class="modern-date-badge"><span style="color: black"> Tanggal Berangkat:</span><i class="fa-regular fa-calendar-check"></i> ${tglBooking}</div></div><div class="ticket-footer" style="background:transparent; padding:0; margin-top:20px; position: relative; height: 35px; display: flex; align-items: center; justify-content: flex-end;"><div id="badge-${order.idBooking}${suffix}" class="status-ribbon-bottom-left ${statusClass}">${statusText}</div>${actionBtn}</div></div></div>`; }
+        return `<div class="ticket-card pesanan-card-item" id="ticketCard-${order.idBooking}${suffix}" ${cardOnClick}><div class="ticket-card-body" style="padding-top: 15px; position: relative;"><div class="ticket-header" style="margin-bottom:8px;"><div class="ticket-brand"><h3 style="color:#89a37b; font-size:16px;">${order.idBooking}</h3><span><i class="fa-solid fa-user" style="color:#cbd5e1;"></i> <b style="color:var(--text-main); margin-left:4px; text-transform:capitalize;">${order.namaPenumpang}</b> ${manualBadge}</span><span style="font-size:10px; margin-top:2px;"><i class="fa-solid fa-phone" style="color:#cbd5e1;"></i> <span style="margin-left:4px;">0${order.noHp}</span></span></div><div class="ticket-price-box"><div class="ticket-price">Rp.
+        ${formatNumber(order.harga)}</div><div style="font-size: 11px; font-weight: 700; color: #64748b; margin: 4px 0;"><i class="fa-solid fa-bus"></i> ${order.merkKendaraan}</div><div class="ticket-seats-info-new" style="margin-top: 0;"><i class="fa-solid fa-chair" style="color:#0284c7;"></i> Kursi: <b>${order.nomorKursi}</b></div></div></div><div class="ticket-timeline-new" style="margin-top:10px; margin-bottom:8px;"><div class="tl-center" style="margin-left:0;"><i class="fa-regular fa-circle-dot icon-origin"></i><div class="tl-line"></div><i class="fa-solid fa-location-dot icon-dest"></i></div><div class="tl-location"><div class="tl-loc-text">Naik: <b>${order.asal}</b></div><div class="tl-loc-text">Turun: <b>${order.tujuan}</b></div></div></div><div style="margin-top:12px; display: flex; justify-content: flex-end;"><div class="modern-date-badge"><span style="color: black"> Tanggal Berangkat:</span><i class="fa-regular fa-calendar-check"></i> ${tglBooking}</div></div><div class="ticket-footer" style="background:transparent;
+        padding:0; margin-top:20px; position: relative; height: 35px; display: flex; align-items: center;
+        justify-content: flex-end;"><div id="badge-${order.idBooking}${suffix}" class="status-ribbon-bottom-left ${statusClass}">${statusText}</div>${actionBtn}</div></div></div>`; }
 
     async function openAddService() { 
         if(isKomisiScheme() && SESSION_COMPANY.saldo <= 0) { 
-            return showAlert("Peringatan", "Mohon maaf saldo anda tidak cukup untuk menambah armada. Silahkan lakukan top up kembali.", "fa-triangle-exclamation", true); 
+            return showAlert("Peringatan", "Maaf, saldo anda tidak mencukupi untuk membayar komisi aplikasi. Anda tidak dapat menambahkan armada. Silahkan top up saldo terlebih dahulu.", "fa-triangle-exclamation", true); 
         }
-        document.getElementById('pageAddService').classList.add('open'); pushBackButtonHandler('addService'); try { let response = await fetch(GAS_API_URL + "?action=getVehicleTypes"); let listJenis = await response.json(); let optionsHtml = listJenis.length > 0 ? listJenis.map(i => `<div class="custom-option" onclick="selectServiceType('${i.nama}', '${i.icon || "https://cdn-icons-png.flaticon.com/512/744/744465.png"}')"><img src="${i.icon || ""}"><span style="color:var(--text-main); font-weight:500;">${i.nama}</span></div>`).join("") : `<div class="custom-option">Tidak ada data.</div>`; document.getElementById('serviceTypeOptions').innerHTML = optionsHtml; } catch (e) { document.getElementById('serviceTypeOptions').innerHTML = `<div class="custom-option" style="color:#EF4444">Gagal memuat jenis.</div>`; } }
+        document.getElementById('pageAddService').classList.add('open'); pushBackButtonHandler('addService'); try { let response = await fetch(GAS_API_URL + "?action=getVehicleTypes"); let listJenis = await response.json(); let optionsHtml = listJenis.length > 
+        0 ? listJenis.map(i => `<div class="custom-option" onclick="selectServiceType('${i.nama}', '${i.icon || "https://cdn-icons-png.flaticon.com/512/744/744465.png"}')"><img src="${i.icon || ""}"><span style="color:var(--text-main);
+        font-weight:500;">${i.nama}</span></div>`).join("") : `<div class="custom-option">Tidak ada data.</div>`;
+        document.getElementById('serviceTypeOptions').innerHTML = optionsHtml;
+        } catch (e) { document.getElementById('serviceTypeOptions').innerHTML = `<div class="custom-option" style="color:#EF4444">Gagal memuat jenis.</div>`;
+        } }
     function selectServiceType(namaJenis, iconUrl) { selectedVehicleTypeName = namaJenis; let isEdit = document.getElementById('pageEditService').classList.contains('open');
-        let targetSpan = isEdit ? 'selectedEditServiceType' : 'selectedServiceType'; if(document.getElementById(targetSpan)){ document.getElementById(targetSpan).innerHTML = `<div style="display: flex; align-items: center; gap: 10px;"><img src="${iconUrl}" style="width:24px; height:24px; object-fit:contain; border-radius:4px;"><span style="font-weight:700; color:var(--text-main);">${namaJenis}</span></div>`;
-        } if(document.getElementById('serviceTypeOptions')) document.getElementById('serviceTypeOptions').classList.remove('open'); if(document.getElementById('serviceEditTypeOptions')) document.getElementById('serviceEditTypeOptions').classList.remove('open'); if(document.getElementById('serviceTypeSelect')) document.getElementById('serviceTypeSelect').style.borderColor = "var(--primary)"; if(document.getElementById('serviceEditTypeSelect')) document.getElementById('serviceEditTypeSelect').style.borderColor = "var(--primary)"; }
+        let targetSpan = isEdit ? 'selectedEditServiceType' : 'selectedServiceType'; if(document.getElementById(targetSpan)){ document.getElementById(targetSpan).innerHTML = `<div style="display: flex;
+        align-items: center; gap: 10px;"><img src="${iconUrl}" style="width:24px; height:24px; object-fit:contain; border-radius:4px;"><span style="font-weight:700;
+        color:var(--text-main);">${namaJenis}</span></div>`;
+        } if(document.getElementById('serviceTypeOptions')) document.getElementById('serviceTypeOptions').classList.remove('open'); if(document.getElementById('serviceEditTypeOptions')) document.getElementById('serviceEditTypeOptions').classList.remove('open'); if(document.getElementById('serviceTypeSelect')) document.getElementById('serviceTypeSelect').style.borderColor = "var(--primary)"; if(document.getElementById('serviceEditTypeSelect')) document.getElementById('serviceEditTypeSelect').style.borderColor = "var(--primary)";
+    }
     function closeAddServiceAndReset(fromPopState = false) { document.getElementById('selectedServiceType').innerHTML = "<span>Pilih Tipe Kendaraan...</span>"; selectedVehicleTypeName = ""; selectedFasilitasArray = [];
-        document.getElementById('addFasilitas').value = ""; document.getElementById('addFasilitasPreviewContainer').innerHTML = ""; ['addMerk','addKapasitas','addHarga','addAsal','addTujuan','addJamB','addJamS','addFotoFile'].forEach(id => document.getElementById(id).value = ""); document.getElementById('previewAddFoto').src = ""; document.getElementById('previewAddFoto').style.display = 'none'; base64ArmadaFoto = "";
-        document.getElementById('pageAddService').classList.remove('open'); if (!fromPopState) popBackButtonHandler(); }
+        document.getElementById('addFasilitas').value = ""; document.getElementById('addFasilitasPreviewContainer').innerHTML = ""; ['addMerk','addKapasitas','addHarga','addAsal','addTujuan','addJamB','addJamS','addFotoFile'].forEach(id => document.getElementById(id).value = "");
+        document.getElementById('previewAddFoto').src = ""; document.getElementById('previewAddFoto').style.display = 'none'; base64ArmadaFoto = "";
+        document.getElementById('pageAddService').classList.remove('open'); if (!fromPopState) popBackButtonHandler();
+    }
     async function submitNewService() { const d = { jenis: selectedVehicleTypeName, merk: document.getElementById('addMerk').value.trim(), fasilitas: document.getElementById('addFasilitas').value.trim(), kapasitas: document.getElementById('addKapasitas').value.trim(), harga: document.getElementById('addHarga').value.trim(), asal: document.getElementById('addAsal').value.trim(), tujuan: document.getElementById('addTujuan').value.trim(), jamBerangkat: document.getElementById('addJamB').value, jamSampai: document.getElementById('addJamS').value };
         if(!d.jenis || !d.merk || !d.fasilitas || !d.kapasitas || !d.harga || !d.asal || !d.tujuan || !d.jamBerangkat || !d.jamSampai) { showAlert("Belum Lengkap", "Isi seluruh spesifikasi jadwal.", "fa-triangle-exclamation", true);
         return; } if(!base64ArmadaFoto) { showAlert("Foto Wajib", "Upload foto armada.", "fa-camera", true); return; } showLoading(true);
         const payload = { action: "addService", username: SESSION_USER.username, email: SESSION_USER.email, namaPerusahaan: SESSION_COMPANY.namaPerusahaan, foto: base64ArmadaFoto, ...d };
         try { let result = await fetchGAS(payload); showLoading(false); if(result.status === "success") { showAlert("Berhasil", "Armada ditambahkan.", "fa-circle-check"); closeAddServiceAndReset(); loadLayananData();
-        } else { showAlert("Gagal", result.message, "fa-circle-xmark", true); } } catch(e) { showLoading(false); showAlert("Koneksi Error", e.message, "fa-wifi", true); } }
+        } else { showAlert("Gagal", result.message, "fa-circle-xmark", true); } } catch(e) { showLoading(false); showAlert("Koneksi Error", e.message, "fa-wifi", true);
+        } }
 
     function openPengaturanDrawer(idx) { activeLayananIndex = idx; const item = globalLayananList[idx];
-        document.getElementById('pengaturanModalTitle').innerText = "Pengaturan " + item.merk; currentCalYear = new Date().getFullYear(); currentCalMonth = new Date().getMonth(); document.getElementById('pengaturanModal').classList.add('open'); renderCalendarWidget(); pushBackButtonHandler('pengaturanModal'); }
-    function closePengaturanModal(fromPopState = false) { document.getElementById('pengaturanModal').classList.remove('open'); if (!fromPopState) popBackButtonHandler(); }
+        document.getElementById('pengaturanModalTitle').innerText = "Pengaturan " + item.merk; currentCalYear = new Date().getFullYear(); currentCalMonth = new Date().getMonth(); document.getElementById('pengaturanModal').classList.add('open'); renderCalendarWidget(); pushBackButtonHandler('pengaturanModal');
+    }
+    function closePengaturanModal(fromPopState = false) { document.getElementById('pengaturanModal').classList.remove('open'); if (!fromPopState) popBackButtonHandler();
+    }
     function renderCalendarWidget() { const item = globalLayananList[activeLayananIndex]; let offDatesArray = item.tanggalLibur ?
         item.tanggalLibur.split(',').map(d => d.trim()).filter(Boolean) : []; const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
         if(document.getElementById('calMonthYearTitle')) document.getElementById('calMonthYearTitle').innerText = `${monthNames[currentCalMonth]} ${currentCalYear}`; let firstDay = new Date(currentCalYear, currentCalMonth, 1).getDay();
@@ -1812,7 +2242,8 @@
     async function saveCalendarSettings() { if(activeLayananIndex === -1) return; const item = globalLayananList[activeLayananIndex]; showLoading(true);
         try { let res = await fetchGAS({ action: "updateCalendar", username: SESSION_USER.username, email: SESSION_USER.email, merk: item.merk, jamBerangkat: item.jamBerangkat, tanggalLibur: item.tanggalLibur });
         showLoading(false); if(res.status === "success") { showAlert("Sukses", "Kalender diperbarui!", "fa-circle-check"); closePengaturanModal(); loadLayananData(); } else { showAlert("Gagal", res.message, "fa-circle-xmark", true);
-        } } catch(e) { showLoading(false); showAlert("Koneksi Error", e.message, "fa-wifi", true); } }
+        } } catch(e) { showLoading(false); showAlert("Koneksi Error", e.message, "fa-wifi", true);
+        } }
     async function executeDeleteService() { if(activeLayananIndex === -1) return; const item = globalLayananList[activeLayananIndex]; showLoading(true);
         try { let res = await fetchGAS({ action: "deleteService", username: SESSION_USER.username, email: SESSION_USER.email, merk: item.merk, jamBerangkat: item.jamBerangkat }); showLoading(false);
         if(res.status === "success") { showAlert("Terhapus", "Data dihapus.", "fa-trash"); closePengaturanModal(); loadLayananData(); } else { showAlert("Gagal", res.message, "fa-circle-xmark", true);
@@ -1842,7 +2273,8 @@
     function openEditPribadi() { if(!SESSION_USER) return; document.getElementById('epNama').value = SESSION_USER.namaLengkap || '';
         document.getElementById('epHp').value = SESSION_USER.noHp || ''; document.getElementById('epAlamat').value = SESSION_USER.alamatLengkap || ''; document.getElementById('modalEditPribadi').classList.add('open'); pushBackButtonHandler('editPribadi');
     }
-    function closeEditPribadi(fromPopState = false) { document.getElementById('modalEditPribadi').classList.remove('open'); if (!fromPopState) popBackButtonHandler(); }
+    function closeEditPribadi(fromPopState = false) { document.getElementById('modalEditPribadi').classList.remove('open'); if (!fromPopState) popBackButtonHandler();
+    }
     async function submitEditPribadi() { const nama = document.getElementById('epNama').value.trim(); const hp = document.getElementById('epHp').value.trim(); const alamat = document.getElementById('epAlamat').value.trim();
         if(!nama || !hp || !alamat) return showAlert("Perhatian", "Semua kolom wajib diisi", "fa-triangle-exclamation", true); showLoading(true);
         try { let res = await fetchGAS({ action: "editProfile", username: SESSION_USER.username, namaLengkap: nama, noHp: hp, alamatLengkap: alamat }); showLoading(false);
@@ -1869,9 +2301,12 @@
     function executeLogout() {
         closeAlert();
         if(pesananPollingInterval) { clearInterval(pesananPollingInterval); pesananPollingInterval = null; }
-        if(seatPollingInterval) { clearInterval(seatPollingInterval); seatPollingInterval = null; }
-        if(subscriptionCheckInterval) { clearInterval(subscriptionCheckInterval); subscriptionCheckInterval = null; }
-        if(realtimeSyncInterval) { clearInterval(realtimeSyncInterval); realtimeSyncInterval = null; }
+        if(seatPollingInterval) { clearInterval(seatPollingInterval); seatPollingInterval = null;
+        }
+        if(subscriptionCheckInterval) { clearInterval(subscriptionCheckInterval); subscriptionCheckInterval = null;
+        }
+        if(realtimeSyncInterval) { clearInterval(realtimeSyncInterval); realtimeSyncInterval = null;
+        }
         
         document.getElementById('globalHeaderTimer').style.display = 'none';
         document.getElementById('mobileHeaderTimer').style.display = 'none';
