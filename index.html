@@ -562,41 +562,80 @@
     </div>
 
 <script>
+    // Penambahan Style Kustom
+    if (!document.getElementById('customEnhancementStyles')) {
+        let style = document.createElement('style');
+        style.id = 'customEnhancementStyles';
+        style.innerHTML = `
+            .status-ribbon-bottom-left.pending-orange { background: #f59e0b !important; color: white !important; }
+            .status-ribbon-bottom-left.ditolak { background: #ef4444 !important; color: white !important; }
+            
+            /* Animasi dan Style Keren Tombol Salin */
+            .btn-salin-keren {
+                background: linear-gradient(135deg, #10b981, #059669);
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 50px;
+                font-size: 12px;
+                font-weight: 700;
+                cursor: pointer;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
+            }
+            .btn-salin-keren:hover {
+                transform: translateY(-2px) scale(1.05);
+                box-shadow: 0 6px 15px rgba(16, 185, 129, 0.4);
+            }
+            .btn-salin-keren:active {
+                transform: translateY(0) scale(0.95);
+            }
+
+            @keyframes slideDownCopy {
+                0% { top: -50px; opacity: 0; transform: translateX(-50%) scale(0.9); }
+                100% { top: 20px; opacity: 1; transform: translateX(-50%) scale(1); }
+            }
+            @keyframes slideUpCopy {
+                0% { top: 20px; opacity: 1; transform: translateX(-50%) scale(1); }
+                100% { top: -50px; opacity: 0; transform: translateX(-50%) scale(0.9); }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
     let backButtonHandlerStack = []; let isHandlingPopState = false;
     function pushBackButtonHandler(closeFunctionId) { history.pushState({ modalOpen: closeFunctionId }, "", window.location.href); backButtonHandlerStack.push(closeFunctionId); }
     function popBackButtonHandler() { if (isHandlingPopState) return;
-    if (backButtonHandlerStack.length > 0) { backButtonHandlerStack.pop(); isHandlingPopState = true; history.back(); setTimeout(() => { isHandlingPopState = false; }, 100);
-    } 
+        if (backButtonHandlerStack.length > 0) { backButtonHandlerStack.pop(); isHandlingPopState = true; history.back(); setTimeout(() => { isHandlingPopState = false; }, 100); } 
     }
     window.addEventListener('popstate', function(e) { if (isHandlingPopState) return; if (backButtonHandlerStack.length > 0) { isHandlingPopState = true; let closeFnId = backButtonHandlerStack.pop(); executeCloseFunctionById(closeFnId, true); setTimeout(() => { isHandlingPopState = false; }, 100); } });
+    
     function executeCloseFunctionById(id, fromPopState = false) {
         switch(id) {
-            case 'aksesKursi': closeAksesKursi(fromPopState);
-            break;
+            case 'aksesKursi': closeAksesKursi(fromPopState); break;
             case 'addService': closeAddServiceAndReset(fromPopState); break;
             case 'editService': closeEditLayananForm(fromPopState); break;
             case 'pengaturanModal': closePengaturanModal(fromPopState); break;
             case 'seatCalendar': closeSeatCalendar(fromPopState); break;
-            case 'editPribadi': closeEditPribadi(fromPopState);
-            break;
+            case 'editPribadi': closeEditPribadi(fromPopState); break;
             case 'editPerusahaan': closeEditPerusahaan(fromPopState); break;
             case 'regionModal': closeRegionModal(fromPopState); break;
             case 'scanner': closeScanner(fromPopState); break;
             case 'timePicker': closeTimeModal(fromPopState); break;
-            case 'facilityModal': closeFacilityModal(fromPopState);
-            break;
+            case 'facilityModal': closeFacilityModal(fromPopState); break;
             case 'cropperModal': cancelCrop(fromPopState); break;
             case 'scannedTicket': closeScannedTicketDrawer(fromPopState); break;
             case 'confirmModal': closeConfirmModal(fromPopState); break;
             case 'paymentModal': closePaymentModal(fromPopState); break;
-            case 'manualBookingPaymentModal': closeManualPaymentModal(fromPopState);
-            break;
+            case 'manualBookingPaymentModal': closeManualPaymentModal(fromPopState); break;
             case 'manualTicketResultModal': closeManualTicketModal(fromPopState); break;
             case 'desktopSidebar': toggleDesktopSidebar(fromPopState); break;
             case 'layananSearch': closeLayananSearch(fromPopState); break;
             case 'paymentDrawer': closePaymentDrawer(fromPopState); break;
-            case 'riwayatImageModal': closeRiwayatImageModal(fromPopState);
-            break;
+            case 'riwayatImageModal': closeRiwayatImageModal(fromPopState); break;
             case 'topUpDrawer': closeTopUpDrawer(fromPopState); break;
             case 'mutasiSaldoModal': closeMutasiSaldo(fromPopState); break;
             case 'notifSidebar': closeNotifSidebar(fromPopState); break;
@@ -664,7 +703,6 @@
         let actionGroup = document.getElementById('headerActionGroup');
         let existingBellContainer = null;
         
-        // Cari bell asli dari template yang posisinya di sebelah pencarian
         if (actionGroup) {
             let bells = actionGroup.querySelectorAll('.fa-bell');
             if (bells.length > 0) {
@@ -672,14 +710,12 @@
             }
         }
 
-        // Terapkan fungsi dan pastikan styling bell yang sudah ada
         if (existingBellContainer) {
             existingBellContainer.setAttribute('onclick', 'openNotifSidebar()');
             existingBellContainer.style.position = 'relative';
             existingBellContainer.style.cursor = 'pointer';
             existingBellContainer.id = 'bellNotifBtn';
 
-            // Tambahkan CSS Animasi Shake & Bounce untuk Notifikasi jika belum ada
             if (!document.getElementById('notifStyleExtras')) {
                 let style = document.createElement('style');
                 style.id = 'notifStyleExtras';
@@ -716,7 +752,7 @@
         if (!document.getElementById('notifSidebarModal')) {
             let modalHTML = `
             <div class="right-sidebar" id="notifSidebarModal" style="position: fixed; top: 0; right: -500px; width: 100%; max-width: 380px; height: 100vh; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 100000; transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: -5px 0 20px rgba(0,0,0,0.1); display: flex; flex-direction: column; border-left: 1px solid rgba(255, 255, 255, 0.5);">
-                <div class="drawer-header" style="padding: 20px; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center;">
+                <div class="drawer-header" style="padding: 20px; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px">
                     <h3 style="margin: 0; font-size: 16px; font-weight: 800; color: #0f172a;"><i class="fa-solid fa-bell" style="color:#0284c7; margin-right:8px;"></i> Notifikasi Pesanan</h3>
                     <button class="close-btn" onclick="closeNotifSidebar()" style="background: none; border: none; font-size: 20px; color: #64748b; cursor: pointer; transition: 0.2s;"><i class="fa-solid fa-xmark"></i></button>
                 </div>
@@ -736,11 +772,9 @@
         let html = "";
         let notifs = globalPesananList.filter(o => o.role !== "Mitra" && !o.isManualLocal);
 
-        // Update Notification Badge
         let unreadCount = notifs.filter(o => o.notifStatus !== "terbuka").length;
         let bellBtn = document.getElementById('bellNotifBtn');
         if (bellBtn) {
-            // Update Icon Color secara Real-time
             if (unreadCount > 0) {
                 bellBtn.classList.add('has-unread');
             } else {
@@ -757,7 +791,7 @@
                 }
                 badge.innerText = unreadCount > 99 ? '99+' : unreadCount;
                 badge.style.display = 'block';
-                badge.classList.add('bounce-badge'); // Badge goyang saat ada notif baru
+                badge.classList.add('bounce-badge');
             } else if (badge) {
                 badge.style.display = 'none';
                 badge.classList.remove('bounce-badge');
@@ -769,7 +803,6 @@
         } else {
             notifs.forEach(o => {
                 let isBaru = o.notifStatus !== "terbuka";
-
                 let tglOrder = o.tanggalBooking ? formatTglIndo(o.tanggalBooking) : "-";
                 let rawWaktu = o.waktuPemesananDb || o.waktuPemesanan;
  
@@ -778,15 +811,13 @@
                     try { wktOrder = new Date(rawWaktu).toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'}); } 
                     catch(e) { wktOrder = rawWaktu.toString().split(' ')[4] || "-"; }
                 }
-
+        
                 let badgeHtml = isBaru ? `<span style="background:linear-gradient(135deg, #ef4444, #dc2626); color:#fff; font-size:9px; padding:2px 8px; border-radius:12px; font-weight:800; margin-left:8px; box-shadow: 0 2px 5px rgba(239,68,68,0.3);">Baru</span>` : "";
-                
-                // Menerapkan logic pudar ketika card telah dibuka
                 let cursorStyle = isBaru ? 'pointer' : 'default';
                 let opacityStyle = isBaru ? '1' : '0.6';
+                
                 let bgStyle = isBaru ? 'rgba(255,255,255,0.9)' : 'rgba(241, 245, 249, 0.7)';
                 let onClickFn = isBaru ? `onclick="handleNotifClick('${o.idBooking}')"` : ``;
-                
                 html += `
                 <div class="notif-card" ${onClickFn} style="background:${bgStyle}; opacity:${opacityStyle}; backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border:1px solid rgba(226,232,240,0.8); border-radius:12px; padding:15px; margin-bottom:12px; cursor:${cursorStyle}; box-shadow: 0 4px 10px rgba(0,0,0,0.03); transition: 0.2s;">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
@@ -807,21 +838,19 @@
         let order = globalPesananList.find(o => o.idBooking === idBooking);
         if (!order) return;
         
-        // Optimistic UI Update
         order.notifStatus = "terbuka";
         renderNotifications();
-        
-        // Tutup sidebar notif
         closeNotifSidebar();
 
-        // Buka detail tiket di pop-up / drawer seperti saat scan QR Code
         setTimeout(() => {
             document.getElementById('scannedTicketContent').innerHTML = `<div style="padding: 10px 20px 20px 20px;">${generateTicketCardHTML(order, true, 0)}</div>`;
             openScannedTicketDrawer();
         }, 300);
 
-        try { await fetchGAS({ action: "markNotifRead", idBooking: idBooking }); } 
-        catch(e) { console.error("Gagal update read status", e); }
+        try { await fetchGAS({ action: "markNotifRead", idBooking: idBooking });
+        } 
+        catch(e) { console.error("Gagal update read status", e);
+        }
     }
     // =========================================================
 
@@ -829,11 +858,11 @@
         if (document.getElementById('mutasiSaldoModal')) return;
         let modalHTML = `
         <div class="right-sidebar" id="mutasiSaldoModal" style="position: fixed; top: 0; right: -500px; width: 100%; max-width: 420px; height: 100vh; background: #f8fafc; z-index: 100000; transition: right 0.3s ease; box-shadow: -5px 0 20px rgba(0,0,0,0.15); display: flex; flex-direction: column;">
-            <div class="drawer-header" style="padding: 20px; background: #fff; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; margin-bottom:10px; align-items: center;">
+            <div class="drawer-header" style="padding: 20px; background: #fff; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px">
                 <h3 style="margin: 0; font-size: 16px; font-weight: 800; color: #0f172a;"><i class="fa-solid fa-file-invoice-dollar" style="color:#10b981; margin-right:8px;"></i> Riwayat Mutasi Saldo</h3>
                 <button class="close-btn" onclick="closeMutasiSaldo()" style="background: none; border: none; font-size: 20px; color: #64748b; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div class="drawer-body" id="mutasiSaldoContainer" style="padding: 2px 15px; flex: 1; overflow-y: auto;">
+            <div class="drawer-body" id="mutasiSaldoContainer" style="padding: 15px; flex: 1; overflow-y: auto;">
             </div>
         </div>
         `;
@@ -849,7 +878,7 @@
                 <h3 style="margin: 0; font-size: 16px; font-weight: 800; color: #0f172a;"><i class="fa-solid fa-image" style="color:#0284c7; margin-right:8px;"></i> Bukti Pembayaran</h3>
                 <button class="close-btn" onclick="closeRiwayatImageModal()" style="background: none; border: none; font-size: 20px; color: #64748b; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div class="drawer-body" style="padding:15px; flex: 1; overflow-y: auto; display: flex; align-items: center; justify-content: center;">
+            <div class="drawer-body" style="padding: 15px; flex: 1; overflow-y: auto; display: flex; align-items: center; justify-content: center;">
                 <img id="riwayatSidebarImg" src="" style="width: 100%; height: auto; max-height: 85vh; object-fit: contain; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
             </div>
         </div>
@@ -868,6 +897,7 @@
             if (labelDesk) labelDesk.innerText = "Total Saldo:"; if (labelMob) labelMob.innerText = "Total Saldo:";
             let saldoFormatted = formatRupiah(SESSION_COMPANY.saldo || 0);
             let colorStr = (SESSION_COMPANY.saldo < 0) ? "#ef4444" : "#10b981";
+      
             if (dtDesk) { dtDesk.innerText = saldoFormatted; dtDesk.className = "sub-countdown"; dtDesk.style.color = colorStr; }
             if (dtMob) { dtMob.innerText = saldoFormatted; dtMob.className = "sub-countdown"; dtMob.style.color = colorStr; }
             btnsRenew.forEach(btn => {
@@ -881,8 +911,41 @@
         }
     }
 
+    // Copy Toast logic
+    function salinRekening(norek) {
+        navigator.clipboard.writeText(norek).then(() => {
+            showCopyToast(norek);
+        }).catch(err => {
+            showAlert("Gagal", "Gagal menyalin nomor rekening.", "fa-xmark", true);
+        });
+    }
+    function showCopyToast(norek) {
+        let existing = document.getElementById('copyToastOverlay');
+        if(existing) existing.remove();
+        let toastHtml = `
+        <div id="copyToastOverlay" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 1000000; display: flex; align-items: center; background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(8px); padding: 12px 24px; border-radius: 50px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); animation: slideDownCopy 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;">
+            <div style="width: 28px; height: 28px; background: #10b981; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 12px; color: white; font-size: 14px;">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            <div>
+                <p style="margin: 0; color: white; font-size: 13px; font-weight: 700;">Berhasil Disalin!</p>
+                <p style="margin: 0; color: #94a3b8; font-size: 11px;">Nomor Rekening: ${norek}</p>
+            </div>
+        </div>`;
+        document.body.insertAdjacentHTML('beforeend', toastHtml);
+        setTimeout(() => {
+            let t = document.getElementById('copyToastOverlay');
+            if(t) {
+                t.style.animation = "slideUpCopy 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards";
+                setTimeout(() => t.remove(), 400);
+            }
+        }, 2500);
+    }
+
     window.onload = () => {
-        initCityData(); fetchFacilitiesData(); initTimePickerOptions(); fetchSkemaData(); initMutasiSaldoUI();
+        initCityData();
+        fetchFacilitiesData(); initTimePickerOptions(); fetchSkemaData();
+        initMutasiSaldoUI();
         let savedSession = localStorage.getItem('goBorneo_partner_session');
         if(savedSession) {
             let parsed = JSON.parse(savedSession);
@@ -891,19 +954,22 @@
             if(parsed.serverTime) serverTimeDelta = new Date(parsed.serverTime).getTime() - new Date().getTime();
             
             if (SESSION_COMPANY) {
-                initNotifUI(); populateDashboardData();
+                initNotifUI();
+                populateDashboardData();
                 switchPage('pageMainApp'); switchSubView('layanan'); loadLayananData();
                 startSubscriptionTimer(); startRealtimeExpirySync();
                 if(!pesananPollingInterval) pesananPollingInterval = setInterval(fetchPesananDataSilently, 5000);
-                if(!isKomisiScheme() && isSubscriptionExpired()) { setTimeout(() => { showSubscriptionModal(true); }, 2000); }
-            } else { switchPage('pageOnboarding'); }
+                if(!isKomisiScheme() && isSubscriptionExpired()) { setTimeout(() => { showSubscriptionModal(true); }, 2000);
+                }
+            } else { switchPage('pageOnboarding');
+            }
         }
     };
-
     function switchPage(pageId) {
         document.querySelectorAll('.page').forEach(p => { p.style.display = 'none'; p.classList.remove('active-page'); });
         let target = document.getElementById(pageId);
-        if(target) { if(target.classList.contains('auth-page')) { target.style.display = 'flex'; } else { target.style.display = 'block'; } }
+        if(target) { if(target.classList.contains('auth-page')) { target.style.display = 'flex'; } else { target.style.display = 'block';
+        } }
         window.scrollTo(0,0);
     }
 
@@ -931,7 +997,8 @@
             mainHeader.style.display = 'flex';
             document.getElementById('subLayanan').style.display = 'block';
             if(document.querySelectorAll('.nav-item')[0]) document.querySelectorAll('.nav-item')[0].classList.add('active');
-            if(window.innerWidth > 768) { document.getElementById('globalHeaderTimer').style.display = 'flex'; }
+            if(window.innerWidth > 768) { document.getElementById('globalHeaderTimer').style.display = 'flex';
+            }
             loadLayananData();
         } else if(tab === 'pesanan') {
             mainHeader.style.display = 'none';
@@ -948,8 +1015,10 @@
             document.getElementById('headerBrandGroup').style.display = 'none'; 
             document.getElementById('headerActionGroup').style.display = 'none'; document.getElementById('headerProfileTitle').style.display = 'block';
             
-            if(window.innerWidth > 768) { document.getElementById('globalHeaderTimer').style.display = 'flex'; } 
-            else { document.getElementById('mobileHeaderTimer').style.display = 'flex'; }
+            if(window.innerWidth > 768) { document.getElementById('globalHeaderTimer').style.display = 'flex';
+            } 
+            else { document.getElementById('mobileHeaderTimer').style.display = 'flex';
+            }
             
             let profSec = document.getElementById('subProfil');
             profSec.style.display = 'block'; profSec.classList.remove('fade-in-smooth'); void profSec.offsetWidth; profSec.classList.add('fade-in-smooth');
@@ -960,7 +1029,8 @@
         window.scrollTo(0,0);
     }
 
-    function getServerAdjustedTime() { return new Date().getTime() + serverTimeDelta; }
+    function getServerAdjustedTime() { return new Date().getTime() + serverTimeDelta;
+    }
 
     function isSubscriptionExpired() {
         if(!SESSION_USER || !SESSION_USER.expiredAt) return true;
@@ -977,18 +1047,21 @@
             if (isKomisiScheme()) { updateHeaderSchemeUI(); return; }
             let timeLeft = new Date(SESSION_USER.expiredAt).getTime() - getServerAdjustedTime();
             
-            let labelDesk = document.getElementById('subLabelDesk'); let labelMob = document.getElementById('subLabelMob');
+           
+             let labelDesk = document.getElementById('subLabelDesk'); let labelMob = document.getElementById('subLabelMob');
             let dtDesk = document.getElementById('subCountdownText'); let dtMob = document.getElementById('mobileSubCountdownText');
             let btnsRenew = document.querySelectorAll('.btn-renew');
         
             if(timeLeft <= 0) {
                 if(SESSION_USER.isTrial) {
+                  
                     if(labelDesk) labelDesk.innerText = "Trial Habis:"; if(labelMob) labelMob.innerText = "Trial Habis:";
                 } else {
                     if(labelDesk) labelDesk.innerText = "Masa Aktif:";
                     if(labelMob) labelMob.innerText = "Masa Aktif:";
                 }
-                dtDesk.innerText = "00:00:00"; dtMob.innerText = "00:00:00";
+                dtDesk.innerText = "00:00:00";
+                dtMob.innerText = "00:00:00";
                 dtDesk.className = "sub-countdown near-expire"; dtMob.className = "sub-countdown near-expire";
                 btnsRenew.forEach(btn => btn.innerText = SESSION_USER.isTrial ? "Berlangganan" : "Perpanjang");
                 if(!document.getElementById('subscriptionOverlay').classList.contains('show')) { showSubscriptionModal(true); }
@@ -1002,14 +1075,17 @@
                 timeStr += hours.toString().padStart(2, '0') + ":" + minutes.toString().padStart(2, '0') + ":" + seconds.toString().padStart(2, '0');
                 dtDesk.innerText = timeStr; dtMob.innerText = timeStr;
                 
-                if (timeLeft < 86400000) { dtDesk.className = "sub-countdown near-expire"; dtMob.className = "sub-countdown near-expire"; } 
+                if (timeLeft < 86400000) { dtDesk.className = "sub-countdown near-expire"; dtMob.className = "sub-countdown near-expire";
+                } 
                 else { dtDesk.className = "sub-countdown"; dtMob.className = "sub-countdown"; }
 
                 if (SESSION_USER.isTrial) {
-                    if(labelDesk) labelDesk.innerText = "Trial Aktif:"; if(labelMob) labelMob.innerText = "Trial Aktif:";
+                    if(labelDesk) labelDesk.innerText = "Trial Aktif:";
+                    if(labelMob) labelMob.innerText = "Trial Aktif:";
                     btnsRenew.forEach(btn => btn.innerText = "Berlangganan");
                 } else {
-                    if(labelDesk) labelDesk.innerText = "Masa Aktif:"; if(labelMob) labelMob.innerText = "Masa Aktif:";
+                    if(labelDesk) labelDesk.innerText = "Masa Aktif:";
+                    if(labelMob) labelMob.innerText = "Masa Aktif:";
                     btnsRenew.forEach(btn => btn.innerText = "Perpanjang");
                 }
             }
@@ -1024,14 +1100,17 @@
                 let res = await fetchGAS({action: "checkExpiry", username: SESSION_USER.username});
                 if(res.status === "success") {
                     if (res.skemaPembayaran) SESSION_COMPANY.skemaPembayaran = res.skemaPembayaran;
+ 
                     if (res.komisiRate !== undefined) SESSION_COMPANY.komisiRate = res.komisiRate;
 
                     if (res.saldo !== undefined) {
                         let oldSaldo = SESSION_COMPANY.saldo || 0;
+                      
                         SESSION_COMPANY.saldo = res.saldo;
                      
                         if (isKomisiScheme()) {
                             if (SESSION_COMPANY.saldo > oldSaldo) {
+                 
                                 showAlert("Top Up Selesai", "Top up saldo telah dikonfirmasi dan ditambahkan.", "fa-wallet");
                             } else if (SESSION_COMPANY.saldo < oldSaldo) {
                                 let diff = oldSaldo - SESSION_COMPANY.saldo;
@@ -1057,48 +1136,60 @@
                         localStorage.setItem('goBorneo_partner_session', JSON.stringify({ 
                             user: SESSION_USER, company: SESSION_COMPANY, paket: globalPaketList, rekening: globalRekeningList, serverTime: new Date(getServerAdjustedTime()).toISOString() 
                         }));
-                        if(oldTrial === true && res.isTrial === false) { document.querySelectorAll('.btn-renew').forEach(btn => btn.innerText = "Perpanjang"); }
+                        if(oldTrial === true && res.isTrial === false) { document.querySelectorAll('.btn-renew').forEach(btn => btn.innerText = "Perpanjang");
+                        }
 
                         if(document.getElementById('subscriptionOverlay').classList.contains('show')) {
                             if(!isSubscriptionExpired() && !SESSION_USER.hasPendingPayment) {
                                 closeSubscriptionModal();
                                 showAlert("Sukses", "Pembayaran Terkonfirmasi. Masa Aktif Diperbarui", "fa-check");
-                            } else { showSubscriptionModal(isSubscriptionExpired()); }
+                            } else { showSubscriptionModal(isSubscriptionExpired());
+                            }
                         } else if(!isSubscriptionExpired() && oldPending === true && res.hasPendingPayment === false) {
                              showAlert("Sukses", "Pembayaran Anda telah disetujui Admin", "fa-check");
                         }
-                    } else { SESSION_USER.expiredAt = res.expiredAt; }
+                    } else { SESSION_USER.expiredAt = res.expiredAt;
+                    }
                 }
             } catch(e) {}
         }, 10000);
     }
 
     function showSubscriptionModal(isForced = false) {
-        if (!SESSION_COMPANY || isKomisiScheme() || document.getElementById('pageOnboarding').style.display === 'flex' || document.getElementById('pageOnboarding').style.display === 'block') { return; }
+        if (!SESSION_COMPANY || isKomisiScheme() || document.getElementById('pageOnboarding').style.display === 'flex' || document.getElementById('pageOnboarding').style.display === 'block') { return;
+        }
         
-        if(seatPollingInterval) { clearInterval(seatPollingInterval); seatPollingInterval = null; }
+        if(seatPollingInterval) { clearInterval(seatPollingInterval);
+        seatPollingInterval = null; }
         
-        let titleEl = document.getElementById('subModalTitle'); let descEl = document.getElementById('subModalDesc');
+        let titleEl = document.getElementById('subModalTitle');
+        let descEl = document.getElementById('subModalDesc');
         let iconEl = document.getElementById('subModalIcon'); let isExp = isSubscriptionExpired();
         if (SESSION_USER.hasPendingPayment) {
             document.getElementById('subPaymentForm').style.display = 'none'; document.getElementById('subPendingView').style.display = 'block';
             if(isForced && isExp) { document.getElementById('btnKeluarPending').style.display = 'block'; }
-            else { document.getElementById('btnKeluarPending').style.display = 'none'; }
+            else { document.getElementById('btnKeluarPending').style.display = 'none';
+            }
         } else {
-            document.getElementById('subPaymentForm').style.display = 'block'; document.getElementById('subPendingView').style.display = 'none';
+            document.getElementById('subPaymentForm').style.display = 'block';
+            document.getElementById('subPendingView').style.display = 'none';
             if (isExp) {
                 iconEl.className = "fa-solid fa-lock warn-icon";
                 if (SESSION_USER.isTrial) {
-                    titleEl.innerText = "Masa Trial Telah Habis"; descEl.innerText = "Masa uji coba gratis Anda berakhir. Silakan beli paket langganan.";
+                    titleEl.innerText = "Masa Trial Telah Habis";
+                    descEl.innerText = "Masa uji coba gratis Anda berakhir. Silakan beli paket langganan.";
                 } else {
-                    titleEl.innerText = "Langganan Berakhir"; descEl.innerText = "Masa aktif Anda habis. Perpanjang untuk melanjutkan kelola armada.";
+                    titleEl.innerText = "Langganan Berakhir";
+                    descEl.innerText = "Masa aktif Anda habis. Perpanjang untuk melanjutkan kelola armada.";
                 }
             } else {
                 if (SESSION_USER.isTrial) {
-                    iconEl.className = "fa-solid fa-box-open warn-icon"; iconEl.style.color = "#3b82f6";
+                    iconEl.className = "fa-solid fa-box-open warn-icon";
+                    iconEl.style.color = "#3b82f6";
                     titleEl.innerText = "Berlangganan Paket"; descEl.innerText = "Ayo berlangganan. Beli paket segera, jangan tunggu masa Trial habis untuk menggunakan layanan Anda";
                 } else {
-                    iconEl.className = "fa-solid fa-shield-halved warn-icon"; iconEl.style.color = "#10b981";
+                    iconEl.className = "fa-solid fa-shield-halved warn-icon";
+                    iconEl.style.color = "#10b981";
                     titleEl.innerText = "Perpanjang Masa Aktif"; descEl.innerText = "Masa aktif Anda masih berlaku. Perpanjang lebih awal untuk mencegah gangguan layanan.";
                 }
             }
@@ -1106,61 +1197,84 @@
             let optsHtml = '';
             if(globalPaketList && globalPaketList.length > 0) {
                 globalPaketList.forEach((paket, idx) => { optsHtml += `<div class="custom-option" onclick="selectPaketValue(${idx}, '${paket.nama}')">${paket.nama}</div>`; });
-            } else { optsHtml = `<div class="custom-option">Tidak ada paket tersedia</div>`; }
+            } else { optsHtml = `<div class="custom-option">Tidak ada paket tersedia</div>`;
+            }
             
             document.getElementById('paketSelectOptions').innerHTML = optsHtml;
-            if(selectedPaketIndex === -1 && globalPaketList.length > 0) { selectPaketValue(0, globalPaketList[0].nama); } 
-            else { subMultiplier = 1; calculateSubPrice(); }
+            if(selectedPaketIndex === -1 && globalPaketList.length > 0) { selectPaketValue(0, globalPaketList[0].nama);
+            } 
+            else { subMultiplier = 1; calculateSubPrice();
+            }
 
             if (isForced && isExp) {
-                document.getElementById('btnKeluarSub').style.display = 'block'; document.getElementById('btnKembaliSub').style.display = 'none';
+                document.getElementById('btnKeluarSub').style.display = 'block';
+                document.getElementById('btnKembaliSub').style.display = 'none';
             } else {
-                document.getElementById('btnKeluarSub').style.display = 'none'; document.getElementById('btnKembaliSub').style.display = 'block';
+                document.getElementById('btnKeluarSub').style.display = 'none';
+                document.getElementById('btnKembaliSub').style.display = 'block';
             }
         }
         
-        document.getElementById('subscriptionOverlay').classList.add('show'); document.body.style.overflow = 'hidden';
+        document.getElementById('subscriptionOverlay').classList.add('show');
+        document.body.style.overflow = 'hidden';
     }
 
     function selectPaketValue(index, nama) {
-        selectedPaketIndex = index; document.getElementById('selectedPaketText').innerText = nama;
+        selectedPaketIndex = index;
+        document.getElementById('selectedPaketText').innerText = nama;
         document.getElementById('selectedPaketText').style.color = "var(--text-main)";
         document.getElementById('paketSelectOptions').classList.remove('open'); calculateSubPrice();
     }
 
-    function closeSubscriptionModal() { document.getElementById('subscriptionOverlay').classList.remove('show'); document.body.style.overflow = ''; }
+    function closeSubscriptionModal() { document.getElementById('subscriptionOverlay').classList.remove('show'); document.body.style.overflow = '';
+    }
 
     function updateSubQty(dir) { subMultiplier += dir; if(subMultiplier < 1) subMultiplier = 1;
     if(subMultiplier > 12) subMultiplier = 12; calculateSubPrice(); }
 
     function calculateSubPrice() {
         document.getElementById('subQtyValue').innerText = subMultiplier + 'x';
-        if(selectedPaketIndex === -1 || !globalPaketList[selectedPaketIndex]) { document.getElementById('subTotalPrice').innerText = "Rp 0"; return; }
+        if(selectedPaketIndex === -1 || !globalPaketList[selectedPaketIndex]) { document.getElementById('subTotalPrice').innerText = "Rp 0"; return;
+        }
         let selectedPaket = globalPaketList[selectedPaketIndex];
         document.getElementById('subTotalPrice').innerText = formatRupiah(selectedPaket.harga * subMultiplier);
     }
 
     function parseDurationToDays(paketName) {
-      let name = paketName.toLowerCase(); let num = parseInt(name.replace(/[^0-9]/g, '')) || 1;
+      let name = paketName.toLowerCase();
+      let num = parseInt(name.replace(/[^0-9]/g, '')) || 1;
       if (name.includes("bulan")) return num * 30; if (name.includes("hari")) return num * 1;
       if (name.includes("minggu")) return num * 7; if (name.includes("tahun")) return num * 365;
       return 30;
     }
 
     function openPaymentProcess() {
-        if(selectedPaketIndex === -1 || !globalPaketList[selectedPaketIndex]) { return showAlert("Peringatan", "Pilih paket terlebih dahulu", "fa-circle-exclamation", true); }
+        if(selectedPaketIndex === -1 || !globalPaketList[selectedPaketIndex]) { return showAlert("Peringatan", "Pilih paket terlebih dahulu", "fa-circle-exclamation", true);
+        }
         
         let htmlRek = "";
         if(globalRekeningList.length === 0) htmlRek = "<p style='color:red;'>Data Rekening Belum Tersedia.</p>";
         else {
             globalRekeningList.forEach(rek => {
-                htmlRek += `<div class="rek-card-modern"><img src="${rek.logo || 'https://placehold.co/100x100?text=Bank'}" class="rek-logo" alt="Bank Logo">
-                            <div class="rek-info"><h4>Bank ${rek.bank}</h4><p class="norek">${rek.norek}</p><p class="name">a/n ${rek.atasNama}</p></div></div>`;
+                htmlRek += `<div class="rek-card-modern" style="position:relative;">
+                            <img src="${rek.logo || 'https://placehold.co/100x100?text=Bank'}" class="rek-logo" alt="Bank Logo">
+                            <div class="rek-info" style="flex:1;"><h4>Bank ${rek.bank}</h4>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
+                                <div>
+                                    <p class="norek" style="margin:0; font-size:15px; font-weight:700; color:#1E90FF;">${rek.norek}</p>
+                                    <p class="name" style="margin:2px 0 0 0; font-size:12px; color:#64748b;">a/n ${rek.atasNama}</p>
+                                </div>
+                                <button class="btn-salin-keren" onclick="salinRekening('${rek.norek}')" title="Salin Rekening">
+                                    <i class="fa-regular fa-copy"></i> Salin
+                                </button>
+                            </div>
+                            </div></div>`;
             });
         }
         document.getElementById('rekeningListContainer').innerHTML = htmlRek;
         
-        let selectedPaket = globalPaketList[selectedPaketIndex]; let totalPaid = selectedPaket.harga * subMultiplier;
+        let selectedPaket = globalPaketList[selectedPaketIndex];
+        let totalPaid = selectedPaket.harga * subMultiplier;
         let totalBulan = Math.round(parseDurationToDays(selectedPaket.nama) / 30 * subMultiplier);
         if (totalBulan === 0) totalBulan = 1;
 
@@ -1174,7 +1288,8 @@
         document.getElementById('paymentDrawer').classList.add('open'); pushBackButtonHandler('paymentDrawer');
     }
 
-    function closePaymentDrawer(fromPopState = false) { document.getElementById('paymentDrawer').classList.remove('open'); if (!fromPopState) popBackButtonHandler(); }
+    function closePaymentDrawer(fromPopState = false) { document.getElementById('paymentDrawer').classList.remove('open'); if (!fromPopState) popBackButtonHandler();
+    }
 
     function previewStrukImage(event) {
         const file = event.target.files[0]; if(!file) return;
@@ -1190,12 +1305,14 @@
         let selectedPaket = globalPaketList[selectedPaketIndex]; let totalPaid = selectedPaket.harga * subMultiplier;
         let totalBulan = Math.round(parseDurationToDays(selectedPaket.nama) / 30 * subMultiplier); if(totalBulan === 0) totalBulan = 1;
         
-        let btn = document.getElementById('btnSubmitRealPayment'); let oriTxt = btn.innerHTML; 
+        let btn = document.getElementById('btnSubmitRealPayment');
+        let oriTxt = btn.innerHTML; 
         btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Mengunggah Struk...`; btn.disabled = true;
         
         const reader = new FileReader();
         reader.onload = async (e) => {
-            let base64 = e.target.result; showLoading(true);
+            let base64 = e.target.result;
+            showLoading(true);
             try {
                 let payload = { action: "submitPayment", username: SESSION_USER.username, email: SESSION_USER.email, bulan: totalBulan, harga: totalPaid, base64: base64 };
                 let res = await fetchGAS(payload); showLoading(false);
@@ -1206,26 +1323,89 @@
                     showSubscriptionModal(isSubscriptionExpired());
                 } else { showAlert("Gagal", res.message, "fa-circle-xmark", true); }
             } catch(err) {
-               showLoading(false); showAlert("Error Koneksi", err.message, "fa-wifi", true);
-            } finally { btn.innerHTML = oriTxt; btn.disabled = false; }
+               showLoading(false);
+               showAlert("Error Koneksi", err.message, "fa-wifi", true);
+            } finally { btn.innerHTML = oriTxt; btn.disabled = false;
+            }
         };
         reader.readAsDataURL(fileInput.files[0]);
     }
 
+    // =============================================
+    // MODIFIKASI DRAW TOP UP & NOMINAL HANDLING
+    // =============================================
     function openTopUpDrawer() {
         if (!SESSION_USER || !SESSION_COMPANY) return;
+        // Tambahan style khusus untuk mode web (sidebar kanan) dan menghilangkan double scroll
+        if (!document.getElementById('topUpStyleFix')) {
+            let s = document.createElement('style');
+            s.id = 'topUpStyleFix';
+            s.innerHTML = `
+                @media(min-width: 768px) {
+                    #topUpDrawer { position: fixed !important; top: 0 !important; right: -500px !important; left: auto !important; width: 100% !important; max-width: 420px !important; height: 100vh !important; display: flex !important; flex-direction: column !important; transition: right 0.3s ease !important; box-shadow: -5px 0 20px rgba(0,0,0,0.15) !important; bottom: auto !important; z-index: 100000 !important;}
+                    #topUpDrawer.open { right: 0 !important; }
+                }
+                #topUpDrawer .drawer-body { flex: 1; overflow-y: auto; overflow-x: hidden; }
+                .input-rp-wrapper { position: relative; display: flex; align-items: center; width: 100%; }
+                .input-rp-wrapper span { position: absolute; left: 15px; font-weight: 700; color: #64748b; font-size: 14px; }
+            `;
+            document.head.appendChild(s);
+        }
+
+        let topUpDrawer = document.getElementById('topUpDrawer');
+        if (topUpDrawer) {
+            topUpDrawer.style.display = 'flex';
+            topUpDrawer.style.flexDirection = 'column';
+            topUpDrawer.style.height = '100vh';
+            
+            let drawerBody = topUpDrawer.querySelector('.drawer-body');
+            if (drawerBody) {
+                drawerBody.style.flex = '1';
+                drawerBody.style.overflowY = 'auto'; // handle scroll responsif
+            }
+            
+            // Membungkus customTopUpNominal untuk prefix "Rp."
+            let nominalInput = document.getElementById('customTopUpNominal');
+            if (nominalInput) {
+                nominalInput.type = 'text'; // Memastikan input menerima tipe text agar format ribuan tidak ditolak browser
+                if (!nominalInput.parentElement || !nominalInput.parentElement.classList.contains('input-rp-wrapper')) {
+                    let wrapper = document.createElement('div');
+                    wrapper.className = 'input-rp-wrapper';
+                    nominalInput.parentNode.insertBefore(wrapper, nominalInput);
+                    
+                    let rpSpan = document.createElement('span');
+                    rpSpan.innerText = 'Rp.';
+                    
+                    wrapper.appendChild(rpSpan);
+                    wrapper.appendChild(nominalInput);
+                    
+                    nominalInput.style.paddingLeft = '45px';
+                }
+            }
+        }
+
         document.getElementById('topUpCurrentBalance').innerText = formatRupiah(SESSION_COMPANY.saldo || 0);
         selectedTopUpAmount = 0; document.getElementById('customTopUpNominal').value = "";
         document.querySelectorAll('.btn-nominal-opt').forEach(b => b.classList.remove('active'));
         document.getElementById('previewTopUpStruk').style.display = 'none'; document.getElementById('previewTopUpStruk').src = '';
         document.getElementById('topUpStrukFile').value = '';
-
         let htmlRek = "";
         if (globalRekeningList.length === 0) { htmlRek = "<p style='color:red; font-size:13px;'>Data Rekening Belum Tersedia.</p>";
         } else {
             globalRekeningList.forEach(rek => {
-                htmlRek += `<div class="rek-card-modern"><img src="${rek.logo || 'https://placehold.co/100x100?text=Bank'}" class="rek-logo" alt="Bank Logo">
-                            <div class="rek-info"><h4>Bank ${rek.bank}</h4><p class="name"> ${rek.atasNama}</p><p class="norek">a/n ${rek.norek}</p></div></div>`;
+                htmlRek += `<div class="rek-card-modern" style="position:relative;">
+                            <img src="${rek.logo || 'https://placehold.co/100x100?text=Bank'}" class="rek-logo" alt="Bank Logo">
+                            <div class="rek-info" style="flex:1;"><h4>Bank ${rek.bank}</h4>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
+                                <div>
+                                    <p class="norek" style="margin:0; font-size:15px; font-weight:700; color:#1E90FF;">${rek.norek}</p>
+                                    <p class="name" style="margin:2px 0 0 0; font-size:12px; color:#64748b;">a/n ${rek.atasNama}</p>
+                                </div>
+                                <button class="btn-salin-keren" onclick="salinRekening('${rek.norek}')" title="Salin Rekening">
+                                    <i class="fa-regular fa-copy"></i> Salin
+                                </button>
+                            </div>
+                            </div></div>`;
             });
         }
         document.getElementById('topUpRekeningContainer').innerHTML = htmlRek;
@@ -1238,7 +1418,8 @@
     }
 
     function selectTopUpNominal(val) {
-        selectedTopUpAmount = val; document.getElementById('customTopUpNominal').value = val;
+        selectedTopUpAmount = val;
+        document.getElementById('customTopUpNominal').value = new Intl.NumberFormat('id-ID').format(val);
         document.querySelectorAll('.btn-nominal-opt').forEach(btn => {
             btn.classList.remove('active');
             if (btn.innerText.replace(/[^0-9]/g, '') == val) { btn.classList.add('active'); }
@@ -1246,38 +1427,57 @@
     }
 
     function handleCustomNominalInput(input) {
-        let val = parseInt(input.value) || 0; selectedTopUpAmount = val;
+        // Mencegah input bertipe number yang akan langsung kosong saat diisi titik pemisah ribuan
+        if (input.type !== 'text') input.type = 'text';
+        
+        let rawVal = input.value.replace(/[^0-9]/g, '');
+        let val = parseInt(rawVal, 10) || 0;
+        selectedTopUpAmount = val;
+        
+        if (val > 0) {
+            input.value = new Intl.NumberFormat('id-ID').format(val);
+        } else {
+            input.value = "";
+        }
+        
         document.querySelectorAll('.btn-nominal-opt').forEach(btn => {
             btn.classList.remove('active');
             if (btn.innerText.replace(/[^0-9]/g, '') == val) { btn.classList.add('active'); }
         });
     }
+    // =============================================
 
     function previewTopUpStruk(event) {
-        const file = event.target.files[0]; if (!file) return;
+        const file = event.target.files[0];
+        if (!file) return;
         const reader = new FileReader();
         reader.onload = (e) => { document.getElementById('previewTopUpStruk').src = e.target.result; document.getElementById('previewTopUpStruk').style.display = 'block'; };
         reader.readAsDataURL(file);
     }
 
     async function submitRealTopUp() {
-        if (!selectedTopUpAmount || selectedTopUpAmount <= 0) { return showAlert("Peringatan", "Masukkan nominal top up yang valid.", "fa-circle-exclamation", true); }
+        if (!selectedTopUpAmount || selectedTopUpAmount <= 0) { return showAlert("Peringatan", "Masukkan nominal top up yang valid.", "fa-circle-exclamation", true);
+        }
         let fileInput = document.getElementById('topUpStrukFile');
-        if (!fileInput.files[0]) { return showAlert("Wajib", "Unggah foto bukti struk transfer.", "fa-image", true); }
+        if (!fileInput.files[0]) { return showAlert("Wajib", "Unggah foto bukti struk transfer.", "fa-image", true);
+        }
 
         let btn = document.getElementById('btnSubmitRealTopUp'); let oriTxt = btn.innerHTML;
         btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Mengirim Top Up...`; btn.disabled = true;
 
         const reader = new FileReader();
         reader.onload = async (e) => {
-            let base64 = e.target.result; showLoading(true);
+            let base64 = e.target.result;
+            showLoading(true);
             try {
                 let payload = { action: "submitTopUp", username: SESSION_USER.username, email: SESSION_USER.email, namaPerusahaan: SESSION_COMPANY.namaPerusahaan, nominal: selectedTopUpAmount, base64: base64 };
                 let res = await fetchGAS(payload); showLoading(false);
                 if (res.status === "success") { closeTopUpDrawer(); showAlert("Top Up Berhasil", res.message, "fa-circle-check");
                 } else { showAlert("Gagal", res.message, "fa-circle-xmark", true); }
-            } catch (err) { showLoading(false); showAlert("Error Koneksi", err.message, "fa-wifi", true); } 
-            finally { btn.innerHTML = oriTxt; btn.disabled = false; }
+            } catch (err) { showLoading(false);
+            showAlert("Error Koneksi", err.message, "fa-wifi", true); } 
+            finally { btn.innerHTML = oriTxt;
+            btn.disabled = false; }
         };
         reader.readAsDataURL(fileInput.files[0]);
     }
@@ -1290,18 +1490,22 @@
             if (isKomisiScheme()) {
                 let result = await fetchGAS({action: "getTopUpHistory", username: SESSION_USER.username, namaPerusahaan: SESSION_COMPANY.namaPerusahaan});
                 if (result.status === "success") { renderTopUpCards(result.data); } 
-                else { container.innerHTML = `<div class="empty-state" style="text-align:center; padding: 40px 0; color:#94a3b8;"><i class="fa-solid fa-clock-rotate-left" style="font-size:40px; margin-bottom:12px;"></i><p>Belum ada riwayat top up.</p></div>`; }
+                else { container.innerHTML = `<div class="empty-state" style="text-align:center; padding: 40px 0; color:#94a3b8;"><i class="fa-solid fa-clock-rotate-left" style="font-size:40px; margin-bottom:12px;"></i><p>Belum ada riwayat top up.</p></div>`;
+                }
             } else {
                 let result = await fetchGAS({action: "getPaymentHistory", username: SESSION_USER.username});
                 if (result.status === "success") { globalRiwayatList = result.data; renderRiwayatCards(globalRiwayatList); } 
-                else { container.innerHTML = `<div class="empty-state" style="text-align:center; padding: 40px 0; color:#94a3b8;"><i class="fa-solid fa-clock-rotate-left" style="font-size:40px; margin-bottom:12px;"></i><p>Belum ada riwayat transaksi.</p></div>`; }
+                else { container.innerHTML = `<div class="empty-state" style="text-align:center; padding: 40px 0; color:#94a3b8;"><i class="fa-solid fa-clock-rotate-left" style="font-size:40px; margin-bottom:12px;"></i><p>Belum ada riwayat transaksi.</p></div>`;
+                }
             }
-        } catch(e) { container.innerHTML = `<div style="text-align: center; margin-top: 40px; color: #ef4444;"><i class="fa-solid fa-triangle-exclamation"></i> Gagal memuat riwayat.</div>`; }
+        } catch(e) { container.innerHTML = `<div style="text-align: center; margin-top: 40px; color: #ef4444;"><i class="fa-solid fa-triangle-exclamation"></i> Gagal memuat riwayat.</div>`;
+        }
     }
 
     function renderRiwayatCards(dataList) {
         const container = document.getElementById('riwayatCardContainer');
-        if(dataList.length === 0) { container.innerHTML = `<div class="empty-state" style="text-align:center; padding: 40px 0; color:#94a3b8;"><i class="fa-solid fa-clock-rotate-left" style="font-size:40px; margin-bottom:12px;"></i><p>Belum ada riwayat transaksi.</p></div>`; return; }
+        if(dataList.length === 0) { container.innerHTML = `<div class="empty-state" style="text-align:center; padding: 40px 0; color:#94a3b8;"><i class="fa-solid fa-clock-rotate-left" style="font-size:40px; margin-bottom:12px;"></i><p>Belum ada riwayat transaksi.</p></div>`;
+        return; }
         let htmlCards = '';
         dataList.forEach((item, idx) => {
             let badgeClass = item.status.toLowerCase() === 'selesai' ? 'selesai' : (item.status.toLowerCase() === 'ditolak' ? 'ditolak' : 'pending');
@@ -1313,12 +1517,14 @@
             <div class="riwayat-card" style="animation-delay: ${idx * 0.05}s;" onclick="openRiwayatImageModal('${item.struk}')">
                 <div style="flex:1;">
                     <p style="margin:0 0 5px 0; font-size:14px; font-weight:800; color:var(--text-main);">Pembelian paket layanan selama ${item.bulan} bulan</p>
+                   
                     <div style="display:flex; justify-content:space-between; align-items:center;">
                         <span style="font-size:12px; color:var(--text-muted);"><i class="fa-regular fa-calendar"></i> ${tglStr} ${jamStr ? '&bull; <i class="fa-regular fa-clock"></i> ' + jamStr : ''}</span>
                     </div>
                 </div>
                 <div style="margin-left: 15px; text-align:right; display:flex; flex-direction:column; align-items:flex-end;">
                     <div class="status-badge-modern ${badgeClass}" style="font-size:10px; padding:4px 8px; margin-bottom:6px;">${item.status.toUpperCase()}</div>
+        
                     <span style="font-size:15px; font-weight:900; color:var(--primary);">${formatRupiah(item.harga)}</span>
                 </div>
             </div>`;
@@ -1328,7 +1534,8 @@
 
     function renderTopUpCards(dataList) {
         const container = document.getElementById('riwayatCardContainer');
-        if(dataList.length === 0) { container.innerHTML = `<div class="empty-state" style="text-align:center; padding: 40px 0; color:#94a3b8;"><i class="fa-solid fa-clock-rotate-left" style="font-size:40px; margin-bottom:12px;"></i><p>Belum ada riwayat top up.</p></div>`; return; }
+        if(dataList.length === 0) { container.innerHTML = `<div class="empty-state" style="text-align:center; padding: 40px 0; color:#94a3b8;"><i class="fa-solid fa-clock-rotate-left" style="font-size:40px; margin-bottom:12px;"></i><p>Belum ada riwayat top up.</p></div>`;
+        return; }
         let htmlCards = '';
         dataList.forEach((item, idx) => {
             let badgeClass = item.status.toLowerCase() === 'selesai' ? 'selesai' : (item.status.toLowerCase() === 'ditolak' ? 'ditolak' : 'pending');
@@ -1346,6 +1553,7 @@
                 </div>
                 <div style="margin-left: 15px; text-align:right; display:flex; flex-direction:column; align-items:flex-end;">
                     <div class="status-badge-modern ${badgeClass}" style="font-size:10px; padding:4px 8px; margin-bottom:6px;">${item.status.toUpperCase()}</div>
+        
                     <span style="font-size:15px; font-weight:900; color:var(--primary);">${formatRupiah(item.nominal)}</span>
                 </div>
             </div>`;
@@ -1360,12 +1568,14 @@
     }
 
     function openRiwayatImageModal(imgUrl) {
-        if(!imgUrl) { return showAlert("Info", "Struk gambar tidak tersedia.", "fa-circle-exclamation", true); }
+        if(!imgUrl) { return showAlert("Info", "Struk gambar tidak tersedia.", "fa-circle-exclamation", true);
+        }
         
         let directUrl = imgUrl;
         if (imgUrl.includes('drive.google.com')) {
             let idMatch = imgUrl.match(/id=([^&]+)/) || imgUrl.match(/file\/d\/([^\/]+)/);
-            if (idMatch) { directUrl = "https://drive.google.com/thumbnail?id=" + idMatch[1] + "&sz=w1000"; }
+            if (idMatch) { directUrl = "https://drive.google.com/thumbnail?id=" + idMatch[1] + "&sz=w1000";
+            }
         }
 
         initRiwayatImageSidebar();
@@ -1421,10 +1631,12 @@
                     html += `
                     <div class="riwayat-card" style="animation-delay: ${idx * 0.05}s; cursor: default; margin-bottom: 12px; border: 1px solid #fee2e2;">
                         <div style="flex:1;">
-                             <p style="margin:0 0 5px 0; font-size:13px; font-weight:700; color:var(--text-main);">
+                    
+                     <p style="margin:0 0 5px 0; font-size:13px; font-weight:700; color:var(--text-main);">
                                 Pemotongan saldo untuk transaksi <span style="color:#0284c7;">${item.idBooking}</span>
                             </p>
-                             <div style="display:flex; justify-content:space-between; align-items:center;">
+                       
+                   <div style="display:flex; justify-content:space-between; align-items:center;">
                                 <span style="font-size:11px; color:var(--text-muted);"><i class="fa-regular fa-calendar"></i> ${tglStr} ${jamStr ? '&bull; <i class="fa-regular fa-clock"></i> ' + jamStr : ''}</span>
                             </div>
                         </div>
@@ -1435,6 +1647,7 @@
                 });
                 container.innerHTML = html;
             } else {
+      
                 container.innerHTML = `<div class="empty-state" style="text-align:center; padding: 30px 0; color:#94a3b8;"><i class="fa-solid fa-receipt" style="font-size:36px; margin-bottom:12px;"></i><p>Belum ada riwayat mutasi.</p></div>`;
             }
         } catch (e) { container.innerHTML = `<div style="text-align: center; padding: 30px 0; color: #ef4444;"><i class="fa-solid fa-triangle-exclamation"></i> Gagal memuat mutasi.</div>`; }
@@ -1471,7 +1684,7 @@
     }
 
     function openSeatCalendar() { let parsed = new Date(currentSeatDate); if(!isNaN(parsed.getTime())) { currentSeatCalYear = parsed.getFullYear(); currentSeatCalMonth = parsed.getMonth();
-    } renderSeatCalendar(); document.getElementById('seatCalendarModal').classList.add('open'); pushBackButtonHandler('seatCalendar'); }
+        } renderSeatCalendar(); document.getElementById('seatCalendarModal').classList.add('open'); pushBackButtonHandler('seatCalendar'); }
     function closeSeatCalendar(fromPopState = false) { document.getElementById('seatCalendarModal').classList.remove('open'); if (!fromPopState) popBackButtonHandler();
     }
     
@@ -1486,7 +1699,7 @@
         gridHtml += `<div onclick="selectSeatDate('${fullDateStr}')" style="width:38px; height:38px; border-radius:12px; display:flex; align-items:center; justify-content:center; margin:auto; cursor:pointer; font-size:13px; font-weight:700; transition:0.2s; ${style}">${day}</div>`; } document.getElementById('seatCalendarGrid').innerHTML = gridHtml;
     }
     function changeSeatCalendarMonth(dir) { currentSeatCalMonth += dir; if (currentSeatCalMonth > 11) { currentSeatCalMonth = 0; currentSeatCalYear++;
-    } else if (currentSeatCalMonth < 0) { currentSeatCalMonth = 11; currentSeatCalYear--; } renderSeatCalendar();
+        } else if (currentSeatCalMonth < 0) { currentSeatCalMonth = 11; currentSeatCalYear--; } renderSeatCalendar();
     }
     function selectSeatDate(dateStr) { currentSeatDate = dateStr; selectedManualSeats = []; document.getElementById('displaySeatDate').innerText = formatTglIndo(dateStr); renderSeatLayout(); closeSeatCalendar();
     }
@@ -1522,9 +1735,10 @@
             if(res.status === "success" || res.status === 200 || !res.error) { 
                 await fetchPesananDataSilently();
                 let generatedId = res.idBooking; let newOrder; 
-                if(generatedId) { newOrder = globalPesananList.find(o => o.idBooking === generatedId); } 
+                if(generatedId) { newOrder = globalPesananList.find(o => o.idBooking === generatedId);
+                } 
                 if(!newOrder) { let seatsStr = selectedManualSeats.join(", ");
-                    newOrder = globalPesananList.find(o => o.merkKendaraan === payload.merkKendaraan && o.nomorKursi === seatsStr && o.namaPenumpang === payload.namaPenumpang);
+                newOrder = globalPesananList.find(o => o.merkKendaraan === payload.merkKendaraan && o.nomorKursi === seatsStr && o.namaPenumpang === payload.namaPenumpang);
                 } 
                 
                 showLoading(false);
@@ -1546,7 +1760,8 @@
                     lastGeneratedTicket = newOrder;
                     showManualTicketResult(newOrder);
                 } else { 
-                    newOrder = { idBooking: generatedId || "MENUNGGU_SINKRONISASI", userId: "MANUAL", role: "Mitra", merkKendaraan: payload.merkKendaraan, tanggalBooking: payload.tanggalBooking, nomorKursi: payload.nomorKursi, namaPenumpang: payload.namaPenumpang, namaPerusahaan: payload.namaPerusahaan, noHp: payload.noHp, harga: payload.harga, asal: payload.asal, tujuan: payload.tujuan, statusBooking: payload.statusBooking, isManualLocal: true };
+                    newOrder = { idBooking: generatedId ||
+                    "MENUNGGU_SINKRONISASI", userId: "MANUAL", role: "Mitra", merkKendaraan: payload.merkKendaraan, tanggalBooking: payload.tanggalBooking, nomorKursi: payload.nomorKursi, namaPenumpang: payload.namaPenumpang, namaPerusahaan: payload.namaPerusahaan, noHp: payload.noHp, harga: payload.harga, asal: payload.asal, tujuan: payload.tujuan, statusBooking: payload.statusBooking, isManualLocal: true };
                     globalPesananList.push(newOrder); selectedManualSeats = []; renderSeatLayout(); closeManualPaymentModal(); 
                     showAlert("Sukses", "Pesanan diproses, memuat sinkronisasi.", "fa-check");
                     if(komisi > 0) {
@@ -1574,7 +1789,8 @@
         let targetedOrder = globalPesananList.find(o => o.idBooking === idBooking);
         if(targetedOrder) { 
             if (isKomisiScheme() && targetedOrder.statusBooking.toLowerCase() !== "lunas") {
-                let kRate = SESSION_COMPANY.komisiRate || 0;
+                let kRate = SESSION_COMPANY.komisiRate ||
+                0;
                 let requiredKomisi = (kRate / 100) * targetedOrder.harga;
                 if (SESSION_COMPANY.saldo < requiredKomisi) {
                     return showAlert("Peringatan", "Maaf, saldo anda tidak mencukupi untuk membayar komisi aplikasi. Anda tidak dapat melihat detail tiket. Silahkan top up saldo terlebih dahulu.", "fa-triangle-exclamation", true);
@@ -1629,7 +1845,8 @@
     function openPaymentModal(idBooking) { 
         let order = globalPesananList.find(o => o.idBooking === idBooking);
         if (isKomisiScheme() && order && order.statusBooking.toLowerCase() !== "lunas") {
-            let kRate = SESSION_COMPANY.komisiRate || 0;
+            let kRate = SESSION_COMPANY.komisiRate ||
+            0;
             let requiredKomisi = (kRate / 100) * order.harga;
             if (SESSION_COMPANY.saldo < requiredKomisi) {
                 return showAlert("Peringatan", "Maaf, saldo anda tidak mencukupi untuk membayar komisi aplikasi. Anda tidak dapat melakukan konfirmasi pembayaran. Silahkan top up saldo terlebih dahulu.", "fa-triangle-exclamation", true);
@@ -1670,15 +1887,13 @@
                 let right = document.createElement('div');
                 right.className = 'pay-right';
                 right.id = 'dynamicStrukBoxRight';
-
                 Array.from(contentContainer.childNodes).forEach(child => {
                     if (child.nodeType === 1 && child.classList.contains('close-btn')) {
-                        // Jangan pindahkan tombol close
                     } else {
                         left.appendChild(child);
                     }
+      
                 });
-
                 wrap.appendChild(left);
                 wrap.appendChild(right);
                 contentContainer.appendChild(wrap);
@@ -1694,37 +1909,56 @@
             let rightPanel = document.getElementById('dynamicStrukBoxRight');
             let mobileBtn = document.getElementById('btnMobileStruk');
             let isManual = (order && (order.role === "Mitra" || order.isManualLocal));
+            // Re-konfigurasi Tombol Aksi di Modal Konfirmasi (Belum/Kembali, Tolak, Sudah Bayar)
+            let btnSudah = document.getElementById('btnSudahBayar');
+            if(btnSudah) {
+                let parentAction = btnSudah.parentElement;
+                let oldTolak = document.getElementById('btnTolakBayar');
+                if(oldTolak) oldTolak.remove();
+                
+                let btnBelum = Array.from(parentAction.querySelectorAll('button')).find(b => b.id !== 'btnSudahBayar' && b.id !== 'btnMobileStruk' && !b.classList.contains('close-btn'));
+                if (isManual) {
+                    if(btnBelum) btnBelum.innerText = "Belum";
+                } else {
+                    if(btnBelum) btnBelum.innerText = "Kembali";
+                    let btnTolak = document.createElement('button');
+                    btnTolak.id = 'btnTolakBayar';
+                    btnTolak.innerText = "Tolak";
+                    btnTolak.style.cssText = "padding:12px 20px; border-radius:8px; border:none; background:#ef4444; color:white; font-weight:700; cursor:pointer; flex: 1;";
+                    btnTolak.onclick = function() { handleTolakPayment(); };
+                    
+                    parentAction.insertBefore(btnTolak, btnSudah);
+                    parentAction.style.display = 'flex';
+                    parentAction.style.gap = '10px';
+                    if(btnBelum) btnBelum.style.flex = '1';
+                    if(btnSudah) btnSudah.style.flex = '1';
+                }
+            }
 
             if (isManual) {
-                // Jangan tampilkan apapun terkait struk jika pesanan manual
                 rightPanel.style.display = 'none';
                 mobileBtn.style.display = 'none';
                 rightPanel.innerHTML = ''; 
             } else {
-                // Tampilkan logic bukti pembayaran dari User
-                rightPanel.style.display = ''; // Biarkan CSS responsive bekerja
-                mobileBtn.style.display = '';  
-
+                rightPanel.style.display = '';
+                mobileBtn.style.display = '';
                 let imgUrl = order.strukPayment;
                 if (imgUrl) {
                     if (imgUrl.includes('drive.google.com')) {
                         let idMatch = imgUrl.match(/id=([^&]+)/) || imgUrl.match(/file\/d\/([^\/]+)/);
-                        if (idMatch) { imgUrl = "https://drive.google.com/thumbnail?id=" + idMatch[1] + "&sz=w1000"; }
+                        if (idMatch) { imgUrl = "https://drive.google.com/thumbnail?id=" + idMatch[1] + "&sz=w1000";
+                        }
                     }
                     rightPanel.innerHTML = `<p style="font-size:13px; font-weight:800; color:#0f172a; margin-bottom:12px;">Bukti Pembayaran</p>
                     <img src="${imgUrl}" alt="Struk" class="pay-img" onclick="openRiwayatImageModal('${order.strukPayment}')" />
                     <span style="font-size:10px; color:#94a3b8; margin-top:8px;">Klik gambar untuk perbesar</span>`;
-
-                    mobileBtn.onclick = function() {
-                        openRiwayatImageModal(order.strukPayment);
-                    };
+                    mobileBtn.onclick = function() { openRiwayatImageModal(order.strukPayment); };
                     mobileBtn.disabled = false;
                     mobileBtn.style.opacity = '1';
                     mobileBtn.innerHTML = '<i class="fa-solid fa-image"></i> Lihat Foto Struk';
                 } else {
                     rightPanel.innerHTML = `<div style="padding:20px; background:#f8fafc; border-radius:12px; font-size:12px; color:#94a3b8; border:1px dashed #cbd5e1; text-align:center; width:100%;">
                     <i class="fa-solid fa-image-slash" style="font-size:24px; margin-bottom:8px;"></i><br>User belum mengunggah struk pembayaran.</div>`;
-                    
                     mobileBtn.onclick = null;
                     mobileBtn.disabled = true;
                     mobileBtn.style.opacity = '0.5';
@@ -1736,11 +1970,26 @@
         document.getElementById('paymentConfirmModal').classList.add('show');
         pushBackButtonHandler('paymentModal');
     }
-    function closePaymentModal(fromPopState = false) { document.getElementById('paymentConfirmModal').classList.remove('show'); currentPaymentOrderId = ""; if (!fromPopState) popBackButtonHandler();
+    
+    function closePaymentModal(fromPopState = false) { document.getElementById('paymentConfirmModal').classList.remove('show'); currentPaymentOrderId = "";
+        if (!fromPopState) popBackButtonHandler();
     }
-    function handleSudahBayarClick() { let btn = document.getElementById('btnSudahBayar'); let originalText = btn.innerText;
+    
+    function handleSudahBayarClick() { let btn = document.getElementById('btnSudahBayar');
+        let originalText = btn.innerText;
         btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Memproses...`; btn.disabled = true; btn.style.opacity = '0.7';
         setTimeout(() => { btn.innerHTML = originalText; btn.disabled = false; btn.style.opacity = '1'; executePaymentConfirm(); }, 3000);
+    }
+    
+    function handleTolakPayment() {
+        let btn = document.getElementById('btnTolakBayar');
+        let originalText = btn.innerText;
+        btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Memproses...`; 
+        btn.disabled = true; btn.style.opacity = '0.7';
+        setTimeout(() => { 
+            btn.innerHTML = originalText; btn.disabled = false; btn.style.opacity = '1'; 
+            executeTolakPayment(); 
+        }, 1500);
     }
     
     async function executePaymentConfirm() { 
@@ -1797,6 +2046,37 @@
         } 
     }
 
+    async function executeTolakPayment() {
+        if(!currentPaymentOrderId || !SESSION_COMPANY) return;
+        let idToConfirm = currentPaymentOrderId; 
+        closePaymentModal();
+        
+        let suffixes = ["", "-popup"];
+        suffixes.forEach(suffix => { 
+            let btnConfirm = document.getElementById(`btn-confirm-${idToConfirm}${suffix}`); 
+            let badgeEl = document.getElementById(`badge-${idToConfirm}${suffix}`); 
+            if(btnConfirm) btnConfirm.style.display = 'none'; 
+            if(badgeEl) { badgeEl.className = 'status-ribbon-bottom-left ditolak'; badgeEl.innerText = 'DITOLAK'; } 
+        });
+        let orderIdx = globalPesananList.findIndex(o => o.idBooking === idToConfirm); 
+        if(orderIdx > -1) { 
+            globalPesananList[orderIdx].statusBooking = 'Tolak';
+            updateDashboardPesananStats();
+            if(orderChartInstance) { 
+                let activeType = document.querySelector('.chart-filter-btn.active').id.replace('btn-chart-','');
+                updateChartFilter(activeType); 
+            } 
+        } 
+        
+        try { 
+            let res = await fetchGAS({ action: "confirmPayment", idBooking: idToConfirm, namaPerusahaan: SESSION_COMPANY.namaPerusahaan, statusBooking: "Tolak" });
+            if(res.status !== "success") { throw new Error(res.message); } 
+            showAlert("Ditolak", "Pesanan telah ditolak.", "fa-ban");
+        } catch(e) { 
+            showAlert("Peringatan", e.message || "Gagal sinkronisasi.", "fa-triangle-exclamation", true);
+        }
+    }
+
     function formatTglIndo(tglStr) { if (!tglStr) return "-";
         try { const date = new Date(tglStr); if (isNaN(date.getTime())) return tglStr;
         const options = { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' }; return date.toLocaleDateString('id-ID', options);
@@ -1835,41 +2115,31 @@
 
     function populateDashboardData() { if(!SESSION_USER || !SESSION_COMPANY) return; document.getElementById('layananCompName').innerText = SESSION_COMPANY.namaPerusahaan;
     let logoSrc = SESSION_COMPANY.logo ?
-    SESSION_COMPANY.logo : "https://placehold.co/100x100?text=No+Logo"; document.getElementById('layananLogo').src = logoSrc; document.getElementById('profileLogoImg').src = logoSrc; document.getElementById('profileCompTitle').innerText = SESSION_COMPANY.namaPerusahaan; document.getElementById('profileUserTitle').innerText = `@${SESSION_USER.username}`;
+        SESSION_COMPANY.logo : "https://placehold.co/100x100?text=No+Logo"; document.getElementById('layananLogo').src = logoSrc; document.getElementById('profileLogoImg').src = logoSrc; document.getElementById('profileCompTitle').innerText = SESSION_COMPANY.namaPerusahaan; document.getElementById('profileUserTitle').innerText = `@${SESSION_USER.username}`;
     document.getElementById('pCompDesc').innerText = SESSION_COMPANY.deskripsiPerusahaan;
-    document.getElementById('stat-total-armada').innerText = globalLayananList ? globalLayananList.length : 0; updateHeaderSchemeUI();
+        document.getElementById('stat-total-armada').innerText = globalLayananList ? globalLayananList.length : 0; updateHeaderSchemeUI();
         
         let existingBtn = document.getElementById('btnMutasiSaldo');
         if (isKomisiScheme()) {
             if (!existingBtn) {
                 let btnHtml = `
                 <div id="btnMutasiSaldo" class="menu-item mutasi-menu-item" onclick="openMutasiSaldo()" style="margin-top: 0px; margin-bottom: 15px; display: flex; align-items: center; padding: 15px; background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); cursor: pointer; border: 1px solid #e2e8f0;">
-                    
                 <div class="mutasi-icon-box" style="width: 40px; height: 40px; border-radius: 10px; background: #f0fdf4; color: #10b981; display: flex; align-items: center; justify-content: center; font-size: 18px; margin-right: 15px;">
                         <i class="fa-solid fa-file-invoice-dollar"></i>
                     </div>
-                 
                     <div style="flex: 1;">
-           
-                     <h4 style="margin: 0; font-size: 14px; font-weight: 700; color: var(--text-main);">Mutasi Saldo</h4>
+               
+                       <h4 style="margin: 0; font-size: 14px; font-weight: 700; color: var(--text-main);">Mutasi Saldo</h4>
                         <p style="margin: 2px 0 0 0; font-size: 12px; color: var(--text-muted);">Riwayat pemotongan komisi</p>
                     </div>
                     <i class="fa-solid fa-chevron-right" style="color: #cbd5e1;"></i>
-                </div>
+     
+                 </div>
                 <style>
-                
-                    .mutasi-menu-item { transition: all 0.3s ease;
-                    }
-                    .mutasi-menu-item .mutasi-icon-box { transition: all 0.3s ease;
-                    }
-         
-                
-                    .mutasi-menu-item:hover { border-color: #10b981 !important;
-                box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15) !important; transform: translateY(-2px);
-                    }
-                    .mutasi-menu-item:hover .mutasi-icon-box { background: #10b981 !important;
-                color: #fff !important; }
-  
+                    .mutasi-menu-item { transition: all 0.3s ease; }
+                    .mutasi-menu-item .mutasi-icon-box { transition: all 0.3s ease; }
+                    .mutasi-menu-item:hover { border-color: #10b981 !important; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15) !important; transform: translateY(-2px); }
+                    .mutasi-menu-item:hover .mutasi-icon-box { background: #10b981 !important; color: #fff !important; }
                 </style>`;
                 let editPerusahaanBtn = document.querySelector('[onclick="openEditPerusahaan()"]');
                 if (editPerusahaanBtn) {
@@ -2134,16 +2404,9 @@
         if(result.status === "success" && result.data.length > 0) { result.data.reverse(); globalLayananList = result.data;
         let htmlCards = `<h3 style="margin: 0 0 16px 0; font-size:15px; font-weight:700; color:#475569;">Armada & Jadwal Aktif</h3>`; let delay = 0;
         let todayObj = new Date(); let localOffset = todayObj.getTimezoneOffset() * 60000; let localISODate = new Date(todayObj.getTime() - localOffset).toISOString().split('T')[0];
-        globalLayananList.forEach((item, idx) => { let durasiStr = hitungDurasi(item.jamBerangkat, item.jamSampai); let imgTopSrc = item.foto ? item.foto : "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=600&q=80"; let imgIconsHtml = buildCardFacilityImages(item.fasilitas); let offDaysList = item.tanggalLibur ? item.tanggalLibur.split(',').map(d => d.trim()) : []; let isOffToday = offDaysList.includes(localISODate); let ribbonClass = isOffToday ? "non-aktif" : "aktif"; let ribbonText = isOffToday ? "Libur Hari Ini" : "Beroperasi"; htmlCards += `<div class="ticket-card" style="animation-delay: ${delay}s"><div class="ticket-img-top"><div class="status-ribbon ${ribbonClass}">${ribbonText}</div><img src="${imgTopSrc}" alt="Foto Armada"></div><div class="ticket-card-body"><div class="ticket-header"><div class="ticket-brand"><h3>${SESSION_COMPANY.namaPerusahaan}</h3><span>${item.merk} <div class="ticket-rating"><i class="fa-solid fa-star"></i> 4.8</div></span></div><div class="ticket-price-box"><div class="ticket-price">${formatRupiah(item.harga)}<span style="font-size: 12px;
-        color: #80919D"> /Kursi</span></div><div class="ticket-seats-info-new"><i class="fa-solid fa-chair" style="color:#0284c7;"></i> ${item.kapasitas} Kursi Tersedia</div></div></div><div class="ticket-timeline-new"><div class="tl-time"><div>${item.jamBerangkat}</div><div class="tl-duration">${durasiStr}</div><div>${item.jamSampai}</div></div><div class="tl-center"><i class="fa-regular fa-circle-dot icon-origin"></i><div class="tl-line"></div><i class="fa-solid fa-location-dot icon-dest"></i></div><div class="tl-location"><div class="tl-loc-text">Titik Kumpul: <b>${item.asal}</b></div><div class="tl-loc-text">Tujuan Akhir: <b>${item.tujuan}</b></div></div></div><div style="border-top: 1px dashed #e2e8f0;
-        margin: 12px 0;"></div><h4 style="font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px;">Fasilitas:</h4><div class="ticket-footer" style="background:transparent;
-        padding:0;"><div class="facilities-wrapper"><div class="facilities-icons">${imgIconsHtml}</div><button class="settings-btn" onclick="openPengaturanDrawer(${idx})">Pengaturan</button></div></div></div></div>`; delay += 0.08; }); container.innerHTML = htmlCards; document.getElementById('stat-total-armada').innerText = globalLayananList.length; } else { document.getElementById('stat-total-armada').innerText = 0; container.innerHTML = `<div class="empty-state" style="text-align:center;
-        padding: 40px 0; color:#94a3b8;"><i class="fa-solid fa-bus-slash" style="font-size:40px; margin-bottom:12px;"></i><p>Belum ada armada.</p></div>`; } } catch(e) { container.innerHTML = `<div style="text-align: center;
-        margin-top: 40px; color: #ef4444;"><i class="fa-solid fa-triangle-exclamation"></i> Gagal memuat armada.</div>`; } }
+        globalLayananList.forEach((item, idx) => { let durasiStr = hitungDurasi(item.jamBerangkat, item.jamSampai); let imgTopSrc = item.foto ? item.foto : "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=600&q=80"; let imgIconsHtml = buildCardFacilityImages(item.fasilitas); let offDaysList = item.tanggalLibur ? item.tanggalLibur.split(',').map(d => d.trim()) : []; let isOffToday = offDaysList.includes(localISODate); let ribbonClass = isOffToday ? "non-aktif" : "aktif"; let ribbonText = isOffToday ? "Libur Hari Ini" : "Beroperasi"; htmlCards += `<div class="ticket-card" style="animation-delay: ${delay}s"><div class="ticket-img-top"><div class="status-ribbon ${ribbonClass}">${ribbonText}</div><img src="${imgTopSrc}" alt="Foto Armada"></div><div class="ticket-card-body"><div class="ticket-header"><div class="ticket-brand"><h3>${SESSION_COMPANY.namaPerusahaan}</h3><span>${item.merk} <div class="ticket-rating"><i class="fa-solid fa-star"></i> 4.8</div></span></div><div class="ticket-price-box"><div class="ticket-price">${formatRupiah(item.harga)}<span style="font-size: 12px; color: #80919D"> /Kursi</span></div><div class="ticket-seats-info-new"><i class="fa-solid fa-chair" style="color:#0284c7;"></i> ${item.kapasitas} Kursi Tersedia</div></div></div><div class="ticket-timeline-new"><div class="tl-time"><div>${item.jamBerangkat}</div><div class="tl-duration">${durasiStr}</div><div>${item.jamSampai}</div></div><div class="tl-center"><i class="fa-regular fa-circle-dot icon-origin"></i><div class="tl-line"></div><i class="fa-solid fa-location-dot icon-dest"></i></div><div class="tl-location"><div class="tl-loc-text">Titik Kumpul: <b>${item.asal}</b></div><div class="tl-loc-text">Tujuan Akhir: <b>${item.tujuan}</b></div></div></div><div style="border-top: 1px dashed #e2e8f0; margin: 12px 0;"></div><h4 style="font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px;">Fasilitas:</h4><div class="ticket-footer" style="background:transparent; padding:0;"><div class="facilities-wrapper"><div class="facilities-icons">${imgIconsHtml}</div><button class="settings-btn" onclick="openPengaturanDrawer(${idx})">Pengaturan</button></div></div></div></div>`; delay += 0.08; }); container.innerHTML = htmlCards; document.getElementById('stat-total-armada').innerText = globalLayananList.length; } else { document.getElementById('stat-total-armada').innerText = 0; container.innerHTML = `<div class="empty-state" style="text-align:center; padding: 40px 0; color:#94a3b8;"><i class="fa-solid fa-bus-slash" style="font-size:40px; margin-bottom:12px;"></i><p>Belum ada armada.</p></div>`; } } catch(e) { container.innerHTML = `<div style="text-align: center; margin-top: 40px; color: #ef4444;"><i class="fa-solid fa-triangle-exclamation"></i> Gagal memuat armada.</div>`; } }
 
-    async function loadPesananData() { if(!SESSION_COMPANY) return; const container = document.getElementById('pesananCardContainer'); container.innerHTML = `<div style="text-align:center;
-        padding: 40px 0; color:#94a3b8;"><i class="fa-solid fa-spinner fa-spin fa-2x"></i><p style="margin-top:10px; font-weight:600;">Memuat tiket masuk...</p></div>`; try { let response = await fetch(GAS_API_URL + "?action=getPartnerOrders&perusahaan=" + encodeURIComponent(SESSION_COMPANY.namaPerusahaan)); let result = await response.json(); globalPesananList = result; renderPesananCards(result); renderNotifications(); if (orderChartInstance) { let activeType = document.querySelector('.chart-filter-btn.active').id.replace('btn-chart-',''); updateChartFilter(activeType); } } catch(e) { container.innerHTML = `<div style="text-align: center;
-        margin-top: 40px; color: #ef4444;"><i class="fa-solid fa-triangle-exclamation"></i> Gagal memuat pesanan.</div>`; } }
+    async function loadPesananData() { if(!SESSION_COMPANY) return; const container = document.getElementById('pesananCardContainer'); container.innerHTML = `<div style="text-align:center; padding: 40px 0; color:#94a3b8;"><i class="fa-solid fa-spinner fa-spin fa-2x"></i><p style="margin-top:10px; font-weight:600;">Memuat tiket masuk...</p></div>`; try { let response = await fetch(GAS_API_URL + "?action=getPartnerOrders&perusahaan=" + encodeURIComponent(SESSION_COMPANY.namaPerusahaan)); let result = await response.json(); globalPesananList = result; renderPesananCards(result); renderNotifications(); if (orderChartInstance) { let activeType = document.querySelector('.chart-filter-btn.active').id.replace('btn-chart-',''); updateChartFilter(activeType); } } catch(e) { container.innerHTML = `<div style="text-align: center; margin-top: 40px; color: #ef4444;"><i class="fa-solid fa-triangle-exclamation"></i> Gagal memuat pesanan.</div>`; } }
     
     async function fetchPesananDataSilently() { 
         if(!SESSION_COMPANY) return; 
@@ -2151,14 +2414,16 @@
             let response = await fetch(GAS_API_URL + "?action=getPartnerOrders&perusahaan=" + encodeURIComponent(SESSION_COMPANY.namaPerusahaan)); 
             let result = await response.json(); 
             
+        
             if (globalPesananList.length > 0 && result.length > globalPesananList.length) {
                 let newOrders = result.filter(r => !globalPesananList.some(g => g.idBooking === r.idBooking));
                 if (newOrders.length > 0) {
                     showAlert("Pesanan Baru Masuk", `Terdapat ${newOrders.length} pesanan baru dari User.`, "fa-bell");
-              
+      
                     let bellBtn = document.getElementById('bellNotifBtn');
                     if (bellBtn) {
                         bellBtn.classList.remove('shake-anim');
+                       
                         void bellBtn.offsetWidth;
                         bellBtn.classList.add('shake-anim');
                     }
@@ -2191,31 +2456,56 @@
         filteredList.forEach(order => { htmlCards += generateTicketCardHTML(order, false, delay); delay += 0.08; });
         } else { htmlCards += `<div class="empty-state" style="text-align:center; padding: 40px 0; color:#94a3b8;"><i class="fa-solid fa-ticket" style="font-size:40px; margin-bottom:12px;"></i><p>Belum ada tiket pesanan masuk.</p></div>`;
         } container.innerHTML = htmlCards; updateDashboardPesananStats(); }
-    function generateTicketCardHTML(order, isPopupDrawer = false, delay = 0) { let isPaid = order.statusBooking.toLowerCase() === "lunas";
-        let statusClass = isPaid ? "aktif" : "non-aktif"; let statusText = isPaid ? "LUNAS" : "BELUM BAYAR";
-        let tglBooking = formatTglIndo(order.tanggalBooking); let isManual = (order.role === "Mitra") || order.isManualLocal; let manualBadge = isManual ?
-        `<div class="badge-manual"><i class="fa-solid fa-bolt"></i> Manual</div>` : ''; let suffix = isPopupDrawer ? "-popup" : ""; let actionBtn = isPaid ?
-        '' : `<button id="btn-confirm-${order.idBooking}${suffix}" class="settings-btn" style="background:linear-gradient(135deg, #10b981, #059669); color:white; box-shadow:0 4px 10px rgba(16,185,129,0.3); z-index: 12;" onclick="event.stopPropagation(); openPaymentModal('${order.idBooking}')"><i class="fa-solid fa-hand-holding-dollar"></i> Konfirmasi</button>`;
-        let cardOnClick = !isPopupDrawer ? `onclick="openTicketDetail('${order.idBooking}')" style="cursor:pointer; opacity: 0; animation: fadeIn 0.5s forwards; animation-delay: ${delay}s;"` : `style="box-shadow:none; border: 1px solid #e2e8f0; margin-bottom: 0;"`;
+    
+    function generateTicketCardHTML(order, isPopupDrawer = false, delay = 0) { 
+        let isPaid = order.statusBooking.toLowerCase() === "lunas";
+        let isDitolak = order.statusBooking.toLowerCase() === "ditolak" || order.statusBooking.toLowerCase() === "tolak";
+        let isManual = (order.role === "Mitra") || order.isManualLocal;
+        let statusClass = "non-aktif";
+        let statusText = "BELUM BAYAR";
+
+        if (isPaid) {
+            statusClass = "aktif";
+            statusText = "LUNAS";
+        } else if (isDitolak) {
+            statusClass = "ditolak";
+            statusText = "DITOLAK";
+        } else {
+            if (isManual) {
+                statusClass = "non-aktif";
+                // default CSS red bg
+                statusText = "BELUM BAYAR";
+            } else {
+                statusClass = "pending-orange";
+                // custom CSS orange bg
+                statusText = "TRANSFER PENDING";
+            }
+        }
+
+        let tglBooking = formatTglIndo(order.tanggalBooking);
+        let manualBadge = isManual ?
+        `<div class="badge-manual"><i class="fa-solid fa-bolt"></i> Manual</div>` : ''; 
+        let suffix = isPopupDrawer ? "-popup" : "";
+        let actionBtn = isPaid || isDitolak ?
+        '' : `<button id="btn-confirm-${order.idBooking}${suffix}" class="settings-btn" style="background:linear-gradient(135deg, #10b981, #059669); color:white; box-shadow:0 4px 10px rgba(16,185,129,0.3); z-index: 12;"
+        onclick="event.stopPropagation(); openPaymentModal('${order.idBooking}')"><i class="fa-solid fa-hand-holding-dollar"></i> Konfirmasi</button>`;
+        
+        let cardOnClick = !isPopupDrawer ?
+        `onclick="openTicketDetail('${order.idBooking}')" style="cursor:pointer; opacity: 0; animation: fadeIn 0.5s forwards; animation-delay: ${delay}s;"` : `style="box-shadow:none; border: 1px solid #e2e8f0; margin-bottom: 0;"`;
         return `<div class="ticket-card pesanan-card-item" id="ticketCard-${order.idBooking}${suffix}" ${cardOnClick}><div class="ticket-card-body" style="padding-top: 15px; position: relative;"><div class="ticket-header" style="margin-bottom:8px;"><div class="ticket-brand"><h3 style="color:#89a37b; font-size:16px;">${order.idBooking}</h3><span><i class="fa-solid fa-user" style="color:#cbd5e1;"></i> <b style="color:var(--text-main); margin-left:4px; text-transform:capitalize;">${order.namaPenumpang}</b> ${manualBadge}</span><span style="font-size:10px; margin-top:2px;"><i class="fa-solid fa-phone" style="color:#cbd5e1;"></i> <span style="margin-left:4px;">0${order.noHp}</span></span></div><div class="ticket-price-box"><div class="ticket-price">Rp.
-        ${formatNumber(order.harga)}</div><div style="font-size: 11px; font-weight: 700; color: #64748b; margin: 4px 0;"><i class="fa-solid fa-bus"></i> ${order.merkKendaraan}</div><div class="ticket-seats-info-new" style="margin-top: 0;"><i class="fa-solid fa-chair" style="color:#0284c7;"></i> Kursi: <b>${order.nomorKursi}</b></div></div></div><div class="ticket-timeline-new" style="margin-top:10px; margin-bottom:8px;"><div class="tl-center" style="margin-left:0;"><i class="fa-regular fa-circle-dot icon-origin"></i><div class="tl-line"></div><i class="fa-solid fa-location-dot icon-dest"></i></div><div class="tl-location"><div class="tl-loc-text">Naik: <b>${order.asal}</b></div><div class="tl-loc-text">Turun: <b>${order.tujuan}</b></div></div></div><div style="margin-top:12px; display: flex; justify-content: flex-end;"><div class="modern-date-badge"><span style="color: black"> Tanggal Berangkat:</span><i class="fa-regular fa-calendar-check"></i> ${tglBooking}</div></div><div class="ticket-footer" style="background:transparent;
-        padding:0; margin-top:20px; position: relative; height: 35px; display: flex; align-items: center;
-        justify-content: flex-end;"><div id="badge-${order.idBooking}${suffix}" class="status-ribbon-bottom-left ${statusClass}">${statusText}</div>${actionBtn}</div></div></div>`; }
+        ${formatNumber(order.harga)}</div><div style="font-size: 11px; font-weight: 700; color: #64748b; margin: 4px 0;"><i class="fa-solid fa-bus"></i> ${order.merkKendaraan}</div><div class="ticket-seats-info-new" style="margin-top: 0;"><i class="fa-solid fa-chair" style="color:#0284c7;"></i> Kursi: <b>${order.nomorKursi}</b></div></div></div><div class="ticket-timeline-new" style="margin-top:10px; margin-bottom:8px;"><div class="tl-center" style="margin-left:0;"><i class="fa-regular fa-circle-dot icon-origin"></i><div class="tl-line"></div><i class="fa-solid fa-location-dot icon-dest"></i></div><div class="tl-location"><div class="tl-loc-text">Naik: <b>${order.asal}</b></div><div class="tl-loc-text">Turun: <b>${order.tujuan}</b></div></div></div><div style="margin-top:12px; display: flex; justify-content: flex-end;"><div class="modern-date-badge"><span style="color: black"> Tanggal Berangkat:</span><i class="fa-regular fa-calendar-check"></i> ${tglBooking}</div></div><div class="ticket-footer" style="background:transparent; padding:0; margin-top:20px; position: relative; height: 35px; display: flex; align-items: center; justify-content: flex-end;"><div id="badge-${order.idBooking}${suffix}" class="status-ribbon-bottom-left ${statusClass}">${statusText}</div>${actionBtn}</div></div></div>`; }
 
     async function openAddService() { 
         if(isKomisiScheme() && SESSION_COMPANY.saldo <= 0) { 
             return showAlert("Peringatan", "Maaf, saldo anda tidak mencukupi untuk membayar komisi aplikasi. Anda tidak dapat menambahkan armada. Silahkan top up saldo terlebih dahulu.", "fa-triangle-exclamation", true); 
         }
         document.getElementById('pageAddService').classList.add('open'); pushBackButtonHandler('addService'); try { let response = await fetch(GAS_API_URL + "?action=getVehicleTypes"); let listJenis = await response.json(); let optionsHtml = listJenis.length > 
-        0 ? listJenis.map(i => `<div class="custom-option" onclick="selectServiceType('${i.nama}', '${i.icon || "https://cdn-icons-png.flaticon.com/512/744/744465.png"}')"><img src="${i.icon || ""}"><span style="color:var(--text-main);
-        font-weight:500;">${i.nama}</span></div>`).join("") : `<div class="custom-option">Tidak ada data.</div>`;
+        0 ? listJenis.map(i => `<div class="custom-option" onclick="selectServiceType('${i.nama}', '${i.icon || "https://cdn-icons-png.flaticon.com/512/744/744465.png"}')"><img src="${i.icon || ""}"><span style="color:var(--text-main); font-weight:500;">${i.nama}</span></div>`).join("") : `<div class="custom-option">Tidak ada data.</div>`;
         document.getElementById('serviceTypeOptions').innerHTML = optionsHtml;
         } catch (e) { document.getElementById('serviceTypeOptions').innerHTML = `<div class="custom-option" style="color:#EF4444">Gagal memuat jenis.</div>`;
         } }
     function selectServiceType(namaJenis, iconUrl) { selectedVehicleTypeName = namaJenis; let isEdit = document.getElementById('pageEditService').classList.contains('open');
-        let targetSpan = isEdit ? 'selectedEditServiceType' : 'selectedServiceType'; if(document.getElementById(targetSpan)){ document.getElementById(targetSpan).innerHTML = `<div style="display: flex;
-        align-items: center; gap: 10px;"><img src="${iconUrl}" style="width:24px; height:24px; object-fit:contain; border-radius:4px;"><span style="font-weight:700;
-        color:var(--text-main);">${namaJenis}</span></div>`;
+        let targetSpan = isEdit ? 'selectedEditServiceType' : 'selectedServiceType'; if(document.getElementById(targetSpan)){ document.getElementById(targetSpan).innerHTML = `<div style="display: flex; align-items: center; gap: 10px;"><img src="${iconUrl}" style="width:24px; height:24px; object-fit:contain; border-radius:4px;"><span style="font-weight:700; color:var(--text-main);">${namaJenis}</span></div>`;
         } if(document.getElementById('serviceTypeOptions')) document.getElementById('serviceTypeOptions').classList.remove('open'); if(document.getElementById('serviceEditTypeOptions')) document.getElementById('serviceEditTypeOptions').classList.remove('open'); if(document.getElementById('serviceTypeSelect')) document.getElementById('serviceTypeSelect').style.borderColor = "var(--primary)"; if(document.getElementById('serviceEditTypeSelect')) document.getElementById('serviceEditTypeSelect').style.borderColor = "var(--primary)";
     }
     function closeAddServiceAndReset(fromPopState = false) { document.getElementById('selectedServiceType').innerHTML = "<span>Pilih Tipe Kendaraan...</span>"; selectedVehicleTypeName = ""; selectedFasilitasArray = [];
