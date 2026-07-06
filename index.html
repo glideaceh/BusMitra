@@ -119,14 +119,14 @@
         </div>
     </div>
 
-    <div id="topUpDrawer" class="drawer-modal" style="z-index: 100000;">
-        <div class="drawer-content" style="background: rgba(248, 250, 252, 0.98); backdrop-filter: blur(15px); padding: 0;">
+    <div id="topUpDrawer" class="drawer-modal" style="z-index: 100000; ">
+        <div class="drawer-content" style="background: rgba(248, 250, 252, 0.98); backdrop-filter: blur(15px); padding: 10px; padding-bottom: 0; height: 100%; max-height: 100vh">
             <div class="drawer-handle" style="margin-top: 15px;"></div>
             <div class="drawer-header" style="padding: 0 20px; margin-bottom: 15px;">
                 <h3 style="font-size: 16px; font-weight: 800; color: var(--text-main);"><i class="fa-solid fa-wallet" style="color: #10b981; margin-right: 8px;"></i>Top Up Saldo Mitra</h3>
                 <button class="drawer-close" onclick="closeTopUpDrawer()"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div style="padding: 0 20px 20px 20px; overflow-y: auto; max-height: 75vh;">
+            <div style="padding: 0 20px 20px 20px; overflow-y: auto; max-height: 100vh;">
                 <div style="background: linear-gradient(135deg, #10b981, #059669); border-radius: 16px; padding: 18px; color: #fff; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(16, 185, 129, 0.25); display: flex; justify-content: space-between; align-items: center;">
                     <div>
                         <span style="font-size: 11px; font-weight: 700; opacity: 0.8; text-transform: uppercase; letter-spacing: 0.5px;">Saldo Aktif Saat Ini</span>
@@ -148,8 +148,8 @@
                 </div>
 
                 <div style="margin-bottom: 20px;">
-                    <label style="font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; display: block;">Atau Masukkan Nominal Lainnya (Rp)</label>
-                    <input type="number" id="customTopUpNominal" placeholder="Contoh: 150000" oninput="handleCustomNominalInput(this)" style="width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #e2e8f0; font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 700; color: var(--text-main); outline: none; background: #fff;">
+                    <label style="font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; display: block;">Atau Masukkan Nominal Lainnya </label>
+                    <input type="number" id="customTopUpNominal" placeholder="0" oninput="handleCustomNominalInput(this)" style="width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #e2e8f0; font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 700; color: var(--text-main); outline: none; background: #fff;">
                 </div>
 
                 <p style="font-size: 13px; font-weight: 700; color: var(--text-main); margin-bottom: 8px;">Silakan Transfer ke Rekening Resmi:</p>
@@ -578,6 +578,7 @@
                 padding: 8px 16px;
                 border-radius: 50px;
                 font-size: 12px;
+                margin-top: -20px;
                 font-weight: 700;
                 cursor: pointer;
                 transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
