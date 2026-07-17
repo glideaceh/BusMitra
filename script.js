@@ -1,5 +1,4 @@
-﻿<script>
-    // Penambahan Style Kustom
+   // Penambahan Style Kustom
     if (!document.getElementById('customEnhancementStyles')) {
         let style = document.createElement('style');
         style.id = 'customEnhancementStyles';
@@ -2017,4 +2016,3 @@
         
         switchSubView('layanan'); switchPage('pageLogin');
     }
-</script>
